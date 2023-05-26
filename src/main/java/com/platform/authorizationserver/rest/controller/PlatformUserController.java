@@ -2,8 +2,8 @@ package com.platform.authorizationserver.rest.controller;
 
 import com.platform.authorizationserver.behavioral.HandlerContext;
 import com.platform.authorizationserver.behavioral.HandlerContext.HandlerKey;
-import com.platform.authorizationserver.rest.domain.models.ServletRequest;
-import com.platform.authorizationserver.rest.domain.models.ServletResponse;
+import com.platform.authorizationserver.rest.domain.model.ServletRequest;
+import com.platform.authorizationserver.rest.domain.model.ServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

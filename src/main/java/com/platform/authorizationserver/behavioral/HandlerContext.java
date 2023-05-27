@@ -30,7 +30,7 @@ public class HandlerContext {
         context.put(HandlerKey.ADMIN_UPDATE, new AdminUpdateInvocationHandler());
     }
 
-    public InvocationHandler getHandler(HandlerKey key) {
+    public InvocationHandler getHandlerByKey(HandlerKey key) {
         return context.get(key);
     }
 

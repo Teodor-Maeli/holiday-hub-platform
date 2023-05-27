@@ -1,8 +1,9 @@
 package com.platform.authorizationserver.behavioral;
 
 
-import com.platform.authorizationserver.rest.domain.model.ServletRequest;
-import com.platform.authorizationserver.rest.domain.model.ServletResponse;
+import com.platform.authorizationserver.model.HandlerAction;
+import com.platform.authorizationserver.model.ServletRequest;
+import com.platform.authorizationserver.model.ServletResponse;
 
 /**
  * 27.05.2023.
@@ -14,5 +15,6 @@ import com.platform.authorizationserver.rest.domain.model.ServletResponse;
  */
 
 public interface InvocationHandler {
-    public  ServletResponse handle(ServletRequest request);
+
+    ServletResponse handle(ServletRequest request, HandlerAction action);
 }

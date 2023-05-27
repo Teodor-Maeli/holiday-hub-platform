@@ -1,4 +1,4 @@
-package com.platform.authorizationserver.rest.domain.model;
+package com.platform.authorizationserver.model;
 
 import lombok.Builder;
 import lombok.Getter;

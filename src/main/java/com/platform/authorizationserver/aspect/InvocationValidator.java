@@ -1,6 +1,6 @@
 package com.platform.authorizationserver.aspect;
 
-import com.platform.authorizationserver.behavioral.HandlerContext.HandlerKey;
+import com.platform.authorizationserver.model.HandlerKey;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

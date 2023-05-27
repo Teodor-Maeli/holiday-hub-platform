@@ -1,8 +1,11 @@
 package com.platform.authorizationserver.aspect.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.authorizationserver.aspect.InvocationValidator;
-import com.platform.authorizationserver.behavioral.HandlerContext.HandlerKey;
-import java.util.List;
+import com.platform.authorizationserver.model.HandlerAction;
+import com.platform.authorizationserver.model.HandlerKey;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,37 +22,45 @@ import org.springframework.stereotype.Component;
  */
 
 @Aspect
+@Slf4j
 @Component
+@AllArgsConstructor
 public class InvocationValidatorImpl {
 
+    private ObjectMapper objectMapper;
+
     @Pointcut("@annotation(com.platform.authorizationserver.aspect.InvocationValidator) && execution(* *(..))")
-    public void validator() {
+    public void pointCut() {
     }
 
-    @Around("validator()")
+    @Around("pointCut()")
     public void validate(ProceedingJoinPoint joinPoint) throws Throwable {
-        List<HandlerKey> configuredKeys = getConfiguredKeys(joinPoint);
-        HandlerKey inputKey = getInputKey(joinPoint);
+        HandlerKey[] configuredKeys = getConfiguredKeys(joinPoint);
+        HandlerAction inputAction = getInputAction(joinPoint);
 
-        if (configuredKeys.contains(inputKey)) {
-            joinPoint.proceed();
-            return;
+        for (HandlerKey key : configuredKeys) {
+            if (key.getActions().contains(inputAction)) {
+                joinPoint.proceed();
+                return;
+            }
         }
 
-        throw new IllegalArgumentException("Handler key not eligible for required action!");
+        throw new IllegalArgumentException(
+            String.format("Handler action : %s fails!Not supported by configuredKeys : %s!",
+                inputAction, objectMapper.writeValueAsString(configuredKeys)));
     }
 
-    private static List<HandlerKey> getConfiguredKeys(ProceedingJoinPoint joinPoint) {
-        return List.of(((MethodSignature) joinPoint.getSignature())
+    private HandlerKey[] getConfiguredKeys(ProceedingJoinPoint joinPoint) {
+        return ((MethodSignature) joinPoint.getSignature())
             .getMethod()
             .getAnnotation(InvocationValidator.class)
-            .keys());
+            .keys();
     }
 
-    private HandlerKey getInputKey(ProceedingJoinPoint joinPoint) {
+    private HandlerAction getInputAction(ProceedingJoinPoint joinPoint) {
         for (Object arg : joinPoint.getArgs()) {
-            if (arg instanceof HandlerKey key) {
-                return key;
+            if (arg instanceof HandlerAction action) {
+                return action;
             }
         }
 

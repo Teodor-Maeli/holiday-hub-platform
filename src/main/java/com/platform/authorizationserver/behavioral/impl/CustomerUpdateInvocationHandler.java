@@ -5,7 +5,7 @@ import com.platform.authorizationserver.model.HandlerAction;
 import com.platform.authorizationserver.model.ServletRequest;
 import com.platform.authorizationserver.model.ServletResponse;
 
-public class AdminUpdateInvocationHandler implements InvocationHandler {
+public class CustomerUpdateInvocationHandler implements InvocationHandler {
 
     @Override
     public ServletResponse handle(ServletRequest request, HandlerAction action) {

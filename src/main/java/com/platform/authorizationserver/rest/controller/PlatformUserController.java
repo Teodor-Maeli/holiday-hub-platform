@@ -1,11 +1,12 @@
 package com.platform.authorizationserver.rest.controller;
 
-import com.platform.authorizationserver.aspect.InvocationValidator;
 import com.platform.authorizationserver.aspect.IOLogger;
+import com.platform.authorizationserver.aspect.InvocationValidator;
 import com.platform.authorizationserver.behavioral.HandlerContext;
-import com.platform.authorizationserver.behavioral.HandlerContext.HandlerKey;
-import com.platform.authorizationserver.rest.domain.model.ServletRequest;
-import com.platform.authorizationserver.rest.domain.model.ServletResponse;
+import com.platform.authorizationserver.model.HandlerAction;
+import com.platform.authorizationserver.model.HandlerKey;
+import com.platform.authorizationserver.model.ServletRequest;
+import com.platform.authorizationserver.model.ServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 27.05.2023.
  *
- * <p>Controller responsible for client's request.</p>
+ * <p>Controller handles for customer's request.</p>
  *
  * <p>Author : Teodor Maeli</p>
  */
@@ -32,41 +33,41 @@ public class PlatformUserController {
 
     @IOLogger
     @PostMapping("/persist")
-    @InvocationValidator(keys = HandlerKey.PERSIST)
+    @InvocationValidator(keys = HandlerKey.CUSTOMER_PERSIST)
     public ResponseEntity<ServletResponse> processPersist(
         @RequestBody ServletRequest request,
-        @RequestParam HandlerKey key) {
-        ServletResponse result = handlerContext.getHandlerByKey(key).handle(request);
+        @RequestParam HandlerAction action) {
+        ServletResponse result = handlerContext.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
     @IOLogger
-    @GetMapping("/fetch")
-    @InvocationValidator(keys = HandlerKey.FETCH)
+    @GetMapping("/get")
+    @InvocationValidator(keys = HandlerKey.CUSTOMER_FETCH)
     public ResponseEntity<ServletResponse> processFetch(
         @RequestBody ServletRequest request,
-        @RequestParam("key") HandlerKey key) {
-        ServletResponse result = handlerContext.getHandlerByKey(key).handle(request);
+        @RequestParam HandlerAction action) {
+        ServletResponse result = handlerContext.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
     @IOLogger
     @PostMapping("/update")
-    @InvocationValidator(keys = HandlerKey.UPDATE)
+    @InvocationValidator(keys = HandlerKey.CUSTOMER_UPDATE)
     public ResponseEntity<ServletResponse> processUpdate(
         @RequestBody ServletRequest request,
-        @RequestParam HandlerKey key) {
-        ServletResponse result = handlerContext.getHandlerByKey(key).handle(request);
+        @RequestParam HandlerAction action) {
+        ServletResponse result = handlerContext.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
     @IOLogger
-    @PostMapping("/remove")
-    @InvocationValidator(keys = HandlerKey.REMOVE)
+    @PostMapping("/delete")
+    @InvocationValidator(keys = HandlerKey.CUSTOMER_DELETE)
     public ResponseEntity<ServletResponse> processRemove(
         @RequestBody ServletRequest request,
-        @RequestParam HandlerKey key) {
-        ServletResponse result = handlerContext.getHandlerByKey(key).handle(request);
+        @RequestParam HandlerAction action) {
+        ServletResponse result = handlerContext.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 }

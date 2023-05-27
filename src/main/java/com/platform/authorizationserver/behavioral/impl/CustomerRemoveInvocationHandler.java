@@ -4,8 +4,11 @@ import com.platform.authorizationserver.behavioral.InvocationHandler;
 import com.platform.authorizationserver.model.HandlerAction;
 import com.platform.authorizationserver.model.ServletRequest;
 import com.platform.authorizationserver.model.ServletResponse;
+import lombok.NoArgsConstructor;
 
-public class AdminUpdateInvocationHandler implements InvocationHandler {
+@NoArgsConstructor
+public class CustomerRemoveInvocationHandler implements InvocationHandler {
+
 
     @Override
     public ServletResponse handle(ServletRequest request, HandlerAction action) {

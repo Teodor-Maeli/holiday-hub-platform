@@ -2,13 +2,14 @@ package com.platform.authorizationserver.rest.controller;
 
 import com.platform.authorizationserver.aspect.IOLogger;
 import com.platform.authorizationserver.aspect.InvocationValidator;
-import com.platform.authorizationserver.behavioral.HandlerContext;
+import com.platform.authorizationserver.behavioral.ActionHandlerContext;
 import com.platform.authorizationserver.model.HandlerAction;
 import com.platform.authorizationserver.model.HandlerKey;
 import com.platform.authorizationserver.model.ServletRequest;
 import com.platform.authorizationserver.model.ServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,10 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/authorization/v1")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PlatformUserController {
 
-    private HandlerContext handlerContext;
+    private final ActionHandlerContext context;
 
     @IOLogger
     @PostMapping("/persist")
@@ -37,17 +38,17 @@ public class PlatformUserController {
     public ResponseEntity<ServletResponse> processPersist(
         @RequestBody ServletRequest request,
         @RequestParam HandlerAction action) {
-        ServletResponse result = handlerContext.getHandler(action).handle(request, action);
+        ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
     @IOLogger
     @GetMapping("/get")
-    @InvocationValidator(keys = HandlerKey.CUSTOMER_FETCH)
-    public ResponseEntity<ServletResponse> processFetch(
+    @InvocationValidator(keys = HandlerKey.CUSTOMER_GET)
+    public ResponseEntity<ServletResponse> processGet(
         @RequestBody ServletRequest request,
         @RequestParam HandlerAction action) {
-        ServletResponse result = handlerContext.getHandler(action).handle(request, action);
+        ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
@@ -57,17 +58,17 @@ public class PlatformUserController {
     public ResponseEntity<ServletResponse> processUpdate(
         @RequestBody ServletRequest request,
         @RequestParam HandlerAction action) {
-        ServletResponse result = handlerContext.getHandler(action).handle(request, action);
+        ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
     @IOLogger
-    @PostMapping("/delete")
-    @InvocationValidator(keys = HandlerKey.CUSTOMER_DELETE)
-    public ResponseEntity<ServletResponse> processRemove(
+    @DeleteMapping("/evict")
+    @InvocationValidator(keys = HandlerKey.CUSTOMER_EVICT)
+    public ResponseEntity<ServletResponse> processEvict(
         @RequestBody ServletRequest request,
         @RequestParam HandlerAction action) {
-        ServletResponse result = handlerContext.getHandler(action).handle(request, action);
+        ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 }

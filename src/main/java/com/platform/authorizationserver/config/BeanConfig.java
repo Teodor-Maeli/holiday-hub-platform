@@ -1,4 +1,4 @@
-package com.platform.authorizationserver.bean;
+package com.platform.authorizationserver.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

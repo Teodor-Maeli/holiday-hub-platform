@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.authorizationserver.aspect.InvocationValidator;
 import com.platform.authorizationserver.model.HandlerAction;
 import com.platform.authorizationserver.model.HandlerKey;
+import java.util.Arrays;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
  */
 
 @Aspect
-@Slf4j
 @Component
 @AllArgsConstructor
 public class InvocationValidatorImpl {
@@ -58,12 +57,9 @@ public class InvocationValidatorImpl {
     }
 
     private HandlerAction getInputAction(ProceedingJoinPoint joinPoint) {
-        for (Object arg : joinPoint.getArgs()) {
-            if (arg instanceof HandlerAction action) {
-                return action;
-            }
-        }
-
-        throw new IllegalArgumentException("No valid handler key were provided!");
+        return (HandlerAction) Arrays.stream(joinPoint.getArgs())
+            .filter(HandlerAction.class::isInstance)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("No valid handler key were provided!"));
     }
 }

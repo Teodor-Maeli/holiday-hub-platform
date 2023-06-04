@@ -6,6 +6,4 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ServletRequest {
-
-
 }

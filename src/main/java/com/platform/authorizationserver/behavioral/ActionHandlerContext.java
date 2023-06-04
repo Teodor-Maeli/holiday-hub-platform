@@ -18,18 +18,18 @@ import org.springframework.stereotype.Service;
  * Returns requested invocation handler
  */
 @Service
-public class HandlerContext {
+public class ActionHandlerContext {
 
     private Map<HandlerKey, InvocationHandler> handlerContext;
 
     @PostConstruct
     private void init() {
         handlerContext = new EnumMap<>(HandlerKey.class);
-        handlerContext.put(HandlerKey.CUSTOMER_DELETE, new CustomerRemoveInvocationHandler());
+        handlerContext.put(HandlerKey.CUSTOMER_EVICT, new CustomerRemoveInvocationHandler());
         handlerContext.put(HandlerKey.CUSTOMER_PERSIST, new CustomerPersistInvocationHandler());
         handlerContext.put(HandlerKey.CUSTOMER_UPDATE, new CustomerUpdateInvocationHandler());
-        handlerContext.put(HandlerKey.CUSTOMER_FETCH, new CustomerFetchInvocationHandler());
-        handlerContext.put(HandlerKey.ADMIN_DELETE, new AdminDeleteInvocationHandler());
+        handlerContext.put(HandlerKey.CUSTOMER_GET, new CustomerFetchInvocationHandler());
+        handlerContext.put(HandlerKey.ADMIN_EVICT, new AdminDeleteInvocationHandler());
         handlerContext.put(HandlerKey.ADMIN_UPDATE, new AdminUpdateInvocationHandler());
     }
 
@@ -41,7 +41,8 @@ public class HandlerContext {
     private HandlerKey getHandlerKeyWithHandlerAction(HandlerAction action) {
         return Arrays.stream(HandlerKey.values())
             .filter(handlerKey -> handlerKey.getActions().contains(action))
-            .findFirst().orElseThrow(() -> new IllegalArgumentException(
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(
                 "No such action supported by Invocation handlers."));
     }
 }

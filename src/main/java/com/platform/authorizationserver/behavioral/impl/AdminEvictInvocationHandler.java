@@ -5,7 +5,8 @@ import com.platform.authorizationserver.model.HandlerAction;
 import com.platform.authorizationserver.model.ServletRequest;
 import com.platform.authorizationserver.model.ServletResponse;
 
-public class AdminDeleteInvocationHandler implements InvocationHandler {
+public class AdminEvictInvocationHandler implements InvocationHandler {
+
 
     @Override
     public ServletResponse handle(ServletRequest request, HandlerAction action) {

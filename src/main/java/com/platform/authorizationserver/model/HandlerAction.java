@@ -7,20 +7,22 @@ package com.platform.authorizationserver.model;
  * <p>Author : Teodor Maeli</p>
  */
 public enum HandlerAction {
-    PERSON_PERSIST,
+    PERSON_REGISTER,
     PERSON_FETCH,
     PERSON_UPDATE,
     PERSON_DELETE,
+    PERSON_LOGIN,
 
 
-    ENTITY_PERSIST,
+    ENTITY_REGISTER,
     ENTITY_FETCH,
     ENTITY_UPDATE,
     ENTITY_DELETE,
+    ENTITY_LOGIN,
 
 
-    ADMIN_PERSON_PERSIST,
-    ADMIN_ENTITY_PERSIST,
+    ADMIN_PERSON_REGISTER,
+    ADMIN_ENTITY_REGISTER,
     ADMIN_PERSON_FETCH,
     ADMIN_ENTITY_FETCH,
     ADMIN_PERSON_UPDATE,

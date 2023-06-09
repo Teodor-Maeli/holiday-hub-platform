@@ -32,10 +32,11 @@ public class PlatformUserController {
 
     private final ActionHandlerContext context;
 
-    @IOLogger
-    @PostMapping("/persist")
-    @InvocationValidator(keys = HandlerKey.CUSTOMER_PERSIST)
-    public ResponseEntity<ServletResponse> processPersist(
+
+    @IOLogger(mask = true)
+    @PostMapping("/register")
+    @InvocationValidator(keys = HandlerKey.CUSTOMER_REGISTER)
+    public ResponseEntity<ServletResponse> processRegister(
         @RequestBody ServletRequest request,
         @RequestParam HandlerAction action) {
         ServletResponse result = context.getHandler(action).handle(request, action);

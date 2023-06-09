@@ -34,9 +34,9 @@ public class PlatformAdminController {
     private final ActionHandlerContext context;
 
     @IOLogger
-    @PostMapping("/persist")
-    @InvocationValidator(keys = HandlerKey.ADMIN_PERSIST)
-    public ResponseEntity<ServletResponse> processAdminPersist(
+    @PostMapping("/register")
+    @InvocationValidator(keys = HandlerKey.ADMIN_REGISTER)
+    public ResponseEntity<ServletResponse> processAdminRegister(
         @RequestBody ServletRequest request,
         @RequestParam HandlerAction action) {
         ServletResponse result = context.getHandler(action).handle(request, action);

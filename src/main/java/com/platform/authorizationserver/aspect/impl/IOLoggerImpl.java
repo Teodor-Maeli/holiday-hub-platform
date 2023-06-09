@@ -2,6 +2,7 @@ package com.platform.authorizationserver.aspect.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.platform.authorizationserver.aspect.IOLogger;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,6 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @AllArgsConstructor
 public class IOLoggerImpl {
 
-    @Autowired
     private ObjectMapper mapper;
 
     @Pointcut("@annotation(com.platform.authorizationserver.aspect.IOLogger) && execution(* *(..))")
@@ -43,28 +42,41 @@ public class IOLoggerImpl {
     @Before("pointCut()")
     public void logInput(JoinPoint joinPoint) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        boolean mask = method.getAnnotation(IOLogger.class).mask();
         RequestMapping mapping = getRequestMapping(method);
 
         Map<String, Object> parameters = getParameters(joinPoint);
 
-        log("==Input==> path(s): {}, method(s): {}, arguments: {} ", mapping, parameters);
+        log("==Input==> path(s): {}, method(s): {}, arguments: {} ", mapping, parameters, mask);
     }
 
     @AfterReturning(pointcut = "pointCut()", returning = "object")
     public void logOutput(JoinPoint joinPoint, Object object) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        boolean mask = method.getAnnotation(IOLogger.class).mask();
         RequestMapping mapping = getRequestMapping(method);
 
-        log("<==Output== path(s): {}, method(s): {}, returning: {}", mapping, object);
+        log("<==Output== path(s): {}, method(s): {}, returning: {}", mapping, object, mask);
     }
 
-    private void log(String format, RequestMapping mapping, Object object) {
+    private void log(String format, RequestMapping mapping, Object object, boolean shouldMask) {
         try {
             log.info(format,
-                mapping.path(), mapping.method(), mapper.writeValueAsString(object));
+                mapping.path(), mapping.method(),
+                maskIfRequired(shouldMask, mapper.writeValueAsString(object)));
         } catch (JsonProcessingException e) {
             log.error("Error while converting", e);
         }
+    }
+
+    private Object maskIfRequired(boolean shouldMask, String args) {
+        if (shouldMask) {
+            if (args == null) {
+                return "NULL";
+            }
+            return args.replaceAll(".(?=.{2})", "x");
+        }
+        return args;
     }
 
     private Map<String, Object> getParameters(JoinPoint joinPoint) {

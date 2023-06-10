@@ -1,8 +1,10 @@
 package com.platform.authorizationserver.model;
+
 /**
  * 27.05.2023.
  *
- * <p>Actions used by invocation handlers.</p>
+ * <p>Actions used by invocation handlers and HandlerKeys.</p>
+ * Since 1.0
  *
  * <p>Author : Teodor Maeli</p>
  */
@@ -12,6 +14,7 @@ public enum HandlerAction {
     PERSON_UPDATE,
     PERSON_DELETE,
     PERSON_LOGIN,
+    PERSON_SESSION_INVALIDATE,
 
 
     ENTITY_REGISTER,
@@ -19,6 +22,7 @@ public enum HandlerAction {
     ENTITY_UPDATE,
     ENTITY_DELETE,
     ENTITY_LOGIN,
+    ENTITY_SESSION_INVALIDATE,
 
 
     ADMIN_PERSON_REGISTER,
@@ -28,5 +32,7 @@ public enum HandlerAction {
     ADMIN_PERSON_UPDATE,
     ADMIN_PERSON_DELETE,
     ADMIN_ENTITY_UPDATE,
-    ADMIN_ENTITY_DELETE
+    ADMIN_ENTITY_DELETE,
+    ADMIN_PERSON_SESSION_INVALIDATE,
+    ADMIN_ENTITY_SESSION_INVALIDATE
 }

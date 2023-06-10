@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 27.05.2023.
  *
  * <p>Controller handles administrator's requests.</p>
- *
+ * Since 1.0.
  * <p>Author : Teodor Maeli</p>
  */
 
@@ -33,9 +33,9 @@ public class PlatformAdminController {
 
     private final ActionHandlerContext context;
 
-    @IOLogger
-    @PostMapping("/register")
-    @InvocationValidator(keys = HandlerKey.ADMIN_REGISTER)
+    @IOLogger(mask = true)
+    @PostMapping("/persist")
+    @InvocationValidator(keys = HandlerKey.ADMIN_PERSIST)
     public ResponseEntity<ServletResponse> processAdminRegister(
         @RequestBody ServletRequest request,
         @RequestParam HandlerAction action) {
@@ -43,7 +43,7 @@ public class PlatformAdminController {
         return ResponseEntity.ok().body(result);
     }
 
-    @IOLogger
+    @IOLogger(mask = true)
     @GetMapping("/get")
     @InvocationValidator(keys = HandlerKey.ADMIN_GET)
     public ResponseEntity<ServletResponse> processAdminGet(
@@ -53,7 +53,7 @@ public class PlatformAdminController {
         return ResponseEntity.ok().body(result);
     }
 
-    @IOLogger
+    @IOLogger(mask = true)
     @PatchMapping("/update")
     @InvocationValidator(keys = HandlerKey.ADMIN_UPDATE)
     public ResponseEntity<ServletResponse> processAdminUpdate(

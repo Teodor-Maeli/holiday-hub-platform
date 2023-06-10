@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
  * 27.05.2023.
  *
  * <p>Validates handler keys against RestController endpoints.</p>
+ * Since 1.0.
  *
  * <p>Author : Teodor Maeli</p>
  */

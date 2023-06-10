@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Returns requested invocation handler
+ * Since 1.0
  */
 @Service
 public class ActionHandlerContext {
@@ -28,13 +29,13 @@ public class ActionHandlerContext {
     private void init() {
         handlerContext = new EnumMap<>(HandlerKey.class);
         handlerContext.put(HandlerKey.CUSTOMER_EVICT, new CustomerEvictInvocationHandler());
-        handlerContext.put(HandlerKey.CUSTOMER_REGISTER, new CustomerRegisterInvocationHandler());
+        handlerContext.put(HandlerKey.CUSTOMER_PERSIST, new CustomerRegisterInvocationHandler());
         handlerContext.put(HandlerKey.CUSTOMER_UPDATE, new CustomerUpdateInvocationHandler());
         handlerContext.put(HandlerKey.CUSTOMER_GET, new CustomerFetchInvocationHandler());
         handlerContext.put(HandlerKey.ADMIN_EVICT, new AdminEvictInvocationHandler());
         handlerContext.put(HandlerKey.ADMIN_UPDATE, new AdminUpdateInvocationHandler());
         handlerContext.put(HandlerKey.ADMIN_GET, new AdminFetchInvocationHandler());
-        handlerContext.put(HandlerKey.ADMIN_REGISTER, new AdminRegisterInvocationHandler());
+        handlerContext.put(HandlerKey.ADMIN_PERSIST, new AdminRegisterInvocationHandler());
     }
 
     public InvocationHandler getHandler(HandlerAction action) {

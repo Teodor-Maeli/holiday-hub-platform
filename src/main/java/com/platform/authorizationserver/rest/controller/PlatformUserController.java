@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 27.05.2023.
  *
  * <p>Controller handles for customer's request.</p>
- *
+ * Since 1.0.
  * <p>Author : Teodor Maeli</p>
  */
 
@@ -34,8 +34,8 @@ public class PlatformUserController {
 
 
     @IOLogger(mask = true)
-    @PostMapping("/register")
-    @InvocationValidator(keys = HandlerKey.CUSTOMER_REGISTER)
+    @PostMapping("/persist")
+    @InvocationValidator(keys = HandlerKey.CUSTOMER_PERSIST)
     public ResponseEntity<ServletResponse> processRegister(
         @RequestBody ServletRequest request,
         @RequestParam HandlerAction action) {
@@ -43,7 +43,7 @@ public class PlatformUserController {
         return ResponseEntity.ok().body(result);
     }
 
-    @IOLogger
+    @IOLogger(mask = true)
     @GetMapping("/get")
     @InvocationValidator(keys = HandlerKey.CUSTOMER_GET)
     public ResponseEntity<ServletResponse> processGet(
@@ -53,7 +53,7 @@ public class PlatformUserController {
         return ResponseEntity.ok().body(result);
     }
 
-    @IOLogger
+    @IOLogger(mask = true)
     @PostMapping("/update")
     @InvocationValidator(keys = HandlerKey.CUSTOMER_UPDATE)
     public ResponseEntity<ServletResponse> processUpdate(

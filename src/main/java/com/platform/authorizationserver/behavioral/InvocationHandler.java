@@ -10,6 +10,9 @@ import com.platform.authorizationserver.model.ServletResponse;
  *
  * <p>Handles incoming requests from endpoints - must be implemented by all handlers.</p>
  * {@param ServletRequest}
+ * {@param HandlerAction}
+ *
+ * Since 1.0
  *
  * <p>Author : Teodor Maeli</p>
  */

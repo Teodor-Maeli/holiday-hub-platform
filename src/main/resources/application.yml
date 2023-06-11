@@ -8,17 +8,13 @@ spring:
       enabled: always
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/authserver
-    username: authserver
-    password: authserverisnice
+    url: ${dbUrl:jdbc:postgresql://localhost:5432/authserver}
+    username: ${dbuser:authserver}
+    password: ${dbpass:authserverisnice}
   jpa:
     hibernate:
       ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
-
     generate-ddl: true
     open-in-view: false
 

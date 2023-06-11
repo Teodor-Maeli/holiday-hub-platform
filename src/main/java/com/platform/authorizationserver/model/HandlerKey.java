@@ -10,6 +10,7 @@ import static com.platform.authorizationserver.model.HandlerAction.ADMIN_PERSON_
 import static com.platform.authorizationserver.model.HandlerAction.ADMIN_PERSON_REGISTER;
 import static com.platform.authorizationserver.model.HandlerAction.ADMIN_PERSON_SESSION_INVALIDATE;
 import static com.platform.authorizationserver.model.HandlerAction.ADMIN_PERSON_UPDATE;
+import static com.platform.authorizationserver.model.HandlerAction.CLIENT_LOGOUT;
 import static com.platform.authorizationserver.model.HandlerAction.ENTITY_DELETE;
 import static com.platform.authorizationserver.model.HandlerAction.ENTITY_FETCH;
 import static com.platform.authorizationserver.model.HandlerAction.ENTITY_REGISTER;
@@ -48,7 +49,8 @@ public enum HandlerKey {
             PERSON_DELETE,
             PERSON_SESSION_INVALIDATE,
             ENTITY_DELETE,
-            ENTITY_SESSION_INVALIDATE
+            ENTITY_SESSION_INVALIDATE,
+            CLIENT_LOGOUT
         )
     ),
     CUSTOMER_GET(
@@ -85,7 +87,8 @@ public enum HandlerKey {
             ADMIN_PERSON_DELETE,
             ADMIN_ENTITY_DELETE,
             ADMIN_PERSON_SESSION_INVALIDATE,
-            ADMIN_ENTITY_SESSION_INVALIDATE
+            ADMIN_ENTITY_SESSION_INVALIDATE,
+            CLIENT_LOGOUT
         )
     ),
     ADMIN_PERSIST(

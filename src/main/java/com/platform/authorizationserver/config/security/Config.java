@@ -9,6 +9,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 /**
  * 10.06.2023.
  *
@@ -26,7 +27,8 @@ public class Config {
         return (HandlerAction.ADMIN_ENTITY_REGISTER.name().equalsIgnoreCase(action)
             || HandlerAction.PERSON_REGISTER.name().equalsIgnoreCase(action)
             || HandlerAction.PERSON_LOGIN.name().equalsIgnoreCase(action)
-            || HandlerAction.ENTITY_LOGIN.name().equalsIgnoreCase(action));
+            || HandlerAction.ENTITY_LOGIN.name().equalsIgnoreCase(action)
+            || HandlerAction.CLIENT_LOGOUT.name().equalsIgnoreCase(action));
     };
 
     @Bean

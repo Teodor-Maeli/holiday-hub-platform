@@ -34,11 +34,13 @@ public class Config {
     @Bean
     public SecurityFilterChain configuration(HttpSecurity http) throws Exception {
 
-        http.csrf().disable().cors()
+        http
+            .csrf().disable().cors()
             .and()
             .authorizeHttpRequests().requestMatchers(entryMatcher).permitAll()
             .and()
             .authorizeHttpRequests().anyRequest().authenticated();
+
         return http.build();
     }
 
@@ -47,7 +49,8 @@ public class Config {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
+                registry
+                    .addMapping("/**")
                     .allowedOrigins("http://localhost:8080")
                     .allowedHeaders("*")
                     .allowedMethods("*");

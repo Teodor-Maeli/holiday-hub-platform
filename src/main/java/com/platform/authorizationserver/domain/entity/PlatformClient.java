@@ -17,10 +17,19 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+/**
+ * 27.05.2023.
+ *
+ * <p>Base entity class.</p>
+ *
+ * Since 1.0
+ *
+ * <p>Author : Teodor Maeli</p>
+ */
 
 @SuperBuilder
 @MappedSuperclass
-public abstract class Client implements Serializable, UserDetails {
+public abstract class PlatformClient implements Serializable, UserDetails {
 
     @Id
     @Column(updatable = false)
@@ -32,8 +41,8 @@ public abstract class Client implements Serializable, UserDetails {
     private String username;
     @Column
     private String password;
-    @ElementCollection(targetClass = String.class)
-    private Set<Role> Roles;
+    @ElementCollection(targetClass = Role.class)
+    private Set<Role> roles;
     @Column
     private boolean isAccountNonExpired;
     @Column
@@ -45,7 +54,7 @@ public abstract class Client implements Serializable, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Roles.stream()
+        return roles.stream()
             .map(authority -> new SimpleGrantedAuthority(authority.name()))
             .collect(Collectors.toSet());
     }

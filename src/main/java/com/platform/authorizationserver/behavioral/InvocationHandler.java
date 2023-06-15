@@ -2,8 +2,8 @@ package com.platform.authorizationserver.behavioral;
 
 
 import com.platform.authorizationserver.model.HandlerAction;
-import com.platform.authorizationserver.model.ServletRequest;
-import com.platform.authorizationserver.model.ServletResponse;
+import com.platform.authorizationserver.model.dto.ServletRequest;
+import com.platform.authorizationserver.model.dto.ServletResponse;
 
 /**
  * 27.05.2023.

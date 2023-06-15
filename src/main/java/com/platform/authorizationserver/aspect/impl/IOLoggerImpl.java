@@ -2,7 +2,6 @@ package com.platform.authorizationserver.aspect.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.platform.authorizationserver.aspect.IOLogger;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +42,6 @@ public class IOLoggerImpl {
     @Before("pointCut()")
     public void logInput(JoinPoint joinPoint) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        boolean shouldMask = method.getAnnotation(IOLogger.class).mask();
         RequestMapping mapping = getRequestMapping(method);
 
         Map<String, Object> parameters = getParameters(joinPoint);
@@ -54,7 +52,6 @@ public class IOLoggerImpl {
     @AfterReturning(pointcut = "pointCut()", returning = "object")
     public void logOutput(JoinPoint joinPoint, Object object) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        boolean shouldMask = method.getAnnotation(IOLogger.class).mask();
         RequestMapping mapping = getRequestMapping(method);
 
         log("<==Output== path(s): {}, method(s): {}, returning: {}", mapping, object);

@@ -5,8 +5,8 @@ import com.platform.authorizationserver.aspect.InvocationValidator;
 import com.platform.authorizationserver.behavioral.ActionHandlerContext;
 import com.platform.authorizationserver.model.HandlerAction;
 import com.platform.authorizationserver.model.HandlerKey;
-import com.platform.authorizationserver.model.ServletRequest;
-import com.platform.authorizationserver.model.ServletResponse;
+import com.platform.authorizationserver.model.dto.ServletRequest;
+import com.platform.authorizationserver.model.dto.ServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +33,7 @@ public class PlatformUserController {
     private final ActionHandlerContext context;
 
 
-    @IOLogger(mask = true)
+    @IOLogger
     @PostMapping("/persist")
     @InvocationValidator(keys = HandlerKey.CUSTOMER_PERSIST)
     public ResponseEntity<ServletResponse> processRegister(
@@ -43,7 +43,7 @@ public class PlatformUserController {
         return ResponseEntity.ok().body(result);
     }
 
-    @IOLogger(mask = true)
+    @IOLogger
     @GetMapping("/get")
     @InvocationValidator(keys = HandlerKey.CUSTOMER_GET)
     public ResponseEntity<ServletResponse> processGet(
@@ -53,7 +53,7 @@ public class PlatformUserController {
         return ResponseEntity.ok().body(result);
     }
 
-    @IOLogger(mask = true)
+    @IOLogger
     @PostMapping("/update")
     @InvocationValidator(keys = HandlerKey.CUSTOMER_UPDATE)
     public ResponseEntity<ServletResponse> processUpdate(

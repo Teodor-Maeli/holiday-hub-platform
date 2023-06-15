@@ -8,6 +8,7 @@ import com.platform.authorizationserver.model.HandlerKey;
 import com.platform.authorizationserver.model.dto.ServletRequest;
 import com.platform.authorizationserver.model.dto.ServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PlatformUserController {
 
     private final ActionHandlerContext context;
+    private final ApplicationContext applicationContext;
 
 
     @IOLogger

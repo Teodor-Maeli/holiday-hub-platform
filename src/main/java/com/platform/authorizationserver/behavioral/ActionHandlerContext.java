@@ -2,11 +2,11 @@ package com.platform.authorizationserver.behavioral;
 
 import com.platform.authorizationserver.behavioral.impl.AdminEvictInvocationHandler;
 import com.platform.authorizationserver.behavioral.impl.AdminFetchInvocationHandler;
-import com.platform.authorizationserver.behavioral.impl.AdminRegisterInvocationHandler;
+import com.platform.authorizationserver.behavioral.impl.AdminPersistInvocationHandler;
 import com.platform.authorizationserver.behavioral.impl.AdminUpdateInvocationHandler;
 import com.platform.authorizationserver.behavioral.impl.CustomerEvictInvocationHandler;
 import com.platform.authorizationserver.behavioral.impl.CustomerFetchInvocationHandler;
-import com.platform.authorizationserver.behavioral.impl.CustomerRegisterInvocationHandler;
+import com.platform.authorizationserver.behavioral.impl.CustomerPersistInvocationHandler;
 import com.platform.authorizationserver.behavioral.impl.CustomerUpdateInvocationHandler;
 import com.platform.authorizationserver.model.HandlerAction;
 import com.platform.authorizationserver.model.HandlerKey;
@@ -29,13 +29,13 @@ public class ActionHandlerContext {
     private void init() {
         handlerContext = new EnumMap<>(HandlerKey.class);
         handlerContext.put(HandlerKey.CUSTOMER_EVICT, new CustomerEvictInvocationHandler());
-        handlerContext.put(HandlerKey.CUSTOMER_PERSIST, new CustomerRegisterInvocationHandler());
+        handlerContext.put(HandlerKey.CUSTOMER_PERSIST, new CustomerPersistInvocationHandler());
         handlerContext.put(HandlerKey.CUSTOMER_UPDATE, new CustomerUpdateInvocationHandler());
         handlerContext.put(HandlerKey.CUSTOMER_GET, new CustomerFetchInvocationHandler());
         handlerContext.put(HandlerKey.ADMIN_EVICT, new AdminEvictInvocationHandler());
         handlerContext.put(HandlerKey.ADMIN_UPDATE, new AdminUpdateInvocationHandler());
         handlerContext.put(HandlerKey.ADMIN_GET, new AdminFetchInvocationHandler());
-        handlerContext.put(HandlerKey.ADMIN_PERSIST, new AdminRegisterInvocationHandler());
+        handlerContext.put(HandlerKey.ADMIN_PERSIST, new AdminPersistInvocationHandler());
     }
 
     public InvocationHandler getHandler(HandlerAction action) {

@@ -13,11 +13,13 @@ import static com.platform.authorizationserver.model.HandlerAction.ADMIN_PERSON_
 import static com.platform.authorizationserver.model.HandlerAction.CLIENT_LOGOUT;
 import static com.platform.authorizationserver.model.HandlerAction.ENTITY_DELETE;
 import static com.platform.authorizationserver.model.HandlerAction.ENTITY_FETCH;
+import static com.platform.authorizationserver.model.HandlerAction.ENTITY_LOGIN;
 import static com.platform.authorizationserver.model.HandlerAction.ENTITY_REGISTER;
 import static com.platform.authorizationserver.model.HandlerAction.ENTITY_SESSION_INVALIDATE;
 import static com.platform.authorizationserver.model.HandlerAction.ENTITY_UPDATE;
 import static com.platform.authorizationserver.model.HandlerAction.PERSON_DELETE;
 import static com.platform.authorizationserver.model.HandlerAction.PERSON_FETCH;
+import static com.platform.authorizationserver.model.HandlerAction.PERSON_LOGIN;
 import static com.platform.authorizationserver.model.HandlerAction.PERSON_REGISTER;
 import static com.platform.authorizationserver.model.HandlerAction.PERSON_SESSION_INVALIDATE;
 import static com.platform.authorizationserver.model.HandlerAction.PERSON_UPDATE;
@@ -30,8 +32,7 @@ import lombok.Getter;
  * 27.05.2023.
  *
  * <p>Invocation handler key , used to determine the handler that is requested.</p>
- * Used also to validate request at controller level using AOP.
- * Since 1.0
+ * Used also to validate request at controller level using AOP. Since 1.0
  *
  * <p>Author : Teodor Maeli</p>
  */
@@ -40,9 +41,7 @@ import lombok.Getter;
 public enum HandlerKey {
 
     /**
-     * Client/Customer capabilities per HandlerKey
-     * for both entity or person.
-     * Since 1.0
+     * Client/Customer capabilities per HandlerKey for both entity or person. Since 1.0
      */
     CUSTOMER_EVICT(
         List.of(
@@ -56,7 +55,9 @@ public enum HandlerKey {
     CUSTOMER_GET(
         List.of(
             PERSON_FETCH,
-            ENTITY_FETCH
+            ENTITY_FETCH,
+            ENTITY_LOGIN,
+            PERSON_LOGIN
         )
     ),
     CUSTOMER_UPDATE(
@@ -73,8 +74,7 @@ public enum HandlerKey {
     ),
 
     /**
-     * Admin capabilities per HandlerKey.
-     * Since 1.0
+     * Admin capabilities per HandlerKey. Since 1.0
      */
     ADMIN_UPDATE(
         List.of(

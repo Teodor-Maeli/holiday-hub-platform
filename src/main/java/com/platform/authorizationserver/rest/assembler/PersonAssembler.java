@@ -8,7 +8,9 @@ import com.platform.authorizationserver.model.dto.PersonResponse;
 import com.platform.authorizationserver.model.dto.PlatformClientRequest;
 import com.platform.authorizationserver.model.dto.PlatformClientResponse;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PersonAssembler implements Assembler {
 
     @Override

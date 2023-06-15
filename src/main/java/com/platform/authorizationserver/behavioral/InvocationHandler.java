@@ -16,7 +16,6 @@ import com.platform.authorizationserver.model.dto.ServletResponse;
  *
  * <p>Author : Teodor Maeli</p>
  */
-
 public interface InvocationHandler {
 
     ServletResponse handle(ServletRequest request, HandlerAction action);

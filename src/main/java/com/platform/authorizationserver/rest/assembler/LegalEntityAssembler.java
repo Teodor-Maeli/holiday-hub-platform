@@ -8,7 +8,9 @@ import com.platform.authorizationserver.model.dto.LegalEntityResponse;
 import com.platform.authorizationserver.model.dto.PlatformClientRequest;
 import com.platform.authorizationserver.model.dto.PlatformClientResponse;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
+@Component
 public class LegalEntityAssembler implements Assembler {
 
     @Override
@@ -16,6 +18,11 @@ public class LegalEntityAssembler implements Assembler {
         LegalEntity legalEntity = (LegalEntity) entity;
 
         return LegalEntityResponse.builder()
+            .companyName(legalEntity.getCompanyName())
+            .companyNumber(legalEntity.getCompanyNumber())
+            .subscriptionStarts(legalEntity.getSubscriptionStarts())
+            .subscriptionEnds(legalEntity.getSubscriptionEnds())
+            .isPremiumEnabled(legalEntity.isPremiumEnabled())
             .username(legalEntity.getUsername())
             .roles(legalEntity.getAuthorities().stream()
                 .map(grantedAuthority -> Role.valueOf(grantedAuthority.getAuthority()))
@@ -32,6 +39,11 @@ public class LegalEntityAssembler implements Assembler {
         LegalEntityRequest legalEntityRequest = (LegalEntityRequest) request;
 
         return LegalEntity.builder()
+            .companyName(legalEntityRequest.getCompanyName())
+            .companyNumber(legalEntityRequest.getCompanyNumber())
+            .subscriptionStarts(legalEntityRequest.getSubscriptionStarts())
+            .subscriptionEnds(legalEntityRequest.getSubscriptionEnds())
+            .isPremiumEnabled(legalEntityRequest.isPremiumEnabled())
             .username(legalEntityRequest.getUsername())
             .password(legalEntityRequest.getPassword())
             .roles(legalEntityRequest.getRoles())

@@ -2,7 +2,7 @@ package com.platform.authorizationserver.rest.controller;
 
 import com.platform.authorizationserver.aspect.IOLogger;
 import com.platform.authorizationserver.aspect.InvocationValidator;
-import com.platform.authorizationserver.behavioral.ActionHandlerContext;
+import com.platform.authorizationserver.handler.ActionHandlerContext;
 import com.platform.authorizationserver.model.HandlerAction;
 import com.platform.authorizationserver.model.HandlerKey;
 import com.platform.authorizationserver.model.dto.ServletRequest;

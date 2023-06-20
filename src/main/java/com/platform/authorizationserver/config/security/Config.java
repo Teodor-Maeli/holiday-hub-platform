@@ -22,8 +22,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 public class Config {
 
-    private static final RequestMatcher entryMatcher = (request) -> {
+    private static final RequestMatcher gatewayMatcher = (request) -> {
         String action = request.getParameter("action");
+
         return (HandlerAction.ADMIN_ENTITY_REGISTER.name().equalsIgnoreCase(action)
             || HandlerAction.PERSON_REGISTER.name().equalsIgnoreCase(action)
             || HandlerAction.PERSON_LOGIN.name().equalsIgnoreCase(action)
@@ -37,7 +38,7 @@ public class Config {
         http
             .csrf().disable().cors()
             .and()
-            .authorizeHttpRequests().requestMatchers(entryMatcher).permitAll()
+            .authorizeHttpRequests().requestMatchers(gatewayMatcher).permitAll()
             .and()
             .authorizeHttpRequests().anyRequest().authenticated();
 
@@ -46,6 +47,7 @@ public class Config {
 
     @Bean
     public WebMvcConfigurer corsConfiguration() {
+
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {

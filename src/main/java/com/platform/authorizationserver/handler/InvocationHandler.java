@@ -1,4 +1,4 @@
-package com.platform.authorizationserver.behavioral;
+package com.platform.authorizationserver.handler;
 
 
 import com.platform.authorizationserver.model.HandlerAction;

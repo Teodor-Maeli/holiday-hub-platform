@@ -35,7 +35,7 @@ public class IOLoggerImpl {
 
     private ObjectMapper mapper;
 
-    @Pointcut("@annotation(com.platform.core.aspect.IOLogger) && execution(* *(..))")
+    @Pointcut("@annotation(com.platform.aspect.IOLogger) && execution(* *(..))")
     public void pointCut() {
     }
 

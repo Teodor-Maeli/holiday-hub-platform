@@ -29,7 +29,7 @@ public class InvocationValidatorImpl {
 
     private ObjectMapper objectMapper;
 
-    @Pointcut("@annotation(com.platform.core.aspect.InvocationValidator) && execution(* *(..))")
+    @Pointcut("@annotation(com.platform.aspect.InvocationValidator) && execution(* *(..))")
     public void pointCut() {
     }
 

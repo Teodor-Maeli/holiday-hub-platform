@@ -1,0 +1,40 @@
+package com.platform.model;
+
+/**
+ * 27.05.2023.
+ *
+ * <p>Actions used by invocation handlers and HandlerKeys.</p>
+ * Since 1.0
+ *
+ * <p>Author : Teodor Maeli</p>
+ */
+public enum HandlerAction {
+    PERSON_REGISTER,
+    PERSON_FETCH,
+    PERSON_UPDATE,
+    PERSON_DELETE,
+    PERSON_LOGIN,
+    PERSON_SESSION_INVALIDATE,
+
+
+    ENTITY_REGISTER,
+    ENTITY_FETCH,
+    ENTITY_UPDATE,
+    ENTITY_DELETE,
+    ENTITY_LOGIN,
+    ENTITY_SESSION_INVALIDATE,
+
+
+    ADMIN_PERSON_REGISTER,
+    ADMIN_ENTITY_REGISTER,
+    ADMIN_PERSON_FETCH,
+    ADMIN_ENTITY_FETCH,
+    ADMIN_PERSON_UPDATE,
+    ADMIN_PERSON_DELETE,
+    ADMIN_ENTITY_UPDATE,
+    ADMIN_ENTITY_DELETE,
+    ADMIN_PERSON_SESSION_INVALIDATE,
+    ADMIN_ENTITY_SESSION_INVALIDATE,
+
+    CLIENT_LOGOUT
+}

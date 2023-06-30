@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    include:
+      - security
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${dbUrl:jdbc:postgresql://localhost:5432/authserver}
+    username: ${dbuser:authserver}
+    password: ${dbpass:authserverisnice}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    generate-ddl: true
+    open-in-view: false
+

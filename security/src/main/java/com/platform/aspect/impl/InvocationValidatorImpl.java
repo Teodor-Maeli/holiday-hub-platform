@@ -2,7 +2,7 @@ package com.platform.aspect.impl;
 
 import  com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.aspect.InvocationValidator;
-import com.platform.model.HandlerAction;
+import com.platform.model.RequestAction;
 import com.platform.model.HandlerKey;
 import java.util.Arrays;
 import lombok.AllArgsConstructor;
@@ -36,7 +36,7 @@ public class InvocationValidatorImpl {
     @Around("pointCut()")
     public void validate(ProceedingJoinPoint joinPoint) throws Throwable {
         HandlerKey[] configuredKeys = getConfiguredKeys(joinPoint);
-        HandlerAction inputAction = getInputAction(joinPoint);
+        RequestAction inputAction = getInputAction(joinPoint);
 
         for (HandlerKey key : configuredKeys) {
             if (key.getActions().contains(inputAction)) {
@@ -57,9 +57,9 @@ public class InvocationValidatorImpl {
             .keys();
     }
 
-    private HandlerAction getInputAction(ProceedingJoinPoint joinPoint) {
-        return (HandlerAction) Arrays.stream(joinPoint.getArgs())
-            .filter(HandlerAction.class::isInstance)
+    private RequestAction getInputAction(ProceedingJoinPoint joinPoint) {
+        return (RequestAction) Arrays.stream(joinPoint.getArgs())
+            .filter(RequestAction.class::isInstance)
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("No valid handler key were provided!"));
     }

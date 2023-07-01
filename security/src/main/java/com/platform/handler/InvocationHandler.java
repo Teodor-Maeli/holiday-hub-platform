@@ -1,7 +1,7 @@
 package com.platform.handler;
 
 
-import com.platform.model.HandlerAction;
+import com.platform.model.RequestAction;
 import com.platform.model.dto.ServletRequest;
 import com.platform.model.dto.ServletResponse;
 
@@ -18,5 +18,5 @@ import com.platform.model.dto.ServletResponse;
  */
 public interface InvocationHandler {
 
-    ServletResponse handle(ServletRequest request, HandlerAction action);
+    ServletResponse handle(ServletRequest request, RequestAction action);
 }

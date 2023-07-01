@@ -1,11 +1,14 @@
-package com.platform.config.security;
+package com.platform.config.auth;
 
-import com.platform.model.HandlerAction;
+import com.platform.model.RequestAction;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -20,16 +23,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @EnableWebSecurity
-public class Config {
+@AllArgsConstructor
+public class AuthConfig {
+
+    private SessionRegistry sessionRegistry;
 
     private static final RequestMatcher gatewayMatcher = (request) -> {
         String action = request.getParameter("action");
 
-        return (HandlerAction.ADMIN_ENTITY_REGISTER.name().equalsIgnoreCase(action)
-            || HandlerAction.PERSON_REGISTER.name().equalsIgnoreCase(action)
-            || HandlerAction.PERSON_LOGIN.name().equalsIgnoreCase(action)
-            || HandlerAction.ENTITY_LOGIN.name().equalsIgnoreCase(action)
-            || HandlerAction.CLIENT_LOGOUT.name().equalsIgnoreCase(action));
+        return (RequestAction.ADMIN_ENTITY_REGISTER.name().equalsIgnoreCase(action)
+            || RequestAction.PERSON_REGISTER.name().equalsIgnoreCase(action)
+            || RequestAction.PERSON_LOGIN.name().equalsIgnoreCase(action)
+            || RequestAction.ENTITY_LOGIN.name().equalsIgnoreCase(action)
+            || RequestAction.CLIENT_LOGOUT.name().equalsIgnoreCase(action));
     };
 
     @Bean
@@ -40,7 +46,10 @@ public class Config {
             .and()
             .authorizeHttpRequests().requestMatchers(gatewayMatcher).permitAll()
             .and()
-            .authorizeHttpRequests().anyRequest().authenticated();
+            .authorizeHttpRequests().anyRequest().authenticated()
+            .and()
+            .sessionManagement()
+            .sessionAuthenticationStrategy(new RegisterSessionAuthenticationStrategy(sessionRegistry));
 
         return http.build();
     }

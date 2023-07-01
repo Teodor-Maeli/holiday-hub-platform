@@ -8,7 +8,7 @@ import com.platform.handler.impl.CustomerEvictInvocationHandler;
 import com.platform.handler.impl.CustomerFetchInvocationHandler;
 import com.platform.handler.impl.CustomerPersistInvocationHandler;
 import com.platform.handler.impl.CustomerUpdateInvocationHandler;
-import com.platform.model.HandlerAction;
+import com.platform.model.RequestAction;
 import com.platform.model.HandlerKey;
 import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
@@ -43,13 +43,13 @@ public class ActionHandlerContext {
         handlerContext.put(HandlerKey.ADMIN_PERSIST, AdminPersistInvocationHandler.class);
     }
 
-    public InvocationHandler getHandler(HandlerAction action) {
-        HandlerKey key = getHandlerKeyWithHandlerAction(action);
+    public InvocationHandler getHandler(RequestAction action) {
+        HandlerKey key = getHandlerKeyWithRequestAction(action);
         Class<? extends InvocationHandler> clazz = handlerContext.get(key);
         return applicationContext.getBean(clazz);
     }
 
-    private HandlerKey getHandlerKeyWithHandlerAction(HandlerAction action) {
+    private HandlerKey getHandlerKeyWithRequestAction(RequestAction action) {
         return Arrays.stream(HandlerKey.values())
             .filter(handlerKey -> handlerKey.getActions().contains(action))
             .findFirst()

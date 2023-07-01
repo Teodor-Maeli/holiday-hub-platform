@@ -21,31 +21,31 @@ public enum HandlerKey {
      */
     CUSTOMER_EVICT(
         List.of(
-            HandlerAction.PERSON_DELETE,
-            HandlerAction.PERSON_SESSION_INVALIDATE,
-            HandlerAction.ENTITY_DELETE,
-            HandlerAction.ENTITY_SESSION_INVALIDATE,
-            HandlerAction.CLIENT_LOGOUT
+            RequestAction.PERSON_DELETE,
+            RequestAction.PERSON_SESSION_INVALIDATE,
+            RequestAction.ENTITY_DELETE,
+            RequestAction.ENTITY_SESSION_INVALIDATE,
+            RequestAction.CLIENT_LOGOUT
         )
     ),
     CUSTOMER_GET(
         List.of(
-            HandlerAction.PERSON_FETCH,
-            HandlerAction.ENTITY_FETCH,
-            HandlerAction.ENTITY_LOGIN,
-            HandlerAction.PERSON_LOGIN
+            RequestAction.PERSON_FETCH,
+            RequestAction.ENTITY_FETCH,
+            RequestAction.ENTITY_LOGIN,
+            RequestAction.PERSON_LOGIN
         )
     ),
     CUSTOMER_UPDATE(
         List.of(
-            HandlerAction.PERSON_UPDATE,
-            HandlerAction.ENTITY_UPDATE
+            RequestAction.PERSON_UPDATE,
+            RequestAction.ENTITY_UPDATE
         )
     ),
     CUSTOMER_PERSIST(
         List.of(
-            HandlerAction.PERSON_REGISTER,
-            HandlerAction.ENTITY_REGISTER
+            RequestAction.PERSON_REGISTER,
+            RequestAction.ENTITY_REGISTER
         )
     ),
 
@@ -54,31 +54,31 @@ public enum HandlerKey {
      */
     ADMIN_UPDATE(
         List.of(
-            HandlerAction.ADMIN_PERSON_UPDATE,
-            HandlerAction.ADMIN_ENTITY_UPDATE
+            RequestAction.ADMIN_PERSON_UPDATE,
+            RequestAction.ADMIN_ENTITY_UPDATE
         )
     ),
     ADMIN_EVICT(
         List.of(
-            HandlerAction.ADMIN_PERSON_DELETE,
-            HandlerAction.ADMIN_ENTITY_DELETE,
-            HandlerAction.ADMIN_PERSON_SESSION_INVALIDATE,
-            HandlerAction.ADMIN_ENTITY_SESSION_INVALIDATE,
-            HandlerAction.CLIENT_LOGOUT
+            RequestAction.ADMIN_PERSON_DELETE,
+            RequestAction.ADMIN_ENTITY_DELETE,
+            RequestAction.ADMIN_PERSON_SESSION_INVALIDATE,
+            RequestAction.ADMIN_ENTITY_SESSION_INVALIDATE,
+            RequestAction.CLIENT_LOGOUT
         )
     ),
     ADMIN_PERSIST(
         List.of(
-            HandlerAction.ADMIN_PERSON_REGISTER,
-            HandlerAction.ADMIN_ENTITY_REGISTER
+            RequestAction.ADMIN_PERSON_REGISTER,
+            RequestAction.ADMIN_ENTITY_REGISTER
         )
     ),
     ADMIN_GET(
         List.of(
-            HandlerAction.ADMIN_PERSON_FETCH,
-            HandlerAction.ADMIN_ENTITY_FETCH
+            RequestAction.ADMIN_PERSON_FETCH,
+            RequestAction.ADMIN_ENTITY_FETCH
         )
     );
 
-    private final List<HandlerAction> actions;
+    private final List<RequestAction> actions;
 }

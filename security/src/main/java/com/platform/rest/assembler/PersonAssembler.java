@@ -37,9 +37,6 @@ public class PersonAssembler implements Assembler {
             .username(personRequest.getUsername())
             .password(personRequest.getPassword())
             .roles(personRequest.getRoles())
-            .isAccountNonExpired(personRequest.isAccountNonExpired())
-            .isCredentialsNonExpired(personRequest.isCredentialsNonExpired())
-            .isAccountNonLocked(personRequest.isAccountNonLocked())
             .isEnabled(personRequest.isEnabled())
             .roles(personRequest.getRoles())
             .build();

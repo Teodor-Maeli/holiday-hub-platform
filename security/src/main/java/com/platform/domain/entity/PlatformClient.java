@@ -44,12 +44,6 @@ public abstract class PlatformClient implements Serializable, UserDetails {
     @ElementCollection(targetClass = Role.class)
     private Set<Role> roles;
     @Column
-    private boolean isAccountNonExpired;
-    @Column
-    private boolean isAccountNonLocked;
-    @Column
-    private boolean isCredentialsNonExpired;
-    @Column
     private boolean isEnabled;
 
     @Override
@@ -70,22 +64,22 @@ public abstract class PlatformClient implements Serializable, UserDetails {
     }
 
     @Override
+    public boolean isEnabled() {
+        return this.isEnabled;
+    }
+
+    @Override
     public boolean isAccountNonExpired() {
-        return this.isAccountNonExpired;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return this.isAccountNonLocked;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return this.isCredentialsNonExpired;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.isEnabled;
+        return true;
     }
 }

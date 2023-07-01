@@ -47,9 +47,6 @@ public class LegalEntityAssembler implements Assembler {
             .username(legalEntityRequest.getUsername())
             .password(legalEntityRequest.getPassword())
             .roles(legalEntityRequest.getRoles())
-            .isAccountNonExpired(legalEntityRequest.isAccountNonExpired())
-            .isCredentialsNonExpired(legalEntityRequest.isCredentialsNonExpired())
-            .isAccountNonLocked(legalEntityRequest.isAccountNonLocked())
             .isEnabled(legalEntityRequest.isEnabled())
             .roles(request.getRoles())
             .build();

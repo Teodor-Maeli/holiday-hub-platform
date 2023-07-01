@@ -3,7 +3,7 @@ package com.platform.rest.controller;
 import com.platform.aspect.IOLogger;
 import com.platform.aspect.InvocationValidator;
 import com.platform.handler.ActionHandlerContext;
-import com.platform.model.HandlerAction;
+import com.platform.model.RequestAction;
 import com.platform.model.HandlerKey;
 import com.platform.model.dto.ServletRequest;
 import com.platform.model.dto.ServletResponse;
@@ -32,15 +32,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class PlatformUserController {
 
     private final ActionHandlerContext context;
-    private final ApplicationContext applicationContext;
-
 
     @IOLogger
     @PostMapping("/persist")
     @InvocationValidator(keys = HandlerKey.CUSTOMER_PERSIST)
     public ResponseEntity<ServletResponse> processRegister(
         @RequestBody ServletRequest request,
-        @RequestParam HandlerAction action) {
+        @RequestParam RequestAction action) {
         ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -50,7 +48,7 @@ public class PlatformUserController {
     @InvocationValidator(keys = HandlerKey.CUSTOMER_GET)
     public ResponseEntity<ServletResponse> processGet(
         @RequestBody ServletRequest request,
-        @RequestParam HandlerAction action) {
+        @RequestParam RequestAction action) {
         ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -60,7 +58,7 @@ public class PlatformUserController {
     @InvocationValidator(keys = HandlerKey.CUSTOMER_UPDATE)
     public ResponseEntity<ServletResponse> processUpdate(
         @RequestBody ServletRequest request,
-        @RequestParam HandlerAction action) {
+        @RequestParam RequestAction action) {
         ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -70,7 +68,7 @@ public class PlatformUserController {
     @InvocationValidator(keys = HandlerKey.CUSTOMER_EVICT)
     public ResponseEntity<ServletResponse> processEvict(
         @RequestBody ServletRequest request,
-        @RequestParam HandlerAction action) {
+        @RequestParam RequestAction action) {
         ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }

@@ -3,7 +3,7 @@ package com.platform.rest.controller;
 import com.platform.aspect.IOLogger;
 import com.platform.aspect.InvocationValidator;
 import com.platform.handler.ActionHandlerContext;
-import com.platform.model.HandlerAction;
+import com.platform.model.RequestAction;
 import com.platform.model.HandlerKey;
 import com.platform.model.dto.ServletRequest;
 import com.platform.model.dto.ServletResponse;
@@ -38,7 +38,7 @@ public class PlatformAdminController {
     @InvocationValidator(keys = HandlerKey.ADMIN_PERSIST)
     public ResponseEntity<ServletResponse> processAdminRegister(
         @RequestBody ServletRequest request,
-        @RequestParam HandlerAction action) {
+        @RequestParam RequestAction action) {
         ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -48,7 +48,7 @@ public class PlatformAdminController {
     @InvocationValidator(keys = HandlerKey.ADMIN_GET)
     public ResponseEntity<ServletResponse> processAdminGet(
         @RequestBody ServletRequest request,
-        @RequestParam HandlerAction action) {
+        @RequestParam RequestAction action) {
         ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -58,7 +58,7 @@ public class PlatformAdminController {
     @InvocationValidator(keys = HandlerKey.ADMIN_UPDATE)
     public ResponseEntity<ServletResponse> processAdminUpdate(
         @RequestBody ServletRequest request,
-        @RequestParam HandlerAction action) {
+        @RequestParam RequestAction action) {
         ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -68,7 +68,7 @@ public class PlatformAdminController {
     @InvocationValidator(keys = HandlerKey.ADMIN_EVICT)
     public ResponseEntity<ServletResponse> processAdminEvict(
         @RequestBody ServletRequest request,
-        @RequestParam HandlerAction action) {
+        @RequestParam RequestAction action) {
         ServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }

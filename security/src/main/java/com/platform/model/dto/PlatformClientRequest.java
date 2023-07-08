@@ -2,9 +2,14 @@ package com.platform.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.platform.model.Role;
+import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -17,15 +22,19 @@ import lombok.experimental.SuperBuilder;
  * <p>Author : Teodor Maeli</p>
  */
 @Getter
-@SuperBuilder
+@NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
-public abstract class PlatformClientRequest {
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
+@JsonSubTypes({
+    @JsonSubTypes.Type(PersonRequest.class),
+    @JsonSubTypes.Type(LegalEntityRequest.class) })
+public class PlatformClientRequest {
 
     private String username;
     private String password;
     private Set<Role> roles;
-    private boolean isAccountNonExpired;
-    private boolean isAccountNonLocked;
-    private boolean isCredentialsNonExpired;
-    private boolean isEnabled;
+    private Boolean isEnabled;
+    private Boolean isPremiumEnabled;
+    private LocalDateTime subscriptionStarts;
+    private LocalDateTime subscriptionEnds;
 }

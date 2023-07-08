@@ -7,29 +7,34 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 /**
  * 27.05.2023.
  *
  * <p>Base entity class.</p>
- *
+ * <p>
  * Since 1.0
  *
  * <p>Author : Teodor Maeli</p>
  */
 
-@SuperBuilder
+@Getter
+@Setter
 @MappedSuperclass
-public abstract class PlatformClient implements Serializable, UserDetails {
+public abstract class PlatformClient implements UserDetails {
 
     @Id
     @Column(updatable = false)
@@ -44,7 +49,24 @@ public abstract class PlatformClient implements Serializable, UserDetails {
     @ElementCollection(targetClass = Role.class)
     private Set<Role> roles;
     @Column
-    private boolean isEnabled;
+    private Boolean isEnabled;
+    @Column
+    private Boolean isPremiumEnabled;
+    @Column
+    private LocalDateTime subscriptionStarts;
+    @Column
+    private LocalDateTime subscriptionEnds;
+    @Column
+    private String contactEmail;
+    @Column
+    private String contactPhone;
+    @Column
+    private String registrationDate;
+    @Column
+    private String mostRecentSessionId;
+    @Column
+    private LocalDate mostRecentSessionInitiatedDate;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

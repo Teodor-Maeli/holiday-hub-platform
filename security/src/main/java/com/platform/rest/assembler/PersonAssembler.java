@@ -2,43 +2,49 @@ package com.platform.rest.assembler;
 
 import com.platform.domain.entity.Person;
 import com.platform.domain.entity.PlatformClient;
-import com.platform.model.Role;
 import com.platform.model.dto.PersonRequest;
 import com.platform.model.dto.PersonResponse;
 import com.platform.model.dto.PlatformClientRequest;
 import com.platform.model.dto.PlatformClientResponse;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class PersonAssembler implements Assembler {
+
+    private PasswordEncoder encoder;
 
     @Override
     public PlatformClientResponse assemble(PlatformClient entity) {
         Person person = (Person) entity;
+        PersonResponse personResponse = new PersonResponse();
 
-        return PersonResponse.builder()
-            .username(person.getUsername())
-            .isAccountNonExpired(person.isAccountNonExpired())
-            .isAccountNonLocked(person.isAccountNonLocked())
-            .isCredentialsNonExpired(person.isCredentialsNonExpired())
-            .roles(person.getAuthorities().stream()
-                .map(grantedAuthority -> Role.valueOf(grantedAuthority.getAuthority()))
-                .collect(Collectors.toSet()))
-            .isEnabled(person.isEnabled())
-            .build();
+        personResponse.setUsername(person.getUsername());
+        personResponse.setRoles(person.getRoles());
+        personResponse.setIsEnabled(person.isEnabled());
+
+        return personResponse;
     }
 
     @Override
-    public PlatformClient assemble(PlatformClientRequest request) {
+    public Person assemble(PlatformClientRequest request) {
         PersonRequest personRequest = (PersonRequest) request;
+        Person person = new Person();
 
-        return Person.builder()
-            .username(personRequest.getUsername())
-            .password(personRequest.getPassword())
-            .roles(personRequest.getRoles())
-            .isEnabled(personRequest.isEnabled())
-            .roles(personRequest.getRoles())
-            .build();
+        person.setFamilyName(personRequest.getFamilyName());
+        person.setGivenName(personRequest.getGivenName());
+        person.setMiddleName(personRequest.getMiddleName());
+        person.setUsername(personRequest.getUsername());
+        person.setPassword(encoder.encode(personRequest.getPassword()));
+        person.setRoles(personRequest.getRoles());
+        person.setIsEnabled(personRequest.getIsEnabled());
+        person.setRoles(personRequest.getRoles());
+        person.setIsPremiumEnabled(personRequest.getIsPremiumEnabled());
+        person.setSubscriptionStarts(personRequest.getSubscriptionStarts());
+        person.setSubscriptionEnds(personRequest.getSubscriptionEnds());
+
+        return person;
     }
 }

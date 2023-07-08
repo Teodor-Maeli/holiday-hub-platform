@@ -2,13 +2,14 @@ package com.platform.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import java.time.LocalDateTime;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Entity
-@SuperBuilder
+@NoArgsConstructor
 public class LegalEntity extends PlatformClient {
 
     @Column
@@ -16,9 +17,5 @@ public class LegalEntity extends PlatformClient {
     @Column
     private String companyNumber;
     @Column
-    private LocalDateTime subscriptionStarts;
-    @Column
-    private LocalDateTime subscriptionEnds;
-    @Column
-    private boolean isPremiumEnabled;
+    private String contactPerson;
 }

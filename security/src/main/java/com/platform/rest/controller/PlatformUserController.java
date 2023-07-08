@@ -5,10 +5,9 @@ import com.platform.aspect.InvocationValidator;
 import com.platform.handler.ActionHandlerContext;
 import com.platform.model.RequestAction;
 import com.platform.model.HandlerKey;
-import com.platform.model.dto.ServletRequest;
-import com.platform.model.dto.ServletResponse;
+import com.platform.model.dto.PlatformServletRequest;
+import com.platform.model.dto.PlatformServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,40 +35,40 @@ public class PlatformUserController {
     @IOLogger
     @PostMapping("/persist")
     @InvocationValidator(keys = HandlerKey.CUSTOMER_PERSIST)
-    public ResponseEntity<ServletResponse> processRegister(
-        @RequestBody ServletRequest request,
+    public ResponseEntity<PlatformServletResponse> processRegister(
+        @RequestBody PlatformServletRequest request,
         @RequestParam RequestAction action) {
-        ServletResponse result = context.getHandler(action).handle(request, action);
+        PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
     @IOLogger
     @GetMapping("/get")
     @InvocationValidator(keys = HandlerKey.CUSTOMER_GET)
-    public ResponseEntity<ServletResponse> processGet(
-        @RequestBody ServletRequest request,
+    public ResponseEntity<PlatformServletResponse> processGet(
+        @RequestBody PlatformServletRequest request,
         @RequestParam RequestAction action) {
-        ServletResponse result = context.getHandler(action).handle(request, action);
+        PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
     @IOLogger
     @PostMapping("/update")
     @InvocationValidator(keys = HandlerKey.CUSTOMER_UPDATE)
-    public ResponseEntity<ServletResponse> processUpdate(
-        @RequestBody ServletRequest request,
+    public ResponseEntity<PlatformServletResponse> processUpdate(
+        @RequestBody PlatformServletRequest request,
         @RequestParam RequestAction action) {
-        ServletResponse result = context.getHandler(action).handle(request, action);
+        PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
     @IOLogger
     @DeleteMapping("/evict")
     @InvocationValidator(keys = HandlerKey.CUSTOMER_EVICT)
-    public ResponseEntity<ServletResponse> processEvict(
-        @RequestBody ServletRequest request,
+    public ResponseEntity<PlatformServletResponse> processEvict(
+        @RequestBody PlatformServletRequest request,
         @RequestParam RequestAction action) {
-        ServletResponse result = context.getHandler(action).handle(request, action);
+        PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 }

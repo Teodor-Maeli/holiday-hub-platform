@@ -1,11 +1,11 @@
 package com.platform.handler;
 
 import com.platform.handler.impl.AdminEvictInvocationHandler;
-import com.platform.handler.impl.AdminFetchInvocationHandler;
+import com.platform.handler.impl.AdminGetInvocationHandler;
 import com.platform.handler.impl.AdminPersistInvocationHandler;
 import com.platform.handler.impl.AdminUpdateInvocationHandler;
 import com.platform.handler.impl.CustomerEvictInvocationHandler;
-import com.platform.handler.impl.CustomerFetchInvocationHandler;
+import com.platform.handler.impl.CustomerGetInvocationHandler;
 import com.platform.handler.impl.CustomerPersistInvocationHandler;
 import com.platform.handler.impl.CustomerUpdateInvocationHandler;
 import com.platform.model.RequestAction;
@@ -36,10 +36,10 @@ public class ActionHandlerContext {
         handlerContext.put(HandlerKey.CUSTOMER_EVICT, CustomerEvictInvocationHandler.class);
         handlerContext.put(HandlerKey.CUSTOMER_PERSIST, CustomerPersistInvocationHandler.class);
         handlerContext.put(HandlerKey.CUSTOMER_UPDATE, CustomerUpdateInvocationHandler.class);
-        handlerContext.put(HandlerKey.CUSTOMER_GET, CustomerFetchInvocationHandler.class);
+        handlerContext.put(HandlerKey.CUSTOMER_GET, CustomerGetInvocationHandler.class);
         handlerContext.put(HandlerKey.ADMIN_EVICT, AdminEvictInvocationHandler.class);
         handlerContext.put(HandlerKey.ADMIN_UPDATE, AdminUpdateInvocationHandler.class);
-        handlerContext.put(HandlerKey.ADMIN_GET, AdminFetchInvocationHandler.class);
+        handlerContext.put(HandlerKey.ADMIN_GET, AdminGetInvocationHandler.class);
         handlerContext.put(HandlerKey.ADMIN_PERSIST, AdminPersistInvocationHandler.class);
     }
 

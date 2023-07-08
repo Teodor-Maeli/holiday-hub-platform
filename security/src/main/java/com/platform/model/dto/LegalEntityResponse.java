@@ -1,19 +1,18 @@
 package com.platform.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDateTime;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@SuperBuilder
-@JsonInclude(Include.NON_NULL)
+@Setter
+@NoArgsConstructor
 public class LegalEntityResponse extends PlatformClientResponse {
 
     private String companyName;
     private String companyNumber;
     private LocalDateTime subscriptionStarts;
     private LocalDateTime subscriptionEnds;
-    private boolean isPremiumEnabled;
+    private Boolean isPremiumEnabled;
 }

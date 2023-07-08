@@ -2,13 +2,13 @@ package com.platform.handler.impl;
 
 import com.platform.handler.InvocationHandler;
 import com.platform.model.RequestAction;
-import com.platform.model.dto.ServletRequest;
-import com.platform.model.dto.ServletResponse;
+import com.platform.model.dto.PlatformServletRequest;
+import com.platform.model.dto.PlatformServletResponse;
 
 public class AdminPersistInvocationHandler implements InvocationHandler {
 
     @Override
-    public ServletResponse handle(ServletRequest request, RequestAction action) {
+    public PlatformServletResponse handle(PlatformServletRequest request, RequestAction action) {
         return null;
     }
 }

@@ -5,21 +5,22 @@ import jakarta.persistence.Entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Getter
+@Setter
 @Entity
-@SuperBuilder
+@NoArgsConstructor
 public class Person extends PlatformClient {
 
     @Column
-    private String fullName;
+    private String givenName;
+    @Column
+    private String familyName;
+    @Column
+    private String middleName;
     @Column
     private LocalDate birthDate;
-    @Column
-    private LocalDateTime subscriptionStarts;
-    @Column
-    private LocalDateTime subscriptionEnds;
-    @Column
-    private boolean isPremiumEnabled;
 }

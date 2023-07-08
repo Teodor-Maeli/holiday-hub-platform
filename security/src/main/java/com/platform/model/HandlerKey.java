@@ -31,15 +31,15 @@ public enum HandlerKey {
     CUSTOMER_GET(
         List.of(
             RequestAction.PERSON_FETCH,
-            RequestAction.ENTITY_FETCH,
-            RequestAction.ENTITY_LOGIN,
-            RequestAction.PERSON_LOGIN
+            RequestAction.ENTITY_FETCH
         )
     ),
     CUSTOMER_UPDATE(
         List.of(
             RequestAction.PERSON_UPDATE,
-            RequestAction.ENTITY_UPDATE
+            RequestAction.ENTITY_UPDATE,
+            RequestAction.ENTITY_LOGIN,
+            RequestAction.PERSON_LOGIN
         )
     ),
     CUSTOMER_PERSIST(

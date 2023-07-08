@@ -2,13 +2,13 @@ package com.platform.handler.impl;
 
 import com.platform.handler.InvocationHandler;
 import com.platform.model.RequestAction;
-import com.platform.model.dto.ServletRequest;
-import com.platform.model.dto.ServletResponse;
+import com.platform.model.dto.PlatformServletRequest;
+import com.platform.model.dto.PlatformServletResponse;
 
-public class CustomerFetchInvocationHandler implements InvocationHandler {
+public class CustomerGetInvocationHandler implements InvocationHandler {
 
     @Override
-    public ServletResponse handle(ServletRequest request, RequestAction action) {
+    public PlatformServletResponse handle(PlatformServletRequest request, RequestAction action) {
         return switch (action) {
             case ENTITY_FETCH -> handleEntityFetch(request);
             case PERSON_FETCH -> handlePersonFetch(request);
@@ -17,11 +17,11 @@ public class CustomerFetchInvocationHandler implements InvocationHandler {
         };
     }
 
-    private ServletResponse handlePersonFetch(ServletRequest request) {
+    private PlatformServletResponse handlePersonFetch(PlatformServletRequest request) {
         return null;
     }
 
-    private ServletResponse handleEntityFetch(ServletRequest request) {
+    private PlatformServletResponse handleEntityFetch(PlatformServletRequest request) {
         return null;
     }
 }

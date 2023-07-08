@@ -49,6 +49,8 @@ public class AuthConfig {
             .authorizeHttpRequests().anyRequest().authenticated()
             .and()
             .sessionManagement()
+            .maximumSessions(1)
+            .and()
             .sessionAuthenticationStrategy(new RegisterSessionAuthenticationStrategy(sessionRegistry));
 
         return http.build();

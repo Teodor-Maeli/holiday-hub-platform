@@ -5,7 +5,7 @@ import com.platform.model.RequestAction;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
 
-public class AdminUpdateInvocationHandler implements InvocationHandler {
+public class AdminGetInvocationHandler implements InvocationHandler {
 
     @Override
     public PlatformServletResponse handle(PlatformServletRequest request, RequestAction action) {

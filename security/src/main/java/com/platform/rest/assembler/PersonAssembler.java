@@ -36,7 +36,7 @@ public class PersonAssembler implements Assembler {
         person.setFamilyName(personRequest.getFamilyName());
         person.setGivenName(personRequest.getGivenName());
         person.setMiddleName(personRequest.getMiddleName());
-        person.setUsername(personRequest.getUsername());
+        person.setUsername(personRequest.getPersonUsername());
         person.setPassword(encoder.encode(personRequest.getPassword()));
         person.setRoles(personRequest.getRoles());
         person.setIsEnabled(personRequest.getIsEnabled());

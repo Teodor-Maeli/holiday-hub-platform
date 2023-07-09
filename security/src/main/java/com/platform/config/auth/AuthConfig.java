@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
@@ -27,7 +28,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class AuthConfig {
 
     private SessionRegistry sessionRegistry;
-
     private static final RequestMatcher gatewayMatcher = (request) -> {
         String action = request.getParameter("action");
 
@@ -48,10 +48,7 @@ public class AuthConfig {
             .and()
             .authorizeHttpRequests().anyRequest().authenticated()
             .and()
-            .sessionManagement()
-            .maximumSessions(1)
-            .and()
-            .sessionAuthenticationStrategy(new RegisterSessionAuthenticationStrategy(sessionRegistry));
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).maximumSessions(2).sessionRegistry(sessionRegistry);
 
         return http.build();
     }

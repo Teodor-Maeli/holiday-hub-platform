@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class PersonRequest extends PlatformClientRequest {
 
+    private String personUsername;
     private String givenName;
     private String familyName;
     private String middleName;

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class LegalEntityRequest extends PlatformClientRequest {
 
+    private String companyUserName;
     private String companyName;
     private String companyNumber;
     private String contactPerson;

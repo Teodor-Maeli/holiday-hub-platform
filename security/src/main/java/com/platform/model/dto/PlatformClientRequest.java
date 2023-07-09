@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 /**
  * 27.05.2023.
@@ -30,7 +28,6 @@ import lombok.experimental.SuperBuilder;
     @JsonSubTypes.Type(LegalEntityRequest.class) })
 public class PlatformClientRequest {
 
-    private String username;
     private String password;
     private Set<Role> roles;
     private Boolean isEnabled;

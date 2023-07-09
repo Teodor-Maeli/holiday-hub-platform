@@ -37,15 +37,15 @@ public enum HandlerKey {
     CUSTOMER_UPDATE(
         List.of(
             RequestAction.PERSON_UPDATE,
-            RequestAction.ENTITY_UPDATE,
-            RequestAction.ENTITY_LOGIN,
-            RequestAction.PERSON_LOGIN
+            RequestAction.ENTITY_UPDATE
         )
     ),
     CUSTOMER_PERSIST(
         List.of(
             RequestAction.PERSON_REGISTER,
-            RequestAction.ENTITY_REGISTER
+            RequestAction.ENTITY_REGISTER,
+            RequestAction.ENTITY_LOGIN,
+            RequestAction.PERSON_LOGIN
         )
     ),
 

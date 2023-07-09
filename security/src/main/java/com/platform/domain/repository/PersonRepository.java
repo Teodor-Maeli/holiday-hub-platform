@@ -8,8 +8,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PersonRepository extends JpaRepository<Person,Long> {
+public interface PersonRepository extends JpaRepository<Person, Long> {
 
-    @Query("SELECT P FROM Person P WHERE P.username = :username")
+    @Query("SELECT p FROM Person p "
+        + "LEFT JOIN FETCH p.roles r "
+        + "WHERE p.username = :username")
     Optional<Person> findByUserName(@Param("username") String username);
 }

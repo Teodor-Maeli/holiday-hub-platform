@@ -64,7 +64,7 @@ public abstract class PlatformClient implements UserDetails {
     @Column
     private String mostRecentSessionId;
     @Column
-    private LocalDate mostRecentSessionInitiatedDate;
+    private LocalDateTime mostRecentSessionInitiatedDate;
 
 
     @Override

@@ -12,11 +12,14 @@ import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
 import com.platform.rest.assembler.LegalEntityAssembler;
 import com.platform.rest.assembler.PersonAssembler;
+import jakarta.persistence.PersistenceException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -91,12 +94,23 @@ public class CustomerPersistInvocationHandler implements InvocationHandler {
             throw new IllegalArgumentException("Incorrect credentials!");
         }
 
-        authenticateAndRegisterNewSession(person);
+        String sessionId = httpServletRequest.getSession().getId();
+        authenticateAndRegisterNewSession(person, sessionId);
+
+        try {
+            person.setMostRecentSessionInitiatedDate(LocalDateTime.now());
+            person.setMostRecentSessionId(sessionId);
+            personRepository.save(person);
+        } catch (PersistenceException pe) {
+            sessionRegistry.getSessionInformation(sessionId).expireNow();
+            throw new AuthenticationServiceException(
+                "Aborting authenticating, could not update sessionInfo for username :" + username, pe);
+        }
 
         return new PlatformServletResponse();
     }
 
-    private void authenticateAndRegisterNewSession(PlatformClient client) {
+    private void authenticateAndRegisterNewSession(PlatformClient client, String sessionId) {
         SecurityContext context = SecurityContextHolder.getContext();
         AbstractAuthenticationToken abstractAuthenticationToken =
             new UsernamePasswordAuthenticationToken(client.getUsername(), client.getPassword(), client.getAuthorities());
@@ -104,7 +118,7 @@ public class CustomerPersistInvocationHandler implements InvocationHandler {
         SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
         securityContextHolderStrategy.setContext(context);
         securityContextRepository.saveContext(context, httpServletRequest, httpServletResponse);
-        sessionRegistry.registerNewSession(httpServletRequest.getSession().getId(), abstractAuthenticationToken.getPrincipal());
+        sessionRegistry.registerNewSession(sessionId, abstractAuthenticationToken.getPrincipal());
     }
 
     private PlatformServletResponse handleEntityLogin(PlatformServletRequest request) {

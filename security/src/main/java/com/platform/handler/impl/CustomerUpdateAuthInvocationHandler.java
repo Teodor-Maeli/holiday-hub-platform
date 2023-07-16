@@ -1,10 +1,9 @@
 package com.platform.handler.impl;
 
-import com.platform.domain.entity.Person;
 import com.platform.domain.repository.LegalEntityRepository;
 import com.platform.domain.repository.PersonRepository;
-import com.platform.handler.InvocationHandler;
-import com.platform.model.RequestAction;
+import com.platform.handler.AuthInvocationHandler;
+import com.platform.model.AuthRequestAction;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
 import com.platform.rest.assembler.LegalEntityAssembler;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class CustomerUpdateInvocationHandler implements InvocationHandler {
+public class CustomerUpdateAuthInvocationHandler implements AuthInvocationHandler {
 
     private PersonAssembler personAssembler;
     private LegalEntityAssembler legalEntityAssembler;
@@ -24,9 +23,8 @@ public class CustomerUpdateInvocationHandler implements InvocationHandler {
     private LegalEntityRepository legalEntityRepository;
 
 
-
     @Override
-    public PlatformServletResponse handle(PlatformServletRequest request, RequestAction action) {
+    public PlatformServletResponse handle(PlatformServletRequest request, AuthRequestAction action) {
 
         return switch (action) {
             case PERSON_UPDATE -> handlePersonUpdate(request);

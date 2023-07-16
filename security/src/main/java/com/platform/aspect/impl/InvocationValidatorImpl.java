@@ -2,8 +2,8 @@ package com.platform.aspect.impl;
 
 import  com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.aspect.InvocationValidator;
-import com.platform.model.RequestAction;
-import com.platform.model.HandlerKey;
+import com.platform.model.AuthRequestAction;
+import com.platform.model.AuthHandlerKey;
 import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -35,10 +35,10 @@ public class InvocationValidatorImpl {
 
     @Around("pointCut()")
     public void validate(ProceedingJoinPoint joinPoint) throws Throwable {
-        HandlerKey[] configuredKeys = getConfiguredKeys(joinPoint);
-        RequestAction inputAction = getInputAction(joinPoint);
+        AuthHandlerKey[] configuredKeys = getConfiguredKeys(joinPoint);
+        AuthRequestAction inputAction = getInputAction(joinPoint);
 
-        for (HandlerKey key : configuredKeys) {
+        for (AuthHandlerKey key : configuredKeys) {
             if (key.getActions().contains(inputAction)) {
                 joinPoint.proceed();
                 return;
@@ -50,16 +50,16 @@ public class InvocationValidatorImpl {
                 inputAction, objectMapper.writeValueAsString(configuredKeys)));
     }
 
-    private HandlerKey[] getConfiguredKeys(ProceedingJoinPoint joinPoint) {
+    private AuthHandlerKey[] getConfiguredKeys(ProceedingJoinPoint joinPoint) {
         return ((MethodSignature) joinPoint.getSignature())
             .getMethod()
             .getAnnotation(InvocationValidator.class)
             .keys();
     }
 
-    private RequestAction getInputAction(ProceedingJoinPoint joinPoint) {
-        return (RequestAction) Arrays.stream(joinPoint.getArgs())
-            .filter(RequestAction.class::isInstance)
+    private AuthRequestAction getInputAction(ProceedingJoinPoint joinPoint) {
+        return (AuthRequestAction) Arrays.stream(joinPoint.getArgs())
+            .filter(AuthRequestAction.class::isInstance)
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("No valid handler key were provided!"));
     }

@@ -3,8 +3,8 @@ package com.platform.handler.impl;
 import com.platform.domain.entity.Person;
 import com.platform.domain.repository.LegalEntityRepository;
 import com.platform.domain.repository.PersonRepository;
-import com.platform.handler.InvocationHandler;
-import com.platform.model.RequestAction;
+import com.platform.handler.AuthInvocationHandler;
+import com.platform.model.AuthRequestAction;
 import com.platform.model.dto.PersonRequest;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
@@ -17,14 +17,14 @@ import org.springframework.util.Assert;
 
 @Service
 @AllArgsConstructor
-public class AdminEvictInvocationHandler implements InvocationHandler {
+public class AdminEvictAuthInvocationHandler implements AuthInvocationHandler {
 
     private SessionRegistry sessionRegistry;
     private PersonRepository personRepository;
     private LegalEntityRepository legalEntityRepository;
 
     @Override
-    public PlatformServletResponse handle(PlatformServletRequest request, RequestAction action) {
+    public PlatformServletResponse handle(PlatformServletRequest request, AuthRequestAction action) {
         return switch (action) {
             case ADMIN_ENTITY_SESSION_INVALIDATE -> handleEntitySessionInvalidate(request);
             case ADMIN_PERSON_SESSION_INVALIDATE -> handlePersonSessionInvalidate(request);

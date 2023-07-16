@@ -1,15 +1,15 @@
 package com.platform.handler;
 
-import com.platform.handler.impl.AdminEvictInvocationHandler;
-import com.platform.handler.impl.AdminGetInvocationHandler;
-import com.platform.handler.impl.AdminPersistInvocationHandler;
-import com.platform.handler.impl.AdminUpdateInvocationHandler;
-import com.platform.handler.impl.CustomerEvictInvocationHandler;
-import com.platform.handler.impl.CustomerGetInvocationHandler;
-import com.platform.handler.impl.CustomerPersistInvocationHandler;
-import com.platform.handler.impl.CustomerUpdateInvocationHandler;
-import com.platform.model.RequestAction;
-import com.platform.model.HandlerKey;
+import com.platform.handler.impl.AdminEvictAuthInvocationHandler;
+import com.platform.handler.impl.AdminGetAuthInvocationHandler;
+import com.platform.handler.impl.AdminPersistAuthInvocationHandler;
+import com.platform.handler.impl.AdminUpdateAuthInvocationHandler;
+import com.platform.handler.impl.CustomerEvictAuthInvocationHandler;
+import com.platform.handler.impl.CustomerGetAuthInvocationHandler;
+import com.platform.handler.impl.CustomerPersistAuthInvocationHandler;
+import com.platform.handler.impl.CustomerUpdateAuthInvocationHandler;
+import com.platform.model.AuthRequestAction;
+import com.platform.model.AuthHandlerKey;
 import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -27,30 +27,30 @@ import org.springframework.stereotype.Service;
 public class ActionHandlerContext {
 
     private final ApplicationContext applicationContext;
-    private Map<HandlerKey, Class<? extends InvocationHandler>> handlerContext;
+    private Map<AuthHandlerKey, Class<? extends AuthInvocationHandler>> handlerContext;
 
 
     @PostConstruct
     private void init() {
-        handlerContext = new EnumMap<>(HandlerKey.class);
-        handlerContext.put(HandlerKey.CUSTOMER_EVICT, CustomerEvictInvocationHandler.class);
-        handlerContext.put(HandlerKey.CUSTOMER_PERSIST, CustomerPersistInvocationHandler.class);
-        handlerContext.put(HandlerKey.CUSTOMER_UPDATE, CustomerUpdateInvocationHandler.class);
-        handlerContext.put(HandlerKey.CUSTOMER_GET, CustomerGetInvocationHandler.class);
-        handlerContext.put(HandlerKey.ADMIN_EVICT, AdminEvictInvocationHandler.class);
-        handlerContext.put(HandlerKey.ADMIN_UPDATE, AdminUpdateInvocationHandler.class);
-        handlerContext.put(HandlerKey.ADMIN_GET, AdminGetInvocationHandler.class);
-        handlerContext.put(HandlerKey.ADMIN_PERSIST, AdminPersistInvocationHandler.class);
+        handlerContext = new EnumMap<>(AuthHandlerKey.class);
+        handlerContext.put(AuthHandlerKey.CUSTOMER_EVICT, CustomerEvictAuthInvocationHandler.class);
+        handlerContext.put(AuthHandlerKey.CUSTOMER_PERSIST, CustomerPersistAuthInvocationHandler.class);
+        handlerContext.put(AuthHandlerKey.CUSTOMER_UPDATE, CustomerUpdateAuthInvocationHandler.class);
+        handlerContext.put(AuthHandlerKey.CUSTOMER_GET, CustomerGetAuthInvocationHandler.class);
+        handlerContext.put(AuthHandlerKey.ADMIN_EVICT, AdminEvictAuthInvocationHandler.class);
+        handlerContext.put(AuthHandlerKey.ADMIN_UPDATE, AdminUpdateAuthInvocationHandler.class);
+        handlerContext.put(AuthHandlerKey.ADMIN_GET, AdminGetAuthInvocationHandler.class);
+        handlerContext.put(AuthHandlerKey.ADMIN_PERSIST, AdminPersistAuthInvocationHandler.class);
     }
 
-    public InvocationHandler getHandler(RequestAction action) {
-        HandlerKey key = getHandlerKeyWithRequestAction(action);
-        Class<? extends InvocationHandler> clazz = handlerContext.get(key);
+    public AuthInvocationHandler getHandler(AuthRequestAction action) {
+        AuthHandlerKey key = getHandlerKeyWithRequestAction(action);
+        Class<? extends AuthInvocationHandler> clazz = handlerContext.get(key);
         return applicationContext.getBean(clazz);
     }
 
-    private HandlerKey getHandlerKeyWithRequestAction(RequestAction action) {
-        return Arrays.stream(HandlerKey.values())
+    private AuthHandlerKey getHandlerKeyWithRequestAction(AuthRequestAction action) {
+        return Arrays.stream(AuthHandlerKey.values())
             .filter(handlerKey -> handlerKey.getActions().contains(action))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException(

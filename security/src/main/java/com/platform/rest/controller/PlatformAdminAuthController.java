@@ -3,8 +3,8 @@ package com.platform.rest.controller;
 import com.platform.aspect.IOLogger;
 import com.platform.aspect.InvocationValidator;
 import com.platform.handler.ActionHandlerContext;
-import com.platform.model.RequestAction;
-import com.platform.model.HandlerKey;
+import com.platform.model.AuthRequestAction;
+import com.platform.model.AuthHandlerKey;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,46 +29,46 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/authorization/admin/v1")
 @RequiredArgsConstructor
-public class PlatformAdminController {
+public class PlatformAdminAuthController {
 
     private final ActionHandlerContext context;
 
     @IOLogger
     @PostMapping("/persist")
-    @InvocationValidator(keys = HandlerKey.ADMIN_PERSIST)
+    @InvocationValidator(keys = AuthHandlerKey.ADMIN_PERSIST)
     public ResponseEntity<PlatformServletResponse> processAdminRegister(
         @RequestBody PlatformServletRequest request,
-        @RequestParam RequestAction action) {
+        @RequestParam AuthRequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
     @IOLogger
     @GetMapping("/get")
-    @InvocationValidator(keys = HandlerKey.ADMIN_GET)
+    @InvocationValidator(keys = AuthHandlerKey.ADMIN_GET)
     public ResponseEntity<PlatformServletResponse> processAdminGet(
         @RequestBody PlatformServletRequest request,
-        @RequestParam RequestAction action) {
+        @RequestParam AuthRequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
     @IOLogger
     @PatchMapping("/update")
-    @InvocationValidator(keys = HandlerKey.ADMIN_UPDATE)
+    @InvocationValidator(keys = AuthHandlerKey.ADMIN_UPDATE)
     public ResponseEntity<PlatformServletResponse> processAdminUpdate(
         @RequestBody PlatformServletRequest request,
-        @RequestParam RequestAction action) {
+        @RequestParam AuthRequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
 
     @IOLogger
     @DeleteMapping("/evict")
-    @InvocationValidator(keys = HandlerKey.ADMIN_EVICT)
+    @InvocationValidator(keys = AuthHandlerKey.ADMIN_EVICT)
     public ResponseEntity<PlatformServletResponse> processAdminEvict(
         @RequestBody PlatformServletRequest request,
-        @RequestParam RequestAction action) {
+        @RequestParam AuthRequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }

@@ -5,8 +5,8 @@ import com.platform.domain.entity.Person;
 import com.platform.domain.entity.PlatformClient;
 import com.platform.domain.repository.LegalEntityRepository;
 import com.platform.domain.repository.PersonRepository;
-import com.platform.handler.InvocationHandler;
-import com.platform.model.RequestAction;
+import com.platform.handler.AuthInvocationHandler;
+import com.platform.model.AuthRequestAction;
 import com.platform.model.dto.PersonRequest;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,7 +34,7 @@ import org.springframework.util.Assert;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class CustomerPersistInvocationHandler implements InvocationHandler {
+public class CustomerPersistAuthInvocationHandler implements AuthInvocationHandler {
 
     private PersonAssembler personAssembler;
     private LegalEntityAssembler legalEntityAssembler;
@@ -46,7 +47,7 @@ public class CustomerPersistInvocationHandler implements InvocationHandler {
     private SessionRegistry sessionRegistry;
 
     @Override
-    public PlatformServletResponse handle(PlatformServletRequest request, RequestAction action) {
+    public PlatformServletResponse handle(PlatformServletRequest request, AuthRequestAction action) {
 
         return switch (action) {
             case ENTITY_REGISTER -> entityRegister(request);
@@ -84,45 +85,47 @@ public class CustomerPersistInvocationHandler implements InvocationHandler {
         String username = personRequest.getPersonUsername();
         String rawPassword = personRequest.getPassword();
 
-        Assert.notNull(username, "USERNAME cannot be null when trying to login and register a session!");
-        Assert.notNull(rawPassword, "PASSWORD cannot be null when trying to login and register a session!");
+        Assert.notNull(username, "USERNAME required, unable to register session");
+        Assert.notNull(rawPassword, "PASSWORD  required, unable to register session");
 
         Person person = personRepository.findByUserName(username)
             .orElseThrow(() -> new IllegalArgumentException("Client " + username + " non-existent!"));
 
-        if (!encoder.matches(rawPassword, person.getPassword())) {
-            throw new IllegalArgumentException("Incorrect credentials!");
-        }
-
-        String sessionId = httpServletRequest.getSession().getId();
-        authenticateAndRegisterNewSession(person, sessionId);
-
-        try {
-            person.setMostRecentSessionInitiatedDate(LocalDateTime.now());
-            person.setMostRecentSessionId(sessionId);
-            personRepository.save(person);
-        } catch (PersistenceException pe) {
-            sessionRegistry.getSessionInformation(sessionId).expireNow();
-            throw new AuthenticationServiceException(
-                "Aborting authenticating, could not update sessionInfo for username :" + username, pe);
-        }
-
-        return new PlatformServletResponse();
-    }
-
-    private void authenticateAndRegisterNewSession(PlatformClient client, String sessionId) {
-        SecurityContext context = SecurityContextHolder.getContext();
-        AbstractAuthenticationToken abstractAuthenticationToken =
-            new UsernamePasswordAuthenticationToken(client.getUsername(), client.getPassword(), client.getAuthorities());
-        context.setAuthentication(abstractAuthenticationToken);
-        SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
-        securityContextHolderStrategy.setContext(context);
-        securityContextRepository.saveContext(context, httpServletRequest, httpServletResponse);
-        sessionRegistry.registerNewSession(sessionId, abstractAuthenticationToken.getPrincipal());
+        return authenticate(username, rawPassword, person, personRepository);
     }
 
     private PlatformServletResponse handleEntityLogin(PlatformServletRequest request) {
         return null;
+    }
+
+    private PlatformServletResponse authenticate(String username,
+        String rawPassword, PlatformClient client, JpaRepository repository) {
+
+        if (!encoder.matches(rawPassword, client.getPassword())) {
+            throw new AuthenticationServiceException("Incorrect credentials!");
+        }
+
+        String sessionId = httpServletRequest.getSession().getId();
+        SecurityContext context = SecurityContextHolder.getContext();
+        AbstractAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(client.getUsername(),
+            client.getPassword(), client.getAuthorities());
+        context.setAuthentication(authToken);
+        SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+        securityContextHolderStrategy.setContext(context);
+        securityContextRepository.saveContext(context, httpServletRequest, httpServletResponse);
+        sessionRegistry.registerNewSession(sessionId, authToken.getPrincipal());
+
+        try {
+            client.setMostRecentSessionInitiatedDate(LocalDateTime.now());
+            client.setMostRecentSessionId(sessionId);
+            repository.save(client);
+        } catch (PersistenceException pe) {
+            sessionRegistry.getSessionInformation(sessionId).expireNow();
+            throw new AuthenticationServiceException(
+                "Error occurred while updating sessionInfo for username :" + username, pe);
+        }
+
+        return new PlatformServletResponse();
     }
 
 }

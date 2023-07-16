@@ -1,6 +1,6 @@
 package com.platform.config.auth;
 
-import com.platform.model.RequestAction;
+import com.platform.model.AuthRequestAction;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -31,11 +30,11 @@ public class AuthConfig {
     private static final RequestMatcher gatewayMatcher = (request) -> {
         String action = request.getParameter("action");
 
-        return (RequestAction.ADMIN_ENTITY_REGISTER.name().equalsIgnoreCase(action)
-            || RequestAction.PERSON_REGISTER.name().equalsIgnoreCase(action)
-            || RequestAction.PERSON_LOGIN.name().equalsIgnoreCase(action)
-            || RequestAction.ENTITY_LOGIN.name().equalsIgnoreCase(action)
-            || RequestAction.CLIENT_LOGOUT.name().equalsIgnoreCase(action));
+        return (AuthRequestAction.ADMIN_ENTITY_REGISTER.name().equalsIgnoreCase(action)
+            || AuthRequestAction.PERSON_REGISTER.name().equalsIgnoreCase(action)
+            || AuthRequestAction.PERSON_LOGIN.name().equalsIgnoreCase(action)
+            || AuthRequestAction.ENTITY_LOGIN.name().equalsIgnoreCase(action)
+            || AuthRequestAction.CLIENT_LOGOUT.name().equalsIgnoreCase(action));
     };
 
     @Bean

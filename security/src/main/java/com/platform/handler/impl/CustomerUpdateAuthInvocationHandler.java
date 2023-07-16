@@ -8,19 +8,19 @@ import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
 import com.platform.rest.assembler.LegalEntityAssembler;
 import com.platform.rest.assembler.PersonAssembler;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomerUpdateAuthInvocationHandler implements AuthInvocationHandler {
 
-    private PersonAssembler personAssembler;
-    private LegalEntityAssembler legalEntityAssembler;
-    private PersonRepository personRepository;
-    private LegalEntityRepository legalEntityRepository;
+    private final PersonAssembler personAssembler;
+    private final LegalEntityAssembler legalEntityAssembler;
+    private final PersonRepository personRepository;
+    private final LegalEntityRepository legalEntityRepository;
 
 
     @Override

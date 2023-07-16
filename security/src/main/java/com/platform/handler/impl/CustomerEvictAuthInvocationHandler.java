@@ -4,9 +4,13 @@ import com.platform.handler.AuthInvocationHandler;
 import com.platform.model.AuthRequestAction;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
-@NoArgsConstructor
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class CustomerEvictAuthInvocationHandler implements AuthInvocationHandler {
 
 

@@ -16,6 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,6 +41,7 @@ public abstract class PlatformClient implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Column(updatable = false)
+    @CreatedDate
     private LocalDate registeredDate;
     @Column(updatable = false)
     private String username;
@@ -60,11 +62,15 @@ public abstract class PlatformClient implements UserDetails {
     @Column
     private String contactPhone;
     @Column
-    private String registrationDate;
-    @Column
     private String mostRecentSessionId;
     @Column
     private LocalDateTime mostRecentSessionInitiatedDate;
+    @Column
+    private LocalDateTime lastEvictedSessionDate;
+    @Column
+    private String evictionComment;
+    @Column
+    private String otherComment;
 
 
     @Override

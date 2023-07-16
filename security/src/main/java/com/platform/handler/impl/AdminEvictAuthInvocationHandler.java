@@ -1,6 +1,7 @@
 package com.platform.handler.impl;
 
 import com.platform.domain.entity.Person;
+import com.platform.domain.entity.PlatformClient;
 import com.platform.domain.repository.LegalEntityRepository;
 import com.platform.domain.repository.PersonRepository;
 import com.platform.handler.AuthInvocationHandler;
@@ -50,7 +51,11 @@ public class AdminEvictAuthInvocationHandler implements AuthInvocationHandler {
         Person person = personRepository.findByUserName(username)
             .orElseThrow(() -> new IllegalArgumentException("Client " + username + " non-existent!"));
 
-        List<SessionInformation> allSessions = sessionRegistry.getAllSessions(person.getUsername(), false);
+        return evict(person);
+    }
+
+    private PlatformServletResponse evict(PlatformClient client) {
+        List<SessionInformation> allSessions = sessionRegistry.getAllSessions(client.getUsername(), false);
         allSessions.forEach(SessionInformation::expireNow);
 
         return new PlatformServletResponse();

@@ -24,6 +24,16 @@ public class PersonAssembler implements Assembler {
         personResponse.setUsername(person.getUsername());
         personResponse.setRoles(person.getRoles());
         personResponse.setIsEnabled(person.isEnabled());
+        personResponse.setBirthDate(person.getBirthDate());
+        personResponse.setFamilyName(person.getFamilyName());
+        personResponse.setGivenName(person.getGivenName());
+        personResponse.setMiddleName(person.getMiddleName());
+        personResponse.setSubscriptionEnds(person.getSubscriptionEnds());
+        personResponse.setSubscriptionStarts(person.getSubscriptionStarts());
+        personResponse.setIsEnabled(person.getIsEnabled());
+        personResponse.setMostRecentSessionId(person.getMostRecentSessionId());
+        personResponse.setMostRecentSessionInitiatedDate(person.getMostRecentSessionInitiatedDate());
+        personResponse.setRegisteredDate(person.getRegisteredDate());
 
         return personResponse;
     }
@@ -40,7 +50,6 @@ public class PersonAssembler implements Assembler {
         person.setPassword(encoder.encode(personRequest.getPassword()));
         person.setRoles(personRequest.getRoles());
         person.setIsEnabled(personRequest.getIsEnabled());
-        person.setRoles(personRequest.getRoles());
         person.setIsPremiumEnabled(personRequest.getIsPremiumEnabled());
         person.setSubscriptionStarts(personRequest.getSubscriptionStarts());
         person.setSubscriptionEnds(personRequest.getSubscriptionEnds());

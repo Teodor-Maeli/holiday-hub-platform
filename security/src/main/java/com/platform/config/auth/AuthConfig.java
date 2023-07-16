@@ -30,8 +30,7 @@ public class AuthConfig {
     private static final RequestMatcher gatewayMatcher = (request) -> {
         String action = request.getParameter("action");
 
-        return (AuthRequestAction.ADMIN_ENTITY_REGISTER.name().equalsIgnoreCase(action)
-            || AuthRequestAction.PERSON_REGISTER.name().equalsIgnoreCase(action)
+        return (AuthRequestAction.PERSON_REGISTER.name().equalsIgnoreCase(action)
             || AuthRequestAction.PERSON_LOGIN.name().equalsIgnoreCase(action)
             || AuthRequestAction.ENTITY_LOGIN.name().equalsIgnoreCase(action)
             || AuthRequestAction.CLIENT_LOGOUT.name().equalsIgnoreCase(action));
@@ -47,7 +46,7 @@ public class AuthConfig {
             .and()
             .authorizeHttpRequests().anyRequest().authenticated()
             .and()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).maximumSessions(2).sessionRegistry(sessionRegistry);
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).maximumSessions(1).sessionRegistry(sessionRegistry);
 
         return http.build();
     }

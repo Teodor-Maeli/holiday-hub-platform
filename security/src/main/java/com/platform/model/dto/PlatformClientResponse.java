@@ -1,8 +1,8 @@
 package com.platform.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.platform.model.Role;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,4 +25,12 @@ public abstract class PlatformClientResponse {
     private String username;
     private Set<Role> roles;
     private Boolean isEnabled;
+    private LocalDate registeredDate;
+    private LocalDateTime subscriptionStarts;
+    private LocalDateTime subscriptionEnds;
+    private Boolean isPremiumEnabled;
+    private String contactEmail;
+    private String contactPhone;
+    private String mostRecentSessionId;
+    private LocalDateTime mostRecentSessionInitiatedDate;
 }

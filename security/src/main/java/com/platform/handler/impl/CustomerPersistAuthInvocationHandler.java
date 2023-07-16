@@ -7,6 +7,7 @@ import com.platform.domain.repository.LegalEntityRepository;
 import com.platform.domain.repository.PersonRepository;
 import com.platform.handler.AuthInvocationHandler;
 import com.platform.model.AuthRequestAction;
+import com.platform.model.dto.LegalEntityRequest;
 import com.platform.model.dto.PersonRequest;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
@@ -16,7 +17,7 @@ import jakarta.persistence.PersistenceException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -33,18 +34,18 @@ import org.springframework.util.Assert;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomerPersistAuthInvocationHandler implements AuthInvocationHandler {
 
-    private PersonAssembler personAssembler;
-    private LegalEntityAssembler legalEntityAssembler;
-    private PersonRepository personRepository;
-    private LegalEntityRepository legalEntityRepository;
-    private PasswordEncoder encoder;
-    private SecurityContextRepository securityContextRepository;
-    private HttpServletRequest httpServletRequest;
-    private HttpServletResponse httpServletResponse;
-    private SessionRegistry sessionRegistry;
+    private final PersonAssembler personAssembler;
+    private final LegalEntityAssembler legalEntityAssembler;
+    private final PersonRepository personRepository;
+    private final LegalEntityRepository legalEntityRepository;
+    private final PasswordEncoder encoder;
+    private final SecurityContextRepository securityContextRepository;
+    private final HttpServletRequest httpServletRequest;
+    private final HttpServletResponse httpServletResponse;
+    private final SessionRegistry sessionRegistry;
 
     @Override
     public PlatformServletResponse handle(PlatformServletRequest request, AuthRequestAction action) {
@@ -85,8 +86,8 @@ public class CustomerPersistAuthInvocationHandler implements AuthInvocationHandl
         String username = personRequest.getPersonUsername();
         String rawPassword = personRequest.getPassword();
 
-        Assert.notNull(username, "USERNAME required, unable to register session");
-        Assert.notNull(rawPassword, "PASSWORD  required, unable to register session");
+        Assert.notNull(username, "PERSON USERNAME required, unable to register session");
+        Assert.notNull(rawPassword, "PERSON PASSWORD  required, unable to register session");
 
         Person person = personRepository.findByUserName(username)
             .orElseThrow(() -> new IllegalArgumentException("Client " + username + " non-existent!"));
@@ -94,12 +95,23 @@ public class CustomerPersistAuthInvocationHandler implements AuthInvocationHandl
         return authenticate(username, rawPassword, person, personRepository);
     }
 
+
     private PlatformServletResponse handleEntityLogin(PlatformServletRequest request) {
-        return null;
+        LegalEntityRequest legalEntityRequest = (LegalEntityRequest) request.getPlatformClientRequest();
+        String username = legalEntityRequest.getCompanyUserName();
+        String rawPassword = legalEntityRequest.getPassword();
+
+        Assert.notNull(username, "LEGAL ENTITY USERNAME required, unable to register session");
+        Assert.notNull(rawPassword, "LEGAL ENTITY PASSWORD  required, unable to register session");
+
+        LegalEntity legalEntity = legalEntityRepository.findByUserName(username)
+            .orElseThrow(() -> new IllegalArgumentException("Client " + username + " non-existent!"));
+
+        return authenticate(username, rawPassword, legalEntity, legalEntityRepository);
     }
 
-    private PlatformServletResponse authenticate(String username,
-        String rawPassword, PlatformClient client, JpaRepository repository) {
+    private <T extends PlatformClient, I extends Number> PlatformServletResponse authenticate(String username, String rawPassword,
+        T client, JpaRepository<T, I> repository) {
 
         if (!encoder.matches(rawPassword, client.getPassword())) {
             throw new AuthenticationServiceException("Incorrect credentials!");
@@ -127,5 +139,4 @@ public class CustomerPersistAuthInvocationHandler implements AuthInvocationHandl
 
         return new PlatformServletResponse();
     }
-
 }

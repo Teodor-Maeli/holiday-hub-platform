@@ -1,9 +1,13 @@
 package com.platform.handler.impl;
 
+import com.platform.domain.entity.LegalEntity;
+import com.platform.domain.entity.Person;
 import com.platform.domain.repository.LegalEntityRepository;
 import com.platform.domain.repository.PersonRepository;
 import com.platform.handler.AuthInvocationHandler;
 import com.platform.model.AuthRequestAction;
+import com.platform.model.dto.LegalEntityRequest;
+import com.platform.model.dto.PersonRequest;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
 import com.platform.rest.assembler.LegalEntityAssembler;
@@ -22,7 +26,6 @@ public class CustomerUpdateAuthInvocationHandler implements AuthInvocationHandle
     private final PersonRepository personRepository;
     private final LegalEntityRepository legalEntityRepository;
 
-
     @Override
     public PlatformServletResponse handle(PlatformServletRequest request, AuthRequestAction action) {
 
@@ -34,10 +37,16 @@ public class CustomerUpdateAuthInvocationHandler implements AuthInvocationHandle
     }
 
     private PlatformServletResponse handleEntityUpdate(PlatformServletRequest request) {
-        return null;
+        LegalEntityRequest platformClientRequest = (LegalEntityRequest) request.getPlatformClientRequest();
+        LegalEntity legalEntity = legalEntityAssembler.assemble(platformClientRequest);
+        legalEntityRepository.save(legalEntity);
+        return new PlatformServletResponse();
     }
 
     private PlatformServletResponse handlePersonUpdate(PlatformServletRequest request) {
-        return null;
+        PersonRequest personRequest = (PersonRequest) request.getPlatformClientRequest();
+        Person person = personAssembler.assemble(personRequest);
+        personRepository.save(person);
+        return new PlatformServletResponse();
     }
 }

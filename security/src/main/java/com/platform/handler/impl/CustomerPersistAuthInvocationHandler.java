@@ -110,17 +110,18 @@ public class CustomerPersistAuthInvocationHandler implements AuthInvocationHandl
         return authenticate(username, rawPassword, legalEntity, legalEntityRepository);
     }
 
-    private <T extends PlatformClient, I extends Number> PlatformServletResponse authenticate(String username, String rawPassword,
-        T client, JpaRepository<T, I> repository) {
+    private <T extends PlatformClient, I extends Number> PlatformServletResponse authenticate(String clientUsername,
+        String clientRawPassword,
+        T platformClient, JpaRepository<T, I> clientRepository) {
 
-        if (!encoder.matches(rawPassword, client.getPassword())) {
+        if (!encoder.matches(clientRawPassword, platformClient.getPassword())) {
             throw new AuthenticationServiceException("Incorrect credentials!");
         }
 
         String sessionId = httpServletRequest.getSession().getId();
         SecurityContext context = SecurityContextHolder.getContext();
-        AbstractAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(client.getUsername(),
-            client.getPassword(), client.getAuthorities());
+        AbstractAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(platformClient.getUsername(),
+            platformClient.getPassword(), platformClient.getAuthorities());
         context.setAuthentication(authToken);
         SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
         securityContextHolderStrategy.setContext(context);
@@ -128,13 +129,13 @@ public class CustomerPersistAuthInvocationHandler implements AuthInvocationHandl
         sessionRegistry.registerNewSession(sessionId, authToken.getPrincipal());
 
         try {
-            client.setMostRecentSessionInitiatedDate(LocalDateTime.now());
-            client.setMostRecentSessionId(sessionId);
-            repository.save(client);
+            platformClient.setMostRecentSessionInitiatedDate(LocalDateTime.now());
+            platformClient.setMostRecentSessionId(sessionId);
+            clientRepository.save(platformClient);
         } catch (PersistenceException pe) {
             sessionRegistry.getSessionInformation(sessionId).expireNow();
-            throw new AuthenticationServiceException(
-                "Error occurred while updating sessionInfo for username :" + username, pe);
+            throw new AuthenticationServiceException("Error occurred while persisting session "
+                + "info for username :" + clientUsername, pe);
         }
 
         return new PlatformServletResponse();

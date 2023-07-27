@@ -1,11 +1,11 @@
 package com.platform.handler.impl;
 
-import com.platform.domain.entity.Person;
-import com.platform.domain.entity.PlatformClient;
+import com.platform.domain.entity.LegalEntity;
 import com.platform.domain.repository.LegalEntityRepository;
 import com.platform.domain.repository.PersonRepository;
 import com.platform.handler.AuthInvocationHandler;
 import com.platform.model.AuthRequestAction;
+import com.platform.model.dto.LegalEntityRequest;
 import com.platform.model.dto.PersonRequest;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
@@ -44,24 +44,22 @@ public class AdminEvictAuthInvocationHandler implements AuthInvocationHandler {
     }
 
     private PlatformServletResponse handlePersonSessionInvalidate(PlatformServletRequest request) {
-        PersonRequest platformClientRequest = (PersonRequest) request.getPlatformClientRequest();
-        String username = platformClientRequest.getPersonUsername();
+        PersonRequest personRequest = (PersonRequest) request.getPlatformClientRequest();
+        String username = personRequest.getPersonUsername();
         Assert.notNull(username, "Username cannot be null when trying to invalidate session!");
-
-        Person person = personRepository.findByUserName(username)
-            .orElseThrow(() -> new IllegalArgumentException("Client " + username + " non-existent!"));
-
-        return evict(person);
-    }
-
-    private PlatformServletResponse evict(PlatformClient client) {
-        List<SessionInformation> allSessions = sessionRegistry.getAllSessions(client.getUsername(), false);
-        allSessions.forEach(SessionInformation::expireNow);
-
-        return new PlatformServletResponse();
+        return evictSessionByUserName(username);
     }
 
     private PlatformServletResponse handleEntitySessionInvalidate(PlatformServletRequest request) {
-        return null;
+        LegalEntityRequest entityRequest = (LegalEntityRequest) request.getPlatformClientRequest();
+        String username = entityRequest.getCompanyUserName();
+        Assert.notNull(username, "Username cannot be null when trying to invalidate session!");
+        return evictSessionByUserName(username);
+    }
+
+    private PlatformServletResponse evictSessionByUserName(String username) {
+        List<SessionInformation> allSessions = sessionRegistry.getAllSessions(username, false);
+        allSessions.forEach(SessionInformation::expireNow);
+        return new PlatformServletResponse();
     }
 }

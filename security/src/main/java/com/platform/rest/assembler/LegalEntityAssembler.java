@@ -25,7 +25,7 @@ public class LegalEntityAssembler implements Assembler {
         legalEntityResponse.setCompanyNumber(legalEntity.getCompanyNumber());
         legalEntityResponse.setSubscriptionStarts(legalEntity.getSubscriptionStarts());
         legalEntityResponse.setSubscriptionEnds(legalEntity.getSubscriptionEnds());
-        legalEntityResponse.setIsPremiumEnabled(legalEntity.getIsPremiumEnabled());
+        legalEntityResponse.setIsPremiumEnabled(legalEntity.getPremium());
         legalEntityResponse.setUsername(legalEntity.getUsername());
         legalEntityResponse.setRoles(legalEntity.getRoles());
         legalEntityResponse.setIsEnabled(legalEntity.isEnabled());
@@ -45,12 +45,13 @@ public class LegalEntityAssembler implements Assembler {
         legalEntity.setCompanyNumber(legalEntityRequest.getCompanyNumber());
         legalEntity.setSubscriptionStarts(legalEntityRequest.getSubscriptionStarts());
         legalEntity.setSubscriptionEnds(legalEntityRequest.getSubscriptionEnds());
-        legalEntity.setIsPremiumEnabled(legalEntityRequest.getIsPremiumEnabled());
+        legalEntity.setPremium(legalEntityRequest.getIsPremiumEnabled());
         legalEntity.setUsername(legalEntityRequest.getCompanyUserName());
         legalEntity.setPassword(encoder.encode(legalEntityRequest.getPassword()));
         legalEntity.setRoles(legalEntityRequest.getRoles());
-        legalEntity.setIsEnabled(legalEntityRequest.getIsEnabled());
+        legalEntity.setEnabled(legalEntityRequest.getIsEnabled());
         legalEntity.setRoles(request.getRoles());
+        legalEntity.setEmailAddress(request.getEmailAddress());
 
         return legalEntity;
     }

@@ -37,39 +37,40 @@ import org.springframework.security.core.userdetails.UserDetails;
 public abstract class PlatformClient implements UserDetails {
 
     @Id
-    @Column(updatable = false)
+    @Column(name = "ID", updatable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(updatable = false)
+    @Column(name = "REGISTERED_DATE", updatable = false)
     @CreatedDate
     private LocalDate registeredDate;
-    @Column(updatable = false)
+    @Column(name = "USERNAME", updatable = false)
     private String username;
-    @Column
+    @Column(name = "PASSWORD")
     private String password;
+    @Column(name = "ROLES")
     @ElementCollection(targetClass = Role.class, fetch = FetchType.LAZY)
     private Set<Role> roles;
-    @Column
-    private Boolean isEnabled;
-    @Column
-    private Boolean isPremiumEnabled;
-    @Column
+    @Column(name = "ENABLED")
+    private Boolean enabled;
+    @Column(name = "PREMIUM")
+    private Boolean premium;
+    @Column(name = "SUBSCRIPTION_STARTS")
     private LocalDateTime subscriptionStarts;
-    @Column
+    @Column(name = "SUBSCRIPTION_ENDS")
     private LocalDateTime subscriptionEnds;
-    @Column
-    private String contactEmail;
-    @Column
-    private String contactPhone;
-    @Column
+    @Column(name = "EMAIL_ADDRESS")
+    private String emailAddress;
+    @Column(name = "PHONE")
+    private String phone;
+    @Column(name = "MOST_RECENT_SESSION_ID")
     private String mostRecentSessionId;
-    @Column
+    @Column(name = "MOST_RECENT_SESSION_INITIATED_DATE")
     private LocalDateTime mostRecentSessionInitiatedDate;
-    @Column
+    @Column(name = "LAST_EVICTED_SESSION_DATE")
     private LocalDateTime lastEvictedSessionDate;
-    @Column
-    private String evictionComment;
-    @Column
+    @Column(name = "LAST_EVICTED_SESSION_COMMENT")
+    private String lastEvictedSessionComment;
+    @Column(name = "OTHER_COMMENT")
     private String otherComment;
 
 
@@ -92,7 +93,7 @@ public abstract class PlatformClient implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.isEnabled;
+        return this.enabled;
     }
 
     @Override

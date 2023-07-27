@@ -24,7 +24,7 @@ public class CustomerGetAuthInvocationHandler implements AuthInvocationHandler {
             case ENTITY_FETCH -> handleEntityFetch(request);
             case PERSON_FETCH -> handlePersonFetch(request);
             default ->
-                throw new IllegalArgumentException("Could not handle following action : " + action);
+                throw new IllegalArgumentException("Action not supported by " + this.getClass());
         };
     }
 

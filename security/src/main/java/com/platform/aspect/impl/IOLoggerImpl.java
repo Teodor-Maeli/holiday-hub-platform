@@ -2,6 +2,8 @@ package com.platform.aspect.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.platform.aspect.Mask;
+import com.platform.model.dto.PlatformClientRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +17,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -43,7 +46,6 @@ public class IOLoggerImpl {
     public void logInput(JoinPoint joinPoint) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         RequestMapping mapping = getRequestMapping(method);
-
         Map<String, Object> parameters = getParameters(joinPoint);
 
         log("==Input==> path(s): {}, method(s): {}, arguments: {}", mapping, parameters);
@@ -59,8 +61,8 @@ public class IOLoggerImpl {
 
     private void log(String format, RequestMapping mapping, Object object) {
         try {
-            log.info(format,
-                mapping.path(), mapping.method(), mapper.writeValueAsString(object));
+            AnnotationUtils.findAnnotation(PlatformClientRequest.class, Mask.class);
+            log.info(format, mapping.path(), mapping.method(),mapper.writeValueAsString(object));
         } catch (JsonProcessingException e) {
             log.error("Error while converting", e);
         }

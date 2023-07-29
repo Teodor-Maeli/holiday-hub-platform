@@ -45,11 +45,11 @@ public class LegalEntityAssembler implements Assembler {
         legalEntity.setCompanyNumber(legalEntityRequest.getCompanyNumber());
         legalEntity.setSubscriptionStarts(legalEntityRequest.getSubscriptionStarts());
         legalEntity.setSubscriptionEnds(legalEntityRequest.getSubscriptionEnds());
-        legalEntity.setPremium(legalEntityRequest.getIsPremiumEnabled());
+        legalEntity.setPremium(legalEntityRequest.getPremiumEnabled());
         legalEntity.setUsername(legalEntityRequest.getCompanyUserName());
         legalEntity.setPassword(encoder.encode(legalEntityRequest.getPassword()));
         legalEntity.setRoles(legalEntityRequest.getRoles());
-        legalEntity.setEnabled(legalEntityRequest.getIsEnabled());
+        legalEntity.setEnabled(legalEntityRequest.getEnabled());
         legalEntity.setRoles(request.getRoles());
         legalEntity.setEmailAddress(request.getEmailAddress());
 

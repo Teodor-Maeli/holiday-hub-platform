@@ -2,7 +2,7 @@ package com.platform.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.platform.aspect.Mask;
+import com.platform.aspect.annotation.Mask;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

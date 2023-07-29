@@ -49,8 +49,8 @@ public class PersonAssembler implements Assembler {
         person.setUsername(personRequest.getPersonUsername());
         person.setPassword(encoder.encode(personRequest.getPassword()));
         person.setRoles(personRequest.getRoles());
-        person.setEnabled(personRequest.getIsEnabled());
-        person.setPremium(personRequest.getIsPremiumEnabled());
+        person.setEnabled(personRequest.getEnabled());
+        person.setPremium(personRequest.getPremiumEnabled());
         person.setSubscriptionStarts(personRequest.getSubscriptionStarts());
         person.setSubscriptionEnds(personRequest.getSubscriptionEnds());
 

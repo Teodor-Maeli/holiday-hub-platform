@@ -1,11 +1,14 @@
 package com.platform.handler.impl;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+
 import com.platform.domain.entity.LegalEntity;
 import com.platform.domain.entity.Person;
 import com.platform.domain.repository.LegalEntityRepository;
 import com.platform.domain.repository.PersonRepository;
-import com.platform.handler.AuthInvocationHandler;
-import com.platform.model.AuthRequestAction;
+import com.platform.exception.SecurityException;
+import com.platform.handler.SecurityInvocationHandler;
+import com.platform.model.RequestAction;
 import com.platform.model.dto.LegalEntityRequest;
 import com.platform.model.dto.PersonRequest;
 import com.platform.model.dto.PlatformServletRequest;
@@ -19,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CustomerUpdateAuthInvocationHandler implements AuthInvocationHandler {
+public class CustomerUpdateHandler implements SecurityInvocationHandler {
 
     private final PersonAssembler personAssembler;
     private final LegalEntityAssembler legalEntityAssembler;
@@ -27,13 +30,20 @@ public class CustomerUpdateAuthInvocationHandler implements AuthInvocationHandle
     private final LegalEntityRepository legalEntityRepository;
 
     @Override
-    public PlatformServletResponse handle(PlatformServletRequest request, AuthRequestAction action) {
+    public PlatformServletResponse handle(PlatformServletRequest request, RequestAction action) {
 
-        return switch (action) {
-            case PERSON_UPDATE -> handlePersonUpdate(request);
-            case ENTITY_UPDATE -> handleEntityUpdate(request);
-            default -> throw new IllegalArgumentException("Could not handle following action : " + action);
-        };
+        switch (action) {
+            case PERSON_UPDATE:
+                return handlePersonUpdate(request);
+            case ENTITY_UPDATE:
+                return handleEntityUpdate(request);
+            default:
+                throw SecurityException.builder()
+                                       .httpStatus(INTERNAL_SERVER_ERROR)
+                                       .action(action)
+                                       .message("Could not handle the requested action!")
+                                       .build();
+        }
     }
 
     private PlatformServletResponse handleEntityUpdate(PlatformServletRequest request) {

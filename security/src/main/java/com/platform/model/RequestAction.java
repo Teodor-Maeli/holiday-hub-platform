@@ -8,7 +8,7 @@ package com.platform.model;
  *
  * <p>Author : Teodor Maeli</p>
  */
-public enum AuthRequestAction {
+public enum RequestAction {
     PERSON_REGISTER,
     PERSON_FETCH,
     PERSON_UPDATE,

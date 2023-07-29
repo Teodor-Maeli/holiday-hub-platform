@@ -1,6 +1,6 @@
 package com.platform.handler;
 
-import com.platform.model.AuthRequestAction;
+import com.platform.model.RequestAction;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
 
@@ -15,7 +15,7 @@ import com.platform.model.dto.PlatformServletResponse;
  *
  * <p>Author : Teodor Maeli</p>
  */
-public interface AuthInvocationHandler {
+public interface SecurityInvocationHandler {
 
-    PlatformServletResponse handle(PlatformServletRequest request, AuthRequestAction action);
+    PlatformServletResponse handle(PlatformServletRequest request, RequestAction action);
 }

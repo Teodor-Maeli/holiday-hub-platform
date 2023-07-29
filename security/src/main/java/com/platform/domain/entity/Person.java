@@ -3,11 +3,9 @@ package com.platform.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
@@ -15,12 +13,12 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class Person extends PlatformClient {
 
-    @Column
+    @Column(name = "GIVEN_NAME")
     private String givenName;
-    @Column
+    @Column(name = "FAMILY_NAME")
     private String familyName;
-    @Column
+    @Column(name = "MIDDLE_NAME")
     private String middleName;
-    @Column
+    @Column(name = "BIRTH_DATE")
     private LocalDate birthDate;
 }

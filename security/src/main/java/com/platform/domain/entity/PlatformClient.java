@@ -73,7 +73,6 @@ public abstract class PlatformClient implements UserDetails {
     @Column(name = "OTHER_COMMENT")
     private String otherComment;
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()

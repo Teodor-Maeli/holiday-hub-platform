@@ -1,10 +1,10 @@
 package com.platform.rest.controller;
 
-import com.platform.aspect.IOLogger;
-import com.platform.aspect.InvocationValidator;
+import com.platform.aspect.annotation.IOLogger;
+import com.platform.aspect.annotation.InvocationValidator;
 import com.platform.handler.ActionHandlerContext;
-import com.platform.model.AuthRequestAction;
 import com.platform.model.AuthHandlerKey;
+import com.platform.model.RequestAction;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class PlatformUserAuthController {
     @InvocationValidator(keys = AuthHandlerKey.CUSTOMER_PERSIST)
     public ResponseEntity<PlatformServletResponse> processRegister(
         @RequestBody PlatformServletRequest request,
-        @RequestParam AuthRequestAction action) {
+        @RequestParam RequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -47,7 +47,7 @@ public class PlatformUserAuthController {
     @InvocationValidator(keys = AuthHandlerKey.CUSTOMER_GET)
     public ResponseEntity<PlatformServletResponse> processGet(
         @RequestBody PlatformServletRequest request,
-        @RequestParam AuthRequestAction action) {
+        @RequestParam RequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -57,7 +57,7 @@ public class PlatformUserAuthController {
     @InvocationValidator(keys = AuthHandlerKey.CUSTOMER_UPDATE)
     public ResponseEntity<PlatformServletResponse> processUpdate(
         @RequestBody PlatformServletRequest request,
-        @RequestParam AuthRequestAction action) {
+        @RequestParam RequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -67,7 +67,7 @@ public class PlatformUserAuthController {
     @InvocationValidator(keys = AuthHandlerKey.CUSTOMER_EVICT)
     public ResponseEntity<PlatformServletResponse> processEvict(
         @RequestBody PlatformServletRequest request,
-        @RequestParam AuthRequestAction action) {
+        @RequestParam RequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }

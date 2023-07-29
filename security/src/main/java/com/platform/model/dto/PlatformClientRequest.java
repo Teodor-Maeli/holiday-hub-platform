@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.platform.aspect.Mask;
+import com.platform.aspect.annotation.Mask;
 import com.platform.model.Role;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -36,8 +36,8 @@ public class PlatformClientRequest {
     @Mask(personal = true)
     private String phone;
     private Set<Role> roles;
-    private Boolean isEnabled;
-    private Boolean isPremiumEnabled;
+    private Boolean enabled;
+    private Boolean premiumEnabled;
     private LocalDateTime subscriptionStarts;
     private LocalDateTime subscriptionEnds;
 }

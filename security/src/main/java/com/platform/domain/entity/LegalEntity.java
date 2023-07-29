@@ -12,10 +12,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class LegalEntity extends PlatformClient {
 
-    @Column
+    @Column(name = "COMPANY_NAME")
     private String companyName;
-    @Column
+    @Column(name = "COMPANY_NUMBER")
     private String companyNumber;
-    @Column
+    @Column(name = "CONTACT_PERSON")
     private String contactPerson;
 }

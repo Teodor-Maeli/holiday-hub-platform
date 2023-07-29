@@ -21,31 +21,31 @@ public enum AuthHandlerKey {
      */
     CUSTOMER_EVICT(
         List.of(
-            AuthRequestAction.PERSON_DELETE,
-            AuthRequestAction.PERSON_SESSION_INVALIDATE,
-            AuthRequestAction.ENTITY_DELETE,
-            AuthRequestAction.ENTITY_SESSION_INVALIDATE,
-            AuthRequestAction.CLIENT_LOGOUT
+            RequestAction.PERSON_DELETE,
+            RequestAction.PERSON_SESSION_INVALIDATE,
+            RequestAction.ENTITY_DELETE,
+            RequestAction.ENTITY_SESSION_INVALIDATE,
+            RequestAction.CLIENT_LOGOUT
         )
     ),
     CUSTOMER_GET(
         List.of(
-            AuthRequestAction.PERSON_FETCH,
-            AuthRequestAction.ENTITY_FETCH
+            RequestAction.PERSON_FETCH,
+            RequestAction.ENTITY_FETCH
         )
     ),
     CUSTOMER_UPDATE(
         List.of(
-            AuthRequestAction.PERSON_UPDATE,
-            AuthRequestAction.ENTITY_UPDATE
+            RequestAction.PERSON_UPDATE,
+            RequestAction.ENTITY_UPDATE
         )
     ),
     CUSTOMER_PERSIST(
         List.of(
-            AuthRequestAction.PERSON_REGISTER,
-            AuthRequestAction.ENTITY_REGISTER,
-            AuthRequestAction.ENTITY_LOGIN,
-            AuthRequestAction.PERSON_LOGIN
+            RequestAction.PERSON_REGISTER,
+            RequestAction.ENTITY_REGISTER,
+            RequestAction.ENTITY_LOGIN,
+            RequestAction.PERSON_LOGIN
         )
     ),
 
@@ -54,31 +54,31 @@ public enum AuthHandlerKey {
      */
     ADMIN_UPDATE(
         List.of(
-            AuthRequestAction.ADMIN_PERSON_UPDATE,
-            AuthRequestAction.ADMIN_ENTITY_UPDATE
+            RequestAction.ADMIN_PERSON_UPDATE,
+            RequestAction.ADMIN_ENTITY_UPDATE
         )
     ),
     ADMIN_EVICT(
         List.of(
-            AuthRequestAction.ADMIN_PERSON_DELETE,
-            AuthRequestAction.ADMIN_ENTITY_DELETE,
-            AuthRequestAction.ADMIN_PERSON_SESSION_INVALIDATE,
-            AuthRequestAction.ADMIN_ENTITY_SESSION_INVALIDATE,
-            AuthRequestAction.CLIENT_LOGOUT
+            RequestAction.ADMIN_PERSON_DELETE,
+            RequestAction.ADMIN_ENTITY_DELETE,
+            RequestAction.ADMIN_PERSON_SESSION_INVALIDATE,
+            RequestAction.ADMIN_ENTITY_SESSION_INVALIDATE,
+            RequestAction.CLIENT_LOGOUT
         )
     ),
     ADMIN_PERSIST(
         List.of(
-            AuthRequestAction.ADMIN_PERSON_REGISTER,
-            AuthRequestAction.ADMIN_ENTITY_REGISTER
+            RequestAction.ADMIN_PERSON_REGISTER,
+            RequestAction.ADMIN_ENTITY_REGISTER
         )
     ),
     ADMIN_GET(
         List.of(
-            AuthRequestAction.ADMIN_PERSON_FETCH,
-            AuthRequestAction.ADMIN_ENTITY_FETCH
+            RequestAction.ADMIN_PERSON_FETCH,
+            RequestAction.ADMIN_ENTITY_FETCH
         )
     );
 
-    private final List<AuthRequestAction> actions;
+    private final List<RequestAction> actions;
 }

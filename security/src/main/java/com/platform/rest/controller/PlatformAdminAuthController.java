@@ -1,10 +1,10 @@
 package com.platform.rest.controller;
 
-import com.platform.aspect.IOLogger;
-import com.platform.aspect.InvocationValidator;
+import com.platform.aspect.annotation.IOLogger;
+import com.platform.aspect.annotation.InvocationValidator;
 import com.platform.handler.ActionHandlerContext;
-import com.platform.model.AuthRequestAction;
 import com.platform.model.AuthHandlerKey;
+import com.platform.model.RequestAction;
 import com.platform.model.dto.PlatformServletRequest;
 import com.platform.model.dto.PlatformServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class PlatformAdminAuthController {
     @InvocationValidator(keys = AuthHandlerKey.ADMIN_PERSIST)
     public ResponseEntity<PlatformServletResponse> processAdminRegister(
         @RequestBody PlatformServletRequest request,
-        @RequestParam AuthRequestAction action) {
+        @RequestParam RequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -48,7 +48,7 @@ public class PlatformAdminAuthController {
     @InvocationValidator(keys = AuthHandlerKey.ADMIN_GET)
     public ResponseEntity<PlatformServletResponse> processAdminGet(
         @RequestBody PlatformServletRequest request,
-        @RequestParam AuthRequestAction action) {
+        @RequestParam RequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -58,7 +58,7 @@ public class PlatformAdminAuthController {
     @InvocationValidator(keys = AuthHandlerKey.ADMIN_UPDATE)
     public ResponseEntity<PlatformServletResponse> processAdminUpdate(
         @RequestBody PlatformServletRequest request,
-        @RequestParam AuthRequestAction action) {
+        @RequestParam RequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }
@@ -68,7 +68,7 @@ public class PlatformAdminAuthController {
     @InvocationValidator(keys = AuthHandlerKey.ADMIN_EVICT)
     public ResponseEntity<PlatformServletResponse> processAdminEvict(
         @RequestBody PlatformServletRequest request,
-        @RequestParam AuthRequestAction action) {
+        @RequestParam RequestAction action) {
         PlatformServletResponse result = context.getHandler(action).handle(request, action);
         return ResponseEntity.ok().body(result);
     }

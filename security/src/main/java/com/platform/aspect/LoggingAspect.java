@@ -1,8 +1,11 @@
-package com.platform.aspect.impl;
+package com.platform.aspect;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.platform.aspect.Mask;
+import com.platform.aspect.annotation.Mask;
+import com.platform.exception.SecurityException;
 import com.platform.model.dto.PlatformClientRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -34,11 +37,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Aspect
 @Component
 @AllArgsConstructor
-public class IOLoggerImpl {
+public class LoggingAspect {
 
     private ObjectMapper mapper;
 
-    @Pointcut("@annotation(com.platform.aspect.IOLogger) && execution(* *(..))")
+    @Pointcut("@annotation(com.platform.aspect.annotation.IOLogger) && execution(* *(..))")
     public void pointCut() {
     }
 
@@ -62,7 +65,7 @@ public class IOLoggerImpl {
     private void log(String format, RequestMapping mapping, Object object) {
         try {
             AnnotationUtils.findAnnotation(PlatformClientRequest.class, Mask.class);
-            log.info(format, mapping.path(), mapping.method(),mapper.writeValueAsString(object));
+            log.info(format, mapping.path(), mapping.method(), mapper.writeValueAsString(object));
         } catch (JsonProcessingException e) {
             log.error("Error while converting", e);
         }
@@ -85,8 +88,11 @@ public class IOLoggerImpl {
 
     private RequestMapping getRequestMapping(Method method) {
         return AnnotatedElementUtils.findAllMergedAnnotations(method, RequestMapping.class)
-            .stream()
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Invalid or missing annotation!"));
+                                    .stream()
+                                    .findFirst()
+                                    .orElseThrow(() -> SecurityException.builder()
+                                                                        .httpStatus(INTERNAL_SERVER_ERROR)
+                                                                        .message("Invalid or missing annotation!")
+                                                                        .build());
     }
 }

@@ -1,7 +1,6 @@
 package com.platform.domain.repository;
 
 import com.platform.domain.entity.LegalEntity;
-import com.platform.domain.entity.Person;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

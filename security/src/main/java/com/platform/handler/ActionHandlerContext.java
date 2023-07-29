@@ -1,15 +1,18 @@
 package com.platform.handler;
 
-import com.platform.handler.impl.AdminEvictAuthInvocationHandler;
-import com.platform.handler.impl.AdminGetAuthInvocationHandler;
-import com.platform.handler.impl.AdminPersistAuthInvocationHandler;
-import com.platform.handler.impl.AdminUpdateAuthInvocationHandler;
-import com.platform.handler.impl.CustomerEvictAuthInvocationHandler;
-import com.platform.handler.impl.CustomerGetAuthInvocationHandler;
-import com.platform.handler.impl.CustomerPersistAuthInvocationHandler;
-import com.platform.handler.impl.CustomerUpdateAuthInvocationHandler;
-import com.platform.model.AuthRequestAction;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
+import com.platform.exception.SecurityException;
+import com.platform.handler.impl.AdminEvictHandler;
+import com.platform.handler.impl.AdminGetHandler;
+import com.platform.handler.impl.AdminPersistHandler;
+import com.platform.handler.impl.AdminUpdateHandler;
+import com.platform.handler.impl.CustomerEvictHandler;
+import com.platform.handler.impl.CustomerGetHandler;
+import com.platform.handler.impl.CustomerPersistHandler;
+import com.platform.handler.impl.CustomerUpdateHandler;
 import com.platform.model.AuthHandlerKey;
+import com.platform.model.RequestAction;
 import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -19,41 +22,43 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 /**
- * Returns requested invocation handler from application context based on action
- * Since 1.0
+ * Returns requested invocation handler from application context based on action Since 1.0
  */
 @Service
 @RequiredArgsConstructor
 public class ActionHandlerContext {
 
     private final ApplicationContext applicationContext;
-    private Map<AuthHandlerKey, Class<? extends AuthInvocationHandler>> handlerContext;
+    private Map<AuthHandlerKey, Class<? extends SecurityInvocationHandler>> handlerContext;
 
 
     @PostConstruct
     private void init() {
         handlerContext = new EnumMap<>(AuthHandlerKey.class);
-        handlerContext.put(AuthHandlerKey.CUSTOMER_EVICT, CustomerEvictAuthInvocationHandler.class);
-        handlerContext.put(AuthHandlerKey.CUSTOMER_PERSIST, CustomerPersistAuthInvocationHandler.class);
-        handlerContext.put(AuthHandlerKey.CUSTOMER_UPDATE, CustomerUpdateAuthInvocationHandler.class);
-        handlerContext.put(AuthHandlerKey.CUSTOMER_GET, CustomerGetAuthInvocationHandler.class);
-        handlerContext.put(AuthHandlerKey.ADMIN_EVICT, AdminEvictAuthInvocationHandler.class);
-        handlerContext.put(AuthHandlerKey.ADMIN_UPDATE, AdminUpdateAuthInvocationHandler.class);
-        handlerContext.put(AuthHandlerKey.ADMIN_GET, AdminGetAuthInvocationHandler.class);
-        handlerContext.put(AuthHandlerKey.ADMIN_PERSIST, AdminPersistAuthInvocationHandler.class);
+        handlerContext.put(AuthHandlerKey.CUSTOMER_EVICT, CustomerEvictHandler.class);
+        handlerContext.put(AuthHandlerKey.CUSTOMER_PERSIST, CustomerPersistHandler.class);
+        handlerContext.put(AuthHandlerKey.CUSTOMER_UPDATE, CustomerUpdateHandler.class);
+        handlerContext.put(AuthHandlerKey.CUSTOMER_GET, CustomerGetHandler.class);
+        handlerContext.put(AuthHandlerKey.ADMIN_EVICT, AdminEvictHandler.class);
+        handlerContext.put(AuthHandlerKey.ADMIN_UPDATE, AdminUpdateHandler.class);
+        handlerContext.put(AuthHandlerKey.ADMIN_GET, AdminGetHandler.class);
+        handlerContext.put(AuthHandlerKey.ADMIN_PERSIST, AdminPersistHandler.class);
     }
 
-    public AuthInvocationHandler getHandler(AuthRequestAction action) {
-        AuthHandlerKey key = getHandlerKeyWithRequestAction(action);
-        Class<? extends AuthInvocationHandler> clazz = handlerContext.get(key);
+    public SecurityInvocationHandler getHandler(RequestAction action) {
+        AuthHandlerKey key = getKeyWithAction(action);
+        Class<? extends SecurityInvocationHandler> clazz = handlerContext.get(key);
         return applicationContext.getBean(clazz);
     }
 
-    private AuthHandlerKey getHandlerKeyWithRequestAction(AuthRequestAction action) {
+    private AuthHandlerKey getKeyWithAction(RequestAction action) {
         return Arrays.stream(AuthHandlerKey.values())
-            .filter(handlerKey -> handlerKey.getActions().contains(action))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException(
-                "No such action supported by Invocation handlers."));
+                     .filter(handlerKey -> handlerKey.getActions().contains(action))
+                     .findFirst()
+                     .orElseThrow(() -> SecurityException.builder()
+                                                         .action(action)
+                                                         .httpStatus(BAD_REQUEST)
+                                                         .message("No such action supported by Invocation handlers.")
+                                                         .build());
     }
 }

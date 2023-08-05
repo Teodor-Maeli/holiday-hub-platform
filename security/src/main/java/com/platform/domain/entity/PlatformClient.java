@@ -37,13 +37,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 public abstract class PlatformClient implements UserDetails {
 
     @Id
-    @Column(name = "ID", updatable = false)
+    @Column(name = "ID", updatable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Column(name = "REGISTERED_DATE", updatable = false)
     @CreatedDate
     private LocalDate registeredDate;
-    @Column(name = "USERNAME", updatable = false)
+    @Column(name = "USERNAME", updatable = false, unique = true)
     private String username;
     @Column(name = "PASSWORD")
     private String password;
@@ -76,8 +76,8 @@ public abstract class PlatformClient implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-            .map(authority -> new SimpleGrantedAuthority(authority.name()))
-            .collect(Collectors.toSet());
+                    .map(authority -> new SimpleGrantedAuthority(authority.name()))
+                    .collect(Collectors.toSet());
     }
 
     @Override

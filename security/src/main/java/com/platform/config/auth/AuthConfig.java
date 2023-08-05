@@ -35,7 +35,7 @@ public class AuthConfig {
         return (RequestAction.PERSON_REGISTER.name().equalsIgnoreCase(action)
             || RequestAction.PERSON_LOGIN.name().equalsIgnoreCase(action)
             || RequestAction.ENTITY_LOGIN.name().equalsIgnoreCase(action)
-            || RequestAction.CLIENT_LOGOUT.name().equalsIgnoreCase(action));
+            || RequestAction.LOGOUT.name().equalsIgnoreCase(action));
     };
 
     @Bean

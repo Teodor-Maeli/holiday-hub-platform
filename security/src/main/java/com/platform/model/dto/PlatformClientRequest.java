@@ -29,6 +29,7 @@ import lombok.NoArgsConstructor;
     @JsonSubTypes.Type(LegalEntityRequest.class)})
 public class PlatformClientRequest {
 
+    private String username;
     @Mask(sensitive = true)
     private String password;
     @Mask(personal = true)

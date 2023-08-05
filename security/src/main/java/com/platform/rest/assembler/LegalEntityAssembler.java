@@ -46,7 +46,7 @@ public class LegalEntityAssembler implements Assembler {
         legalEntity.setSubscriptionStarts(legalEntityRequest.getSubscriptionStarts());
         legalEntity.setSubscriptionEnds(legalEntityRequest.getSubscriptionEnds());
         legalEntity.setPremium(legalEntityRequest.getPremiumEnabled());
-        legalEntity.setUsername(legalEntityRequest.getCompanyUserName());
+        legalEntity.setUsername(legalEntityRequest.getUsername());
         legalEntity.setPassword(encoder.encode(legalEntityRequest.getPassword()));
         legalEntity.setRoles(legalEntityRequest.getRoles());
         legalEntity.setEnabled(legalEntityRequest.getEnabled());

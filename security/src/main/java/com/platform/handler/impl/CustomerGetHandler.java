@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CustomerGetHandler implements SecurityInvocationHandler {
+public class CustomerGetHandler implements SecurityInvocationHandler<PlatformServletResponse> {
 
     private final PersonAssembler personAssembler;
     private final LegalEntityAssembler legalEntityAssembler;
@@ -32,10 +32,14 @@ public class CustomerGetHandler implements SecurityInvocationHandler {
             default:
                 throw SecurityException.builder()
                                        .httpStatus(INTERNAL_SERVER_ERROR)
-                                       .action(action)
                                        .message("Could not handle the requested action!")
                                        .build();
         }
+    }
+
+    @Override
+    public void validate(PlatformServletRequest request) {
+
     }
 
     private PlatformServletResponse handlePersonFetch(PlatformServletRequest request) {

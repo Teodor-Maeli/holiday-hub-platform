@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 public class ActionHandlerContext {
 
     private final ApplicationContext applicationContext;
-    private Map<AuthHandlerKey, Class<? extends SecurityInvocationHandler>> handlerContext;
+    private Map<AuthHandlerKey, Class<? extends SecurityInvocationHandler<?>>> handlerContext;
 
 
     @PostConstruct
@@ -45,9 +45,8 @@ public class ActionHandlerContext {
         handlerContext.put(AuthHandlerKey.ADMIN_PERSIST, AdminPersistHandler.class);
     }
 
-    public SecurityInvocationHandler getHandler(RequestAction action) {
-        AuthHandlerKey key = getKeyWithAction(action);
-        Class<? extends SecurityInvocationHandler> clazz = handlerContext.get(key);
+    public SecurityInvocationHandler<?> getHandler(RequestAction action) {
+        Class<? extends SecurityInvocationHandler<?>> clazz = handlerContext.get(getKeyWithAction(action));
         return applicationContext.getBean(clazz);
     }
 
@@ -56,7 +55,6 @@ public class ActionHandlerContext {
                      .filter(handlerKey -> handlerKey.getActions().contains(action))
                      .findFirst()
                      .orElseThrow(() -> SecurityException.builder()
-                                                         .action(action)
                                                          .httpStatus(BAD_REQUEST)
                                                          .message("No such action supported by Invocation handlers.")
                                                          .build());

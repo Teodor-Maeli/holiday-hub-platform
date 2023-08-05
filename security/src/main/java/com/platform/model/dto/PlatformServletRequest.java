@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class PlatformServletRequest {
 
-    PlatformClientRequest platformClientRequest;
+    private PlatformClientRequest platformClientRequest;
 }

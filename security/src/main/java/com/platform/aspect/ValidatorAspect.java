@@ -47,7 +47,6 @@ public class ValidatorAspect {
                 return;
             } else {
                 throw SecurityException.builder()
-                                       .action(inputAction)
                                        .httpStatus(BAD_REQUEST)
                                        .message("Action invalid or not configured with handler keys!")
                                        .build();

@@ -1,12 +1,19 @@
 package com.platform.rest.controller;
 
+import static com.platform.model.AuthHandlerKey.ADMIN_EVICT;
+import static com.platform.model.AuthHandlerKey.ADMIN_GET;
+import static com.platform.model.AuthHandlerKey.ADMIN_PERSIST;
+import static com.platform.model.AuthHandlerKey.ADMIN_UPDATE;
+import static com.platform.model.AuthHandlerKey.CUSTOMER_EVICT;
+import static com.platform.model.AuthHandlerKey.CUSTOMER_GET;
+import static com.platform.model.AuthHandlerKey.CUSTOMER_PERSIST;
+import static com.platform.model.AuthHandlerKey.CUSTOMER_UPDATE;
+
 import com.platform.aspect.annotation.IOLogger;
 import com.platform.aspect.annotation.InvocationValidator;
 import com.platform.handler.ActionHandlerContext;
-import com.platform.model.AuthHandlerKey;
 import com.platform.model.RequestAction;
 import com.platform.model.dto.PlatformServletRequest;
-import com.platform.model.dto.PlatformServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,41 +41,37 @@ public class PlatformUserAuthController {
 
     @IOLogger
     @PostMapping("/persist")
-    @InvocationValidator(keys = AuthHandlerKey.CUSTOMER_PERSIST)
-    public ResponseEntity<PlatformServletResponse> processRegister(
+    @InvocationValidator(keys = {CUSTOMER_PERSIST, ADMIN_PERSIST})
+    public ResponseEntity<Object> processRegister(
         @RequestBody PlatformServletRequest request,
         @RequestParam RequestAction action) {
-        PlatformServletResponse result = context.getHandler(action).handle(request, action);
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok().body(context.getHandler(action).handle(request, action));
     }
 
     @IOLogger
     @GetMapping("/get")
-    @InvocationValidator(keys = AuthHandlerKey.CUSTOMER_GET)
-    public ResponseEntity<PlatformServletResponse> processGet(
+    @InvocationValidator(keys = {CUSTOMER_GET, ADMIN_GET})
+    public ResponseEntity<Object> processGet(
         @RequestBody PlatformServletRequest request,
         @RequestParam RequestAction action) {
-        PlatformServletResponse result = context.getHandler(action).handle(request, action);
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok().body(context.getHandler(action).handle(request, action));
     }
 
     @IOLogger
     @PostMapping("/update")
-    @InvocationValidator(keys = AuthHandlerKey.CUSTOMER_UPDATE)
-    public ResponseEntity<PlatformServletResponse> processUpdate(
+    @InvocationValidator(keys = {CUSTOMER_UPDATE, ADMIN_UPDATE})
+    public ResponseEntity<Object> processUpdate(
         @RequestBody PlatformServletRequest request,
         @RequestParam RequestAction action) {
-        PlatformServletResponse result = context.getHandler(action).handle(request, action);
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok().body(context.getHandler(action).handle(request, action));
     }
 
     @IOLogger
     @DeleteMapping("/evict")
-    @InvocationValidator(keys = AuthHandlerKey.CUSTOMER_EVICT)
-    public ResponseEntity<PlatformServletResponse> processEvict(
+    @InvocationValidator(keys = {CUSTOMER_EVICT, ADMIN_EVICT})
+    public ResponseEntity<Object> processEvict(
         @RequestBody PlatformServletRequest request,
         @RequestParam RequestAction action) {
-        PlatformServletResponse result = context.getHandler(action).handle(request, action);
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok().body(context.getHandler(action).handle(request, action));
     }
 }

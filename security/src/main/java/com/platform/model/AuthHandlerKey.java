@@ -22,10 +22,10 @@ public enum AuthHandlerKey {
     CUSTOMER_EVICT(
         List.of(
             RequestAction.PERSON_DELETE,
-            RequestAction.PERSON_SESSION_INVALIDATE,
+            RequestAction.SESSION_INVALIDATE,
             RequestAction.ENTITY_DELETE,
             RequestAction.ENTITY_SESSION_INVALIDATE,
-            RequestAction.CLIENT_LOGOUT
+            RequestAction.LOGOUT
         )
     ),
     CUSTOMER_GET(
@@ -62,9 +62,8 @@ public enum AuthHandlerKey {
         List.of(
             RequestAction.ADMIN_PERSON_DELETE,
             RequestAction.ADMIN_ENTITY_DELETE,
-            RequestAction.ADMIN_PERSON_SESSION_INVALIDATE,
-            RequestAction.ADMIN_ENTITY_SESSION_INVALIDATE,
-            RequestAction.CLIENT_LOGOUT
+            RequestAction.ADMIN_SESSION_INVALIDATE,
+            RequestAction.LOGOUT
         )
     ),
     ADMIN_PERSIST(

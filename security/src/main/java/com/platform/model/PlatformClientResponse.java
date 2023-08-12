@@ -2,21 +2,8 @@ package com.platform.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.platform.aspect.annotation.Mask;
-import com.platform.domain.entity.ClientSession;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
-import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * 27.05.2023.
@@ -33,9 +20,7 @@ public class PlatformClientResponse {
 
     private Long id;
     private String username;
-    @Mask
     private String emailAddress;
-    @Mask
     private String phoneNumber;
     private Boolean enabled;
     private Boolean premium;

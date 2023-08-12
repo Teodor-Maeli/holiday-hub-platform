@@ -2,15 +2,10 @@ package com.platform.aspect;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.platform.aspect.annotation.Mask;
 import com.platform.exception.BackendException;
-import java.lang.reflect.Field;
+import com.platform.util.JsonMaskUtils;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -40,12 +35,6 @@ public class LoggingAspect {
 
     private static final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
 
-    private final ObjectMapper mapper;
-
-    public LoggingAspect(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
-
     @Pointcut("@annotation(com.platform.aspect.annotation.IOLogger) && execution(* *(..))")
     public void pointCut() {
     }
@@ -54,38 +43,22 @@ public class LoggingAspect {
     public void logInput(JoinPoint joinPoint) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         RequestMapping mapping = getRequestMapping(method);
-        Map<String, Object> parameters = getParameters(joinPoint);
+        String masked = JsonMaskUtils.mask(getParameters(joinPoint));
 
-        log("==Input==> path(s): {}, method(s): {}, arguments: {}", mapping, parameters);
+        log("==Input==> path(s): {}, method(s): {}, arguments: {}", mapping, masked);
     }
 
-    @AfterReturning(pointcut = "pointCut()", returning = "object")
-    public void logOutput(JoinPoint joinPoint, Object object) {
+    @AfterReturning(pointcut = "pointCut()", returning = "o")
+    public void logOutput(JoinPoint joinPoint, Object o) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         RequestMapping mapping = getRequestMapping(method);
+        String masked = JsonMaskUtils.mask(o);
 
-        log("<==Output== path(s): {}, method(s): {}, returning: {}", mapping, object);
+        log("<==Output== path(s): {}, method(s): {}, returning: {}", mapping, masked);
     }
 
-    private void log(String format, RequestMapping mapping, Object object) {
-        try {
-            String value = mapper.writeValueAsString(object);
-            log.info(format, mapping.path(), mapping.method(), value);
-        } catch (JsonProcessingException e) {
-            log.error("Error while converting", e);
-        }
-    }
-
-    private List<String> getMaskedFields(JoinPoint joinPoint) {
-        return Arrays.stream(joinPoint.getArgs().getClass().getDeclaredFields())
-                     .filter(this::constainsMask)
-                     .map(Field::getName)
-                     .toList();
-    }
-
-    private boolean constainsMask(Field field) {
-        return Arrays.stream(field.getDeclaredAnnotations())
-                     .anyMatch(Mask.class::isInstance);
+    private void log(String format, RequestMapping mapping, String value) {
+        log.info(format, mapping.path(), mapping.method(), value);
     }
 
     private Map<String, Object> getParameters(JoinPoint joinPoint) {
@@ -101,9 +74,11 @@ public class LoggingAspect {
     }
 
     private RequestMapping getRequestMapping(Method method) {
-        return AnnotatedElementUtils.findAllMergedAnnotations(method, RequestMapping.class)
-                                    .stream()
-                                    .findFirst()
-                                    .orElseThrow(() -> new BackendException("Invalid or missing annotation!", INTERNAL_SERVER_ERROR));
+        return AnnotatedElementUtils
+            .findAllMergedAnnotations(method, RequestMapping.class)
+            .stream()
+            .findFirst()
+            .orElseThrow(() -> new BackendException("Invalid or missing annotation!", INTERNAL_SERVER_ERROR));
+
     }
 }

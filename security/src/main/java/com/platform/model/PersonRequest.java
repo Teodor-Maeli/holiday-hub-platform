@@ -1,16 +1,12 @@
 package com.platform.model;
 
-import com.platform.aspect.annotation.Mask;
 import java.time.LocalDate;
 
 
 public class PersonRequest extends PlatformClientRequest {
 
-    @Mask
     private String familyName;
-    @Mask
     private String givenName;
-    @Mask
     private String middleName;
     private LocalDate birthDate;
 

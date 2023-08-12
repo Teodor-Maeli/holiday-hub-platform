@@ -5,13 +5,13 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.aspect.annotation.Mask;
-import com.platform.exception.SecurityException;
-import com.platform.model.dto.PlatformClientRequest;
+import com.platform.exception.BackendException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,8 +19,9 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -33,13 +34,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * <p>Author : Teodor Maeli</p>
  */
 
-@Slf4j
 @Aspect
 @Component
-@AllArgsConstructor
 public class LoggingAspect {
 
-    private ObjectMapper mapper;
+    private static final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
+
+    private final ObjectMapper mapper;
+
+    public LoggingAspect(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Pointcut("@annotation(com.platform.aspect.annotation.IOLogger) && execution(* *(..))")
     public void pointCut() {
@@ -64,19 +69,28 @@ public class LoggingAspect {
 
     private void log(String format, RequestMapping mapping, Object object) {
         try {
-            AnnotationUtils.findAnnotation(PlatformClientRequest.class, Mask.class);
-            log.info(format, mapping.path(), mapping.method(), mapper.writeValueAsString(object));
+            String value = mapper.writeValueAsString(object);
+            log.info(format, mapping.path(), mapping.method(), value);
         } catch (JsonProcessingException e) {
             log.error("Error while converting", e);
         }
     }
 
+    private List<String> getMaskedFields(JoinPoint joinPoint) {
+        return Arrays.stream(joinPoint.getArgs().getClass().getDeclaredFields())
+                     .filter(this::constainsMask)
+                     .map(Field::getName)
+                     .toList();
+    }
+
+    private boolean constainsMask(Field field) {
+        return Arrays.stream(field.getDeclaredAnnotations())
+                     .anyMatch(Mask.class::isInstance);
+    }
 
     private Map<String, Object> getParameters(JoinPoint joinPoint) {
         CodeSignature signature = (CodeSignature) joinPoint.getSignature();
-
         HashMap<String, Object> parameters = new HashMap<>();
-
         String[] parameterNames = signature.getParameterNames();
 
         for (int i = 0; i < parameterNames.length; i++) {
@@ -90,9 +104,6 @@ public class LoggingAspect {
         return AnnotatedElementUtils.findAllMergedAnnotations(method, RequestMapping.class)
                                     .stream()
                                     .findFirst()
-                                    .orElseThrow(() -> SecurityException.builder()
-                                                                        .httpStatus(INTERNAL_SERVER_ERROR)
-                                                                        .message("Invalid or missing annotation!")
-                                                                        .build());
+                                    .orElseThrow(() -> new BackendException("Invalid or missing annotation!", INTERNAL_SERVER_ERROR));
     }
 }

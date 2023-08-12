@@ -1,21 +1,15 @@
-package com.platform.domain.entity;
+package com.platform.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "PERSON")
-public class Person extends PlatformClient {
+@JsonInclude(Include.NON_NULL)
+public class PersonResponse extends PlatformClientResponse {
 
-    @Column(name = "GIVEN_NAME")
-    private String givenName;
-    @Column(name = "FAMILY_NAME")
     private String familyName;
-    @Column(name = "MIDDLE_NAME")
+    private String givenName;
     private String middleName;
-    @Column(name = "BIRTH_DATE")
     private LocalDate birthDate;
 
     public String getGivenName() {

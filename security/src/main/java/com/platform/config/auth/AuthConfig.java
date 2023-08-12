@@ -1,7 +1,5 @@
 package com.platform.config.auth;
 
-import com.platform.model.RequestAction;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,19 +21,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
 public class AuthConfig {
 
     public static final String ACTION = "action";
 
     private SessionRegistry sessionRegistry;
     private static final RequestMatcher gatewayMatcher = (request) -> {
-        String action = request.getParameter(ACTION);
-
-        return (RequestAction.PERSON_REGISTER.name().equalsIgnoreCase(action)
-            || RequestAction.PERSON_LOGIN.name().equalsIgnoreCase(action)
-            || RequestAction.ENTITY_LOGIN.name().equalsIgnoreCase(action)
-            || RequestAction.LOGOUT.name().equalsIgnoreCase(action));
+        //TODO improve the matcher!
+        return true;
     };
 
     @Bean

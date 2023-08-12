@@ -1,30 +1,18 @@
-package com.platform.domain.entity;
+package com.platform.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.platform.aspect.annotation.Mask;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "PERSON")
-public class Person extends PlatformClient {
 
-    @Column(name = "GIVEN_NAME")
-    private String givenName;
-    @Column(name = "FAMILY_NAME")
+public class PersonRequest extends PlatformClientRequest {
+
+    @Mask
     private String familyName;
-    @Column(name = "MIDDLE_NAME")
+    @Mask
+    private String givenName;
+    @Mask
     private String middleName;
-    @Column(name = "BIRTH_DATE")
     private LocalDate birthDate;
-
-    public String getGivenName() {
-        return givenName;
-    }
-
-    public void setGivenName(String givenName) {
-        this.givenName = givenName;
-    }
 
     public String getFamilyName() {
         return familyName;
@@ -32,6 +20,14 @@ public class Person extends PlatformClient {
 
     public void setFamilyName(String familyName) {
         this.familyName = familyName;
+    }
+
+    public String getGivenName() {
+        return givenName;
+    }
+
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
     }
 
     public String getMiddleName() {

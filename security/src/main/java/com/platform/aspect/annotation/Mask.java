@@ -8,8 +8,4 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Mask {
-
-    boolean personal() default false;
-
-    boolean sensitive() default false;
 }

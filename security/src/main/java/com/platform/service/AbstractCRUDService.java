@@ -28,7 +28,7 @@ public abstract class AbstractCRUDService
      * @param repository Repository used to perform generic operations.
      * @param encoder    Used to encode sensitive information.
      */
-    public AbstractCRUDService(R repository, PasswordEncoder encoder) {
+    protected AbstractCRUDService(R repository, PasswordEncoder encoder) {
         this.repository = repository;
         this.encoder = encoder;
     }

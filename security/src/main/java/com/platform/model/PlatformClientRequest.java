@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 /**
  * 27.05.2023.
  *
- * <p>Base dto request class.</p>
+ * <p>Base request class.</p>
  * <p>
  * Since 1.0
  *

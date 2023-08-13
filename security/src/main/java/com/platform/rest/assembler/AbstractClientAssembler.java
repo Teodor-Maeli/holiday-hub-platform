@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @author Teodor Maeli.
  */
 public abstract class AbstractClientAssembler
-    <RS extends PlatformClientResponse, RQ extends PlatformClientRequest, PC extends PlatformClient> {
+    <RS extends PlatformClientResponse, RQ extends PlatformClientRequest, E extends PlatformClient> {
 
     private final PasswordEncoder encoder;
 
@@ -34,11 +34,11 @@ public abstract class AbstractClientAssembler
      * @return {@link PlatformClientResponse} - after successful assembly.
      * @throws BackendException - if the assembly has failed.
      */
-    public RS assembly(PC entity) {
+    public RS assembly(E entity) {
         try {
             return assemblyInternal(entity, initResponse());
         } catch (RuntimeException e) {
-            throw new BackendException(e, "Failed to assembly platform entity to  platform response!", INTERNAL_SERVER_ERROR);
+            throw new BackendException("Failed to assembly platform entity to  platform response!", INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -49,11 +49,11 @@ public abstract class AbstractClientAssembler
      * @return {@link PlatformClient} - after successful assembly.
      * @throws BackendException - if the assembly has failed.
      */
-    public PC assembly(RQ request) {
+    public E assembly(RQ request) {
         try {
             return assemblyInternal(request, initEntity());
         } catch (RuntimeException e) {
-            throw new BackendException(e, "Failed to assembly platform request to platform client!", INTERNAL_SERVER_ERROR);
+            throw new BackendException("Failed to assembly platform request to platform client!", INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -80,7 +80,7 @@ public abstract class AbstractClientAssembler
      *
      * @return {@link PlatformClient} after invocation.
      */
-    protected abstract PC initEntity();
+    protected abstract E initEntity();
 
     /**
      * Used to assembly common fields, package-private access. Override if behavior not satisfying.
@@ -89,7 +89,7 @@ public abstract class AbstractClientAssembler
      * @param response - The already initialized response object that will undergo internal assembly.
      * @return {@link PlatformClientResponse} - after successful post assembly.
      */
-    RS assemblyInternal(PC entity, RS response) {
+    RS assemblyInternal(E entity, RS response) {
         String[] toBeIgnored = getIgnoreProperties();
         BeanUtils.copyProperties(entity, response, toBeIgnored);
         return response;
@@ -102,7 +102,7 @@ public abstract class AbstractClientAssembler
      * @param entity  - The already initialized entity object that will undergo internal assembly.
      * @return {@link PlatformClient} after successful post assembly.
      */
-    PC assemblyInternal(RQ request, PC entity) {
+    E assemblyInternal(RQ request, E entity) {
         String[] toBeIgnored = getIgnoreProperties();
         BeanUtils.copyProperties(request, entity, toBeIgnored);
 

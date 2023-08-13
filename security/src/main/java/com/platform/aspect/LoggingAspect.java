@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Component
 public class LoggingAspect {
 
-    private static final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingAspect.class);
 
     @Pointcut("@annotation(com.platform.aspect.annotation.IOLogger) && execution(* *(..))")
     public void pointCut() {
@@ -58,7 +58,7 @@ public class LoggingAspect {
     }
 
     private void log(String format, RequestMapping mapping, String value) {
-        log.info(format, mapping.path(), mapping.method(), value);
+        LOGGER.info(format, mapping.path(), mapping.method(), value);
     }
 
     private Map<String, Object> getParameters(JoinPoint joinPoint) {
@@ -79,6 +79,5 @@ public class LoggingAspect {
             .stream()
             .findFirst()
             .orElseThrow(() -> new BackendException("Invalid or missing annotation!", INTERNAL_SERVER_ERROR));
-
     }
 }

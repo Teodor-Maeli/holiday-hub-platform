@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * 27.05.2023.
  *
- * <p>Base dto response class.</p>
+ * <p>Base response class.</p>
  *
  * Since 1.0
  *

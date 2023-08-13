@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 
 public class JsonMaskUtils {
 
-    private static final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-    private static final Logger log = LoggerFactory.getLogger(JsonMaskUtils.class);
+    private static final ObjectMapper MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonMaskUtils.class);
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?<=password\" : \")(.*?)(?=\")");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("(?<=emailAddress\" : \")(.*?)(?=\")");
     private static final Pattern PHONE_PATTERN = Pattern.compile("(?<=password\" : \")(.*?)(?=\")");
@@ -24,8 +24,7 @@ public class JsonMaskUtils {
     }
 
     public static String mask(Object o) {
-        return Optional
-            .ofNullable(toJson(o))
+        return toJson(o)
             .map(value -> PASSWORD_PATTERN.matcher(value).replaceAll(MASK))
             .map(value -> EMAIL_PATTERN.matcher(value).replaceAll(MASK))
             .map(value -> PHONE_PATTERN.matcher(value).replaceAll(MASK))
@@ -35,12 +34,12 @@ public class JsonMaskUtils {
             .orElse(null);
     }
 
-    private static String toJson(Object o) {
+    private static Optional<String> toJson(Object o) {
         try {
-            return mapper.writeValueAsString(o);
+            return Optional.ofNullable(MAPPER.writeValueAsString(o));
         } catch (JsonProcessingException e) {
-            log.error("JsonMaskUtil failed to write as string!", e);
-            return null;
+            LOGGER.error("JsonMaskUtil failed to write as string!", e);
+            return Optional.empty();
         }
     }
 }

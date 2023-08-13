@@ -11,5 +11,5 @@ package com.platform.model;
 public enum Role {
     ADMIN,
     PERSON,
-    LEGAL_ENTITY
+    COMPANY
 }

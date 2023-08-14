@@ -1,4 +1,4 @@
 rootProject.name = 'platform'
-include 'security'
-include 'customers'
+include 'customers-auth'
+include 'customers-resources'
 

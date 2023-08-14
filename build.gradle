@@ -33,7 +33,7 @@ allprojects {
     }
 }
 
-project("security") {
+project("customers-auth") {
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'org.springframework.boot:spring-boot-starter-aop'
@@ -41,8 +41,8 @@ project("security") {
 }
 
 dependencies {
-    implementation project(':security')
-    implementation project(':customers')
+    implementation project(':customers-auth')
+    implementation project(':customers-resources')
 }
 
 tasks.named('test') {

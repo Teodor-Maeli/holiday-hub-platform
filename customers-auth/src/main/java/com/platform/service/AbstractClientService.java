@@ -6,7 +6,10 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import com.platform.domain.entity.Client;
 import com.platform.domain.repository.BaseClientRepository;
 import com.platform.exception.BackendException;
+import jakarta.transaction.Transactional;
 import java.util.Optional;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -17,11 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @param <R>  Repository
  */
 public abstract class AbstractClientService
-    <E extends Client, ID, R extends BaseClientRepository<E, ID>> {
+    <E extends Client, ID, R extends BaseClientRepository<E, ID>> implements UserDetailsService {
 
     private final R repository;
     private final PasswordEncoder encoder;
-
 
     /**
      * Ensures dependencies are properly initialized.
@@ -32,6 +34,25 @@ public abstract class AbstractClientService
     protected AbstractClientService(R repository, PasswordEncoder encoder) {
         this.repository = repository;
         this.encoder = encoder;
+    }
+
+    /**
+     * Use to authenticate a user against the server.
+     *
+     * @param username the username identifying the user whose data is required.
+     * @return {@link UserDetails} The user details required in order to perform successful authentication.
+     * @throws BackendException if failed to load user with HTTP status 500 - Internal Server Error.
+     */
+    @Override
+    @Transactional
+    public UserDetails loadUserByUsername(String username) {
+        Optional<E> user = repository.findByUserName(username);
+
+        if (user.isPresent()) {
+            return user.get();
+        }
+
+        throw new BackendException("Failed to LOAD user, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
     }
 
     /**
@@ -50,41 +71,14 @@ public abstract class AbstractClientService
     }
 
     /**
-     * Fetches customer accounts from database.
-     *
-     * @param username By Identifier by which customer account has been retrieved from database.
-     * @return {@link Client} The retrieved customer account.
-     * @throws BackendException with 400 BAD REQUEST if fail to change password or 500 INTERNAL SERVER ERROR if another error occurs.
-     */
-    public E getByUsername(String username) {
-        Optional<E> entity;
-
-        try {
-            entity = repository.findByUserName(username);
-            if (entity.isPresent()) {
-                return entity.get();
-            }
-        } catch (RuntimeException e) {
-            throw new BackendException("Failed to RETRIEVE, USERNAME: %s".formatted(username), INTERNAL_SERVER_ERROR, e);
-        }
-        throw new BackendException("USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
-    }
-
-
-    /**
      * Deletes permanently customer account from the database.
      *
      * @param username Identifier by which customer account has been deleted from database.
      */
     public void delete(String username) {
-        try {
-            if (repository.deleteByUserName(username) > 0) {
-                return;
-            }
-        } catch (RuntimeException e) {
-            throw new BackendException("Failed to DELETE, USERNAME: %s".formatted(username), INTERNAL_SERVER_ERROR, e);
+        if ((repository.deleteByUserName(username) <= 0)) {
+            throw new BackendException("Failed to DELETE, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
         }
-        throw new BackendException("Failed to DELETE, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
     }
 
 

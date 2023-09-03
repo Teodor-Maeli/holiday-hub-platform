@@ -5,19 +5,23 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,6 +36,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@EntityListeners(AuditingEntityListener.class)
 public abstract class Client implements UserDetails {
 
     @Id
@@ -48,18 +53,15 @@ public abstract class Client implements UserDetails {
     private String emailAddress;
     @Column(name = "ENABLED")
     private Boolean enabled;
-    @Column(name = "PREMIUM")
-    private Boolean premium;
     @Column(name = "REGISTERED_DATE", updatable = false)
-    @CreationTimestamp
+    @CreatedDate
     private LocalDateTime registeredDate;
-    @Column(name = "SUBSCRIPTION_STARTS")
-    private LocalDateTime subscriptionStarts;
-    @Column(name = "SUBSCRIPTION_ENDS")
-    private LocalDateTime subscriptionEnds;
-    @PrimaryKeyJoinColumn(name = "SESSION")
-    @OneToOne(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private ClientSession session;
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+    private List<Session> sessions;
+    @PrimaryKeyJoinColumn(name = "SUBSCRIPTION")
+    @OneToOne(mappedBy = "client", fetch = FetchType.LAZY)
+    private Subscription subscription;
+
 
     @Column(name = "ROLES")
     @ElementCollection(targetClass = Role.class, fetch = FetchType.LAZY)
@@ -68,7 +70,7 @@ public abstract class Client implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                    .map(authority -> new SimpleGrantedAuthority(authority.name()))
+                    .map(role -> new SimpleGrantedAuthority(role.name()))
                     .collect(Collectors.toSet());
     }
 
@@ -142,30 +144,6 @@ public abstract class Client implements UserDetails {
         this.roles = roles;
     }
 
-    public Boolean getPremium() {
-        return premium;
-    }
-
-    public void setPremium(Boolean premium) {
-        this.premium = premium;
-    }
-
-    public LocalDateTime getSubscriptionStarts() {
-        return subscriptionStarts;
-    }
-
-    public void setSubscriptionStarts(LocalDateTime subscriptionStarts) {
-        this.subscriptionStarts = subscriptionStarts;
-    }
-
-    public LocalDateTime getSubscriptionEnds() {
-        return subscriptionEnds;
-    }
-
-    public void setSubscriptionEnds(LocalDateTime subscriptionEnds) {
-        this.subscriptionEnds = subscriptionEnds;
-    }
-
     public String getEmailAddress() {
         return emailAddress;
     }
@@ -182,11 +160,19 @@ public abstract class Client implements UserDetails {
         this.phoneNumber = phoneNumber;
     }
 
-    public ClientSession getSession() {
-        return session;
+    public List<Session> getSessions() {
+        return sessions;
     }
 
-    public void setSession(ClientSession session) {
-        this.session = session;
+    public void setSessions(List<Session> sessions) {
+        this.sessions = sessions;
+    }
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
     }
 }

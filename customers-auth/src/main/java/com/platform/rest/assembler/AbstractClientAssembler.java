@@ -57,51 +57,22 @@ public abstract class AbstractClientAssembler
         }
     }
 
-    /**
-     * Used to get properties that needs to be ignored per subclass.
-     *
-     * @return {@link String[]} after invocation.
-     */
     protected String[] getIgnoreProperties() {
-        return new String[]{
-            "password"
-        };
+        return new String[]{"password"};
     }
 
-    /**
-     * Used to initialize new response instance.
-     *
-     * @return {@link ClientResponse} after invocation.
-     */
     protected abstract RS initResponse();
 
-    /**
-     * Used to initialize new entity instance.
-     *
-     * @return {@link Client} after invocation.
-     */
     protected abstract E initEntity();
 
-    /**
-     * Used to assembly common fields, package-private access. Override if behavior not satisfying.
-     *
-     * @param entity   - Contains data that will be assembled as response.
-     * @param response - The already initialized response object that will undergo internal assembly.
-     * @return {@link ClientResponse} - after successful post assembly.
-     */
     RS assemblyInternal(E entity, RS response) {
         String[] toBeIgnored = getIgnoreProperties();
         BeanUtils.copyProperties(entity, response, toBeIgnored);
+
         return response;
     }
 
-    /**
-     * Used to assembly common fields, package-private access. Override if behavior not satisfying.
-     *
-     * @param request - Contains data that will be assembled as entity.
-     * @param entity  - The already initialized entity object that will undergo internal assembly.
-     * @return {@link Client} after successful post assembly.
-     */
+
     E assemblyInternal(RQ request, E entity) {
         String[] toBeIgnored = getIgnoreProperties();
         BeanUtils.copyProperties(request, entity, toBeIgnored);

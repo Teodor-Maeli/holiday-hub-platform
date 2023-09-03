@@ -50,7 +50,7 @@ public class PersonController {
     @IOLogger
     @GetMapping(path = "/get/{username}")
     public ResponseEntity<PersonResponse> getByUsername(@PathVariable("username") String username) {
-        Person entity = service.getByUsername(username);
+        Person entity = (Person) service.loadUserByUsername(username);
         return ResponseEntity
             .status(OK)
             .body(assembler.assembly(entity));

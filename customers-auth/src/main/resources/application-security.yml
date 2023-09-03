@@ -13,4 +13,14 @@ spring:
     show-sql: true
     generate-ddl: true
     open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+logging:
+  level:
+    org:
+      springframework:
+        jdbc:
+          core: TRACE
+
 

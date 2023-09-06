@@ -2,7 +2,6 @@ package com.platform.model;
 
 import java.time.LocalDate;
 
-
 public class PersonRequest extends ClientRequest {
 
     private String familyName;

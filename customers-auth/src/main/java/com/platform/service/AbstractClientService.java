@@ -6,7 +6,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import com.platform.domain.entity.Client;
 import com.platform.domain.repository.BaseClientRepository;
 import com.platform.exception.BackendException;
-import jakarta.transaction.Transactional;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,7 +43,6 @@ public abstract class AbstractClientService
      * @throws BackendException if failed to load user with HTTP status 500 - Internal Server Error.
      */
     @Override
-    @Transactional
     public UserDetails loadUserByUsername(String username) {
         Optional<E> user = repository.findByUserName(username);
 

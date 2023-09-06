@@ -11,7 +11,7 @@ import java.util.Set;
  * 27.05.2023.
  *
  * <p>Base response class.</p>
- *
+ * <p>
  * Since 1.0
  *
  * <p>Author : Teodor Maeli</p>

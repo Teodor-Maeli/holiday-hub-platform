@@ -11,6 +11,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,44 +24,50 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * 10.06.2023.
  *
- * <p>Configuration of Spring security.</p>
- * Since 1.0
+ * <p>Configuration of Spring security. Since 1.0
  *
- * <p>Author : Teodor Maeli</p>
+ * <p>Author : Teodor Maeli
  */
 @Configuration
 @EnableWebSecurity
 public class AuthConfig {
 
-    private static final RequestMatcher registerMatcher = request -> request.getRequestURI().contains("/register");
+    private static final RequestMatcher registerMatcher =
+        request -> request.getRequestURI().contains("/register");
 
     @Bean
     @DependsOn({"personService", "companyService", "passwordEncoder"})
-    public AuthenticationManager authenticationManager(HttpSecurity http,
-                                                       PersonService personService,
-                                                       CompanyService companyService,
-                                                       PasswordEncoder encoder) throws Exception {
-        return http
-            .getSharedObject(AuthenticationManagerBuilder.class)
-            .authenticationProvider(initDAOAuthProvider(personService, encoder))
-            .authenticationProvider(initDAOAuthProvider(companyService, encoder))
-            .build();
+    public AuthenticationManager authenticationManager(
+        HttpSecurity http,
+        PersonService personService,
+        CompanyService companyService,
+        PasswordEncoder encoder) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                   .authenticationProvider(initDAOAuthProvider(personService, encoder))
+                   .authenticationProvider(initDAOAuthProvider(companyService, encoder))
+                   .build();
     }
 
     @Bean
-    @DependsOn({"authenticationFilter"})
+    @DependsOn({"authenticationFilter", "sessionRegistry"})
     public SecurityFilterChain configuration(HttpSecurity http,
-                                             ImprovedAuthenticationFilter authenticationFilter)
-        throws Exception {
-        http
-            .csrf().disable().cors()
+                                             ImprovedAuthenticationFilter authenticationFilter,
+                                             SessionRegistry sessionRegistry) throws Exception {
+        http.csrf().disable()
+            .cors()
             .and()
-            .authorizeHttpRequests(customizer -> {
-                customizer.requestMatchers(registerMatcher).permitAll();
-                customizer.anyRequest().authenticated();
-            })
-            .addFilter(authenticationFilter);
+            .authorizeHttpRequests()
+            .requestMatchers(registerMatcher).permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .addFilter(authenticationFilter)
+            .sessionManagement().maximumSessions(1).sessionRegistry(sessionRegistry);
         return http.build();
+    }
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
     }
 
     @Bean
@@ -67,7 +75,7 @@ public class AuthConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                //That's going to be changed soon.
+                // That's going to be changed soon.
                 registry
                     .addMapping("/**")
                     .allowedOrigins("http://localhost:8080")
@@ -82,7 +90,8 @@ public class AuthConfig {
         return new BCryptPasswordEncoder(10);
     }
 
-    private AuthenticationProvider initDAOAuthProvider(UserDetailsService service, PasswordEncoder encoder) {
+    private AuthenticationProvider initDAOAuthProvider(
+        UserDetailsService service, PasswordEncoder encoder) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setPasswordEncoder(encoder);
         authProvider.setUserDetailsService(service);

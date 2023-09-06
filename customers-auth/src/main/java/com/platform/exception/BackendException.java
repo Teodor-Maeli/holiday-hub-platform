@@ -13,7 +13,7 @@ public class BackendException extends RuntimeException {
     }
 
     public BackendException(String message, HttpStatus httpStatus, Throwable cause) {
-        super(message,cause);
+        super(message, cause);
         this.message = message;
         this.httpStatus = httpStatus;
     }

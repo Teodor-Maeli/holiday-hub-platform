@@ -7,14 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-
 @RestControllerAdvice
 public class PlatformExceptionHandler {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(PlatformExceptionHandler.class);
-
     private static final String MESSAGE = "message";
     private static final String STATUS = "status";
+    private static Logger LOGGER = LoggerFactory.getLogger(PlatformExceptionHandler.class);
 
     @ExceptionHandler(BackendException.class)
     private ResponseEntity<Map<String, Object>> handleException(BackendException be) {

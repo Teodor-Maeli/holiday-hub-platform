@@ -26,8 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(
     path = "/customers-auth/v1/person",
     consumes = MediaType.APPLICATION_JSON_VALUE,
-    produces = MediaType.APPLICATION_JSON_VALUE
-)
+    produces = MediaType.APPLICATION_JSON_VALUE)
 public class PersonController {
 
     private final PersonAssembler assembler;
@@ -42,37 +41,29 @@ public class PersonController {
     @PostMapping(path = "/register")
     public ResponseEntity<PersonResponse> register(@RequestBody PersonRequest request) {
         Person entity = service.save(assembler.assembly(request));
-        return ResponseEntity
-            .status(CREATED)
-            .body(assembler.assembly(entity));
+        return ResponseEntity.status(CREATED).body(assembler.assembly(entity));
     }
 
     @IOLogger
     @GetMapping(path = "/get/{username}")
     public ResponseEntity<PersonResponse> getByUsername(@PathVariable("username") String username) {
         Person entity = (Person) service.loadUserByUsername(username);
-        return ResponseEntity
-            .status(OK)
-            .body(assembler.assembly(entity));
+        return ResponseEntity.status(OK).body(assembler.assembly(entity));
     }
 
     @IOLogger
     @PatchMapping(path = "/update/password")
-    public ResponseEntity<Void> updatePassword(@RequestHeader String password,
-                                               @RequestHeader String username) {
+    public ResponseEntity<Void> updatePassword(
+        @RequestHeader String password, @RequestHeader String username) {
         service.changePassword(password, username);
-        return ResponseEntity
-            .noContent()
-            .build();
+        return ResponseEntity.noContent().build();
     }
 
     @IOLogger
     @PatchMapping(path = "/update/{username}")
-    public ResponseEntity<Void> disableOrEnableAccount(@PathParam("username") String username,
-                                                       @Param("enabled") Boolean enabled) {
+    public ResponseEntity<Void> disableOrEnableAccount(
+        @PathParam("username") String username, @Param("enabled") Boolean enabled) {
         service.disableOrEnableByUsername(username, enabled);
-        return ResponseEntity
-            .noContent()
-            .build();
+        return ResponseEntity.noContent().build();
     }
 }

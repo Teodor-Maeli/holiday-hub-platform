@@ -24,14 +24,13 @@ public class LoggerMasker {
     }
 
     public static String mask(Object o) {
-        return toJson(o)
-            .map(value -> PASSWORD_PATTERN.matcher(value).replaceAll(MASK))
-            .map(value -> EMAIL_PATTERN.matcher(value).replaceAll(MASK))
-            .map(value -> PHONE_PATTERN.matcher(value).replaceAll(MASK))
-            .map(value -> FAMILY_NAME_PATTERN.matcher(value).replaceAll(MASK))
-            .map(value -> GIVEN_NAME_PATTERN.matcher(value).replaceAll(MASK))
-            .map(value -> MIDDLE_NAME_PATTERN.matcher(value).replaceAll(MASK))
-            .orElse(null);
+        return toJson(o).map(value -> PASSWORD_PATTERN.matcher(value).replaceAll(MASK))
+                        .map(value -> EMAIL_PATTERN.matcher(value).replaceAll(MASK))
+                        .map(value -> PHONE_PATTERN.matcher(value).replaceAll(MASK))
+                        .map(value -> FAMILY_NAME_PATTERN.matcher(value).replaceAll(MASK))
+                        .map(value -> GIVEN_NAME_PATTERN.matcher(value).replaceAll(MASK))
+                        .map(value -> MIDDLE_NAME_PATTERN.matcher(value).replaceAll(MASK))
+                        .orElse(null);
     }
 
     private static Optional<String> toJson(Object o) {

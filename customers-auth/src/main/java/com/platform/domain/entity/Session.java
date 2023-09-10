@@ -21,9 +21,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Session {
 
     @Id
-    @Column(name = "ID", updatable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(name = "SESSION_ID", updatable = false, unique = true)
+    private String sessionId;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "CLIENT_ID", nullable = false)
     private Client client;
@@ -39,12 +38,12 @@ public class Session {
     @Column(name = "EVICTED_BY")
     private String evictedBy;
 
-    public Long getId() {
-        return id;
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public Client getClient() {

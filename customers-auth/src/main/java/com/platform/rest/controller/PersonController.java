@@ -41,14 +41,18 @@ public class PersonController {
     @PostMapping(path = "/register")
     public ResponseEntity<PersonResponse> register(@RequestBody PersonRequest request) {
         Person entity = service.save(assembler.assembly(request));
-        return ResponseEntity.status(CREATED).body(assembler.assembly(entity));
+        return ResponseEntity
+            .status(CREATED)
+            .body(assembler.assembly(entity));
     }
 
     @IOLogger
     @GetMapping(path = "/get/{username}")
     public ResponseEntity<PersonResponse> getByUsername(@PathVariable("username") String username) {
         Person entity = (Person) service.loadUserByUsername(username);
-        return ResponseEntity.status(OK).body(assembler.assembly(entity));
+        return ResponseEntity
+            .status(OK)
+            .body(assembler.assembly(entity));
     }
 
     @IOLogger
@@ -56,7 +60,9 @@ public class PersonController {
     public ResponseEntity<Void> updatePassword(
         @RequestHeader String password, @RequestHeader String username) {
         service.changePassword(password, username);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+            .noContent()
+            .build();
     }
 
     @IOLogger
@@ -64,6 +70,8 @@ public class PersonController {
     public ResponseEntity<Void> disableOrEnableAccount(
         @PathParam("username") String username, @Param("enabled") Boolean enabled) {
         service.disableOrEnableByUsername(username, enabled);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+            .noContent()
+            .build();
     }
 }

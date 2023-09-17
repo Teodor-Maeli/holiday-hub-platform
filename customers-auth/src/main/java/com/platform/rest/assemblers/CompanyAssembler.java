@@ -1,8 +1,8 @@
-package com.platform.rest.assembler;
+package com.platform.rest.assemblers;
 
 import com.platform.domain.entity.Company;
-import com.platform.model.CompanyRequest;
-import com.platform.model.CompanyResponse;
+import com.platform.models.CompanyRequest;
+import com.platform.models.CompanyResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

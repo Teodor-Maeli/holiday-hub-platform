@@ -1,4 +1,4 @@
-package com.platform.model;
+package com.platform.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

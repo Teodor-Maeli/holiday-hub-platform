@@ -1,19 +1,22 @@
 package com.platform.config.auth;
 
 import com.platform.domain.entity.Client;
+import com.platform.exception.BackendException;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
@@ -37,7 +40,6 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
 
     private final JdbcTemplate jdbc;
     private final SessionRegistry sessionRegistry;
-    private final SecurityContextRepository securityContextRepository;
 
     public StatefulAuthenticationFilter(
         JdbcTemplate jdbc,
@@ -48,7 +50,28 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
         super(authenticationManager);
         this.jdbc = jdbc;
         this.sessionRegistry = sessionRegistry;
-        this.securityContextRepository = securityContextRepository;
+        setSecurityContextRepository(securityContextRepository);
+    }
+
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        String username = obtainUsername(request);
+        SessionInformation sessionInformation = sessionRegistry.getSessionInformation(request.changeSessionId());
+
+        if (eligibleForAuth(sessionInformation, username)) {
+            return super.attemptAuthentication(request, response);
+        }
+
+        throw new BackendException("User is already authenticated with current session!", HttpStatus.CONFLICT);
+    }
+
+    private boolean eligibleForAuth(SessionInformation sessionInformation, String username) {
+        if (sessionInformation == null || sessionInformation.isExpired()) {
+            return true;
+        }
+
+        Client client = (Client) sessionInformation.getPrincipal();
+        return Objects.equals(client.getUsername(), username);
     }
 
     @Override
@@ -63,34 +86,41 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-        FilterChain chain, Authentication authResult) {
+        FilterChain chain, Authentication authResult) throws ServletException, IOException {
 
         Object principal = authResult.getPrincipal();
+        Client client = (Client) principal;
         String sessionId = request.getSession().getId();
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(authResult);
-        SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
-        securityContextHolderStrategy.setContext(context);
 
-        securityContextRepository.saveContext(context, request, response);
-        sessionRegistry.registerNewSession(sessionId, principal);
-
-        CompletableFuture.runAsync(() -> persistSession((Client) principal, sessionId));
+        persistSession(client, sessionId);
+        super.successfulAuthentication(request, response, chain, authResult);
     }
 
     private void persistSession(Client client, String sessionId) {
         try {
+            sessionRegistry.registerNewSession(sessionId, client);
+
             jdbc.update(Q_INSERT_SESSION,
-                        sessionId,
-                        client.getId(),
-                        LocalDateTime.now(),
-                        null,
-                        Boolean.TRUE,
-                        client.getUsername(),
-                        null);
+                sessionId,
+                client.getId(),
+                LocalDateTime.now(),
+                null,
+                Boolean.TRUE,
+                client.getUsername(),
+                null);
             LOGGER.info("Successfully persisted session into the DB!");
         } catch (RuntimeException e) {
-            LOGGER.error("Failed to log session for customer {} in database asynchronously!", client.getId(), e);
+            invalidateCachedSession(sessionId);
+            throw new BackendException("Session persistence failed for client " + client.getId() + " ! Invalidated session from cache!",
+                HttpStatus.INTERNAL_SERVER_ERROR, e);
+        }
+    }
+
+    private void invalidateCachedSession(String sessionId) {
+        SessionInformation session = sessionRegistry.getSessionInformation(sessionId);
+
+        if (session != null) {
+            session.expireNow();
         }
     }
 }

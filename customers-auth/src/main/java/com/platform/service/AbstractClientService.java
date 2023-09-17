@@ -6,7 +6,10 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import com.platform.domain.entity.Client;
 import com.platform.domain.repository.BaseClientRepository;
 import com.platform.exception.BackendException;
+import java.util.Objects;
 import java.util.Optional;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,16 +26,22 @@ public abstract class AbstractClientService
 
     private final R repository;
     private final PasswordEncoder encoder;
+    private final SessionRegistry sessionRegistry;
 
     /**
      * Ensures dependencies are properly initialized.
      *
-     * @param repository Repository used to perform generic operations.
-     * @param encoder    Used to encode sensitive information.
+     * @param repository      Repository used to perform generic operations.
+     * @param encoder         Used to encode sensitive information.
+     * @param sessionRegistry Principal cache.
      */
-    protected AbstractClientService(R repository, PasswordEncoder encoder) {
+    protected AbstractClientService(
+        R repository,
+        PasswordEncoder encoder,
+        SessionRegistry sessionRegistry) {
         this.repository = repository;
         this.encoder = encoder;
+        this.sessionRegistry = sessionRegistry;
     }
 
     /**
@@ -79,7 +88,6 @@ public abstract class AbstractClientService
         }
     }
 
-
     /**
      * Updates customer account with encoded new password.
      *
@@ -91,12 +99,19 @@ public abstract class AbstractClientService
         try {
             String encoded = encoder.encode(newPassword);
             if (repository.updatePasswordByUsername(username, encoded) > 0) {
-                return;
+                sessionRegistry.getAllPrincipals()
+                               .stream()
+                               .map(Client.class::cast)
+                               .filter(client -> Objects.equals(username, client.getUsername()))
+                               .map(client -> sessionRegistry.getAllSessions(client, false))
+                               .forEach(principalSessions -> principalSessions.forEach(SessionInformation::expireNow));
+
+            } else {
+                throw new BackendException("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
             }
         } catch (RuntimeException e) {
             throw new BackendException("Failed to UPDATE password for USERNAME: %s".formatted(username), INTERNAL_SERVER_ERROR, e);
         }
-        throw new BackendException("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
     }
 
     /**
@@ -113,5 +128,6 @@ public abstract class AbstractClientService
             throw new BackendException("Failed to ENABLE/DISABLE account for USERNAME: %s".formatted(username), INTERNAL_SERVER_ERROR, e);
         }
         throw new BackendException("Failed to ENABLE/DISABLE account, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
+
     }
 }

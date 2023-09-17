@@ -1,6 +1,6 @@
 package com.platform.domain.entity;
 
-import com.platform.model.Role;
+import com.platform.models.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;

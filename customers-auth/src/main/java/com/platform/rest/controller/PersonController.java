@@ -5,11 +5,10 @@ import static org.springframework.http.HttpStatus.OK;
 
 import com.platform.aspect.logger.IOLogger;
 import com.platform.domain.entity.Person;
-import com.platform.model.PersonRequest;
-import com.platform.model.PersonResponse;
-import com.platform.rest.assembler.PersonAssembler;
+import com.platform.models.PersonRequest;
+import com.platform.models.PersonResponse;
+import com.platform.rest.assemblers.PersonAssembler;
 import com.platform.service.PersonService;
-import jakarta.websocket.server.PathParam;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -57,8 +56,8 @@ public class PersonController {
 
     @IOLogger
     @PatchMapping(path = "/update/password")
-    public ResponseEntity<Void> updatePassword(
-        @RequestHeader String password, @RequestHeader String username) {
+    public ResponseEntity<Void> updatePassword(@RequestHeader String password,
+        @RequestHeader String username) {
         service.changePassword(password, username);
         return ResponseEntity
             .noContent()
@@ -67,8 +66,8 @@ public class PersonController {
 
     @IOLogger
     @PatchMapping(path = "/update/{username}")
-    public ResponseEntity<Void> disableOrEnableAccount(
-        @PathParam("username") String username, @Param("enabled") Boolean enabled) {
+    public ResponseEntity<Void> disableOrEnableAccount(@PathVariable("username") String username,
+        @Param("enabled") Boolean enabled) {
         service.disableOrEnableByUsername(username, enabled);
         return ResponseEntity
             .noContent()

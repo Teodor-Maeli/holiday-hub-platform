@@ -1,4 +1,4 @@
-package com.platform.model;
+package com.platform.models;
 
 /**
  * 27.05.2023.

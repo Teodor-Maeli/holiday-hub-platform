@@ -1,11 +1,11 @@
-package com.platform.rest.assembler;
+package com.platform.rest.assemblers;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import com.platform.domain.entity.Client;
 import com.platform.exception.BackendException;
-import com.platform.model.ClientRequest;
-import com.platform.model.ClientResponse;
+import com.platform.models.ClientRequest;
+import com.platform.models.ClientResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

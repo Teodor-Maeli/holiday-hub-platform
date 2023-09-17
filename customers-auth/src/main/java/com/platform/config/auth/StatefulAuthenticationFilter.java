@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -55,23 +54,13 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        String username = obtainUsername(request);
         SessionInformation sessionInformation = sessionRegistry.getSessionInformation(request.changeSessionId());
 
-        if (eligibleForAuth(sessionInformation, username)) {
+        if (sessionInformation == null) {
             return super.attemptAuthentication(request, response);
         }
 
-        throw new BackendException("User is already authenticated with current session!", HttpStatus.CONFLICT);
-    }
-
-    private boolean eligibleForAuth(SessionInformation sessionInformation, String username) {
-        if (sessionInformation == null || sessionInformation.isExpired()) {
-            return true;
-        }
-
-        Client client = (Client) sessionInformation.getPrincipal();
-        return Objects.equals(client.getUsername(), username);
+        throw new BackendException("User is already authenticated with current session!", HttpStatus.FOUND);
     }
 
     @Override

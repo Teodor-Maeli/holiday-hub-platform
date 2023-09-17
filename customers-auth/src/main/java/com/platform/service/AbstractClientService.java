@@ -99,12 +99,7 @@ public abstract class AbstractClientService
         try {
             String encoded = encoder.encode(newPassword);
             if (repository.updatePasswordByUsername(username, encoded) > 0) {
-                sessionRegistry.getAllPrincipals()
-                               .stream()
-                               .map(Client.class::cast)
-                               .filter(client -> Objects.equals(username, client.getUsername()))
-                               .map(client -> sessionRegistry.getAllSessions(client, false))
-                               .forEach(principalSessions -> principalSessions.forEach(SessionInformation::expireNow));
+                invalidateSession(username);
 
             } else {
                 throw new BackendException("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
@@ -122,6 +117,7 @@ public abstract class AbstractClientService
     public void disableOrEnableByUsername(String username, Boolean enabled) {
         try {
             if (repository.disableOrEnableByUsername(username, enabled) > 0) {
+                invalidateSession(username);
                 return;
             }
         } catch (RuntimeException e) {
@@ -129,5 +125,14 @@ public abstract class AbstractClientService
         }
         throw new BackendException("Failed to ENABLE/DISABLE account, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
 
+    }
+
+    private void invalidateSession(String username) {
+        sessionRegistry.getAllPrincipals()
+                       .stream()
+                       .map(Client.class::cast)
+                       .filter(client -> Objects.equals(username, client.getUsername()))
+                       .map(client -> sessionRegistry.getAllSessions(client, false))
+                       .forEach(principalSessions -> principalSessions.forEach(SessionInformation::expireNow));
     }
 }

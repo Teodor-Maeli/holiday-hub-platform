@@ -9,13 +9,13 @@ import java.time.LocalDate;
 @Table(name = "PERSON")
 public class Person extends Client {
 
-    @Column(name = "GIVEN_NAME")
+    @Column(name = "GIVEN_NAME", nullable = false)
     private String givenName;
-    @Column(name = "FAMILY_NAME")
+    @Column(name = "FAMILY_NAME", nullable = false)
     private String familyName;
-    @Column(name = "MIDDLE_NAME")
+    @Column(name = "MIDDLE_NAME", nullable = false)
     private String middleName;
-    @Column(name = "BIRTH_DATE")
+    @Column(name = "BIRTH_DATE", nullable = false)
     private LocalDate birthDate;
 
     public String getGivenName() {

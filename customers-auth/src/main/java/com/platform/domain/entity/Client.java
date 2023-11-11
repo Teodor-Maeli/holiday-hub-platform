@@ -39,20 +39,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 public abstract class Client implements UserDetails {
 
     @Id
-    @Column(name = "ID", updatable = false, unique = true)
+    @Column(name = "ID", updatable = false, unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(name = "USERNAME", updatable = false, unique = true)
+    @Column(name = "USERNAME", updatable = false, unique = true, nullable = false)
     private String username;
-    @Column(name = "PASSWORD")
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
-    @Column(name = "EMAIL_ADDRESS")
+    @Column(name = "EMAIL_ADDRESS", unique = true, nullable = false)
     private String emailAddress;
-    @Column(name = "ENABLED")
+    @Column(name = "ENABLED", nullable = false)
     private Boolean enabled;
-    @Column(name = "REGISTERED_DATE", updatable = false)
+    @Column(name = "REGISTERED_DATE", updatable = false, nullable = false)
     @CreatedDate
     private LocalDateTime registeredDate;
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)

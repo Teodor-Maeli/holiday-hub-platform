@@ -8,11 +8,11 @@ import jakarta.persistence.Table;
 @Table(name = "COMPANY")
 public class Company extends Client {
 
-    @Column(name = "COMPANY_NAME")
+    @Column(name = "COMPANY_NAME", nullable = false)
     private String companyName;
-    @Column(name = "COMPANY_NUMBER")
+    @Column(name = "COMPANY_NUMBER", nullable = false)
     private String companyNumber;
-    @Column(name = "CONTACT_PERSON")
+    @Column(name = "CONTACT_PERSON", nullable = false)
     private String contactPerson;
 
     public String getCompanyName() {

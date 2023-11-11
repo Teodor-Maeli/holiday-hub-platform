@@ -14,10 +14,6 @@ public class PersonService extends AbstractClientService<Person, Long, PersonRep
         PasswordEncoder encoder,
         SessionRegistry sessionRegistry
     ) {
-        super(
-            repository,
-            encoder,
-            sessionRegistry
-        );
+        super(repository, encoder, sessionRegistry);
     }
 }

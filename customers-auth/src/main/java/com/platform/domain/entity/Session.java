@@ -21,7 +21,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Session {
 
     @Id
-    @Column(name = "SESSION_ID", updatable = false, unique = true)
+    @Column(name = "SESSION_ID", updatable = false, unique = true, nullable = false)
     private String sessionId;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "CLIENT_ID", nullable = false)
@@ -33,7 +33,7 @@ public class Session {
     private LocalDateTime evictedDate;
     @Column(name = "ACTIVE")
     private Boolean active;
-    @Column(name = "INITIATED_BY")
+    @Column(name = "INITIATED_BY", nullable = false)
     private String initiatedBy;
     @Column(name = "EVICTED_BY")
     private String evictedBy;

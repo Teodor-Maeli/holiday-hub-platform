@@ -100,10 +100,9 @@ public abstract class AbstractClientService
             String encoded = encoder.encode(newPassword);
             if (repository.updatePasswordByUsername(username, encoded) > 0) {
                 invalidateSession(username);
-
-            } else {
-                throw new BackendException("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
+                return;
             }
+            throw new BackendException("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
         } catch (RuntimeException e) {
             throw new BackendException("Failed to UPDATE password for USERNAME: %s".formatted(username), INTERNAL_SERVER_ERROR, e);
         }
@@ -120,11 +119,10 @@ public abstract class AbstractClientService
                 invalidateSession(username);
                 return;
             }
+            throw new BackendException("Failed to ENABLE/DISABLE account, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
         } catch (RuntimeException e) {
             throw new BackendException("Failed to ENABLE/DISABLE account for USERNAME: %s".formatted(username), INTERNAL_SERVER_ERROR, e);
         }
-        throw new BackendException("Failed to ENABLE/DISABLE account, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
-
     }
 
     private void invalidateSession(String username) {

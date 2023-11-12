@@ -4,40 +4,43 @@ import java.time.LocalDate;
 
 public class PersonRequest extends ClientRequest {
 
-    private String familyName;
-    private String givenName;
-    private String middleName;
-    private LocalDate birthDate;
+  private String familyName;
 
-    public String getFamilyName() {
-        return familyName;
-    }
+  private String givenName;
 
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
-    }
+  private String middleName;
 
-    public String getGivenName() {
-        return givenName;
-    }
+  private LocalDate birthDate;
 
-    public void setGivenName(String givenName) {
-        this.givenName = givenName;
-    }
+  public String getFamilyName() {
+    return familyName;
+  }
 
-    public String getMiddleName() {
-        return middleName;
-    }
+  public void setFamilyName(String familyName) {
+    this.familyName = familyName;
+  }
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
+  public String getGivenName() {
+    return givenName;
+  }
 
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
+  public void setGivenName(String givenName) {
+    this.givenName = givenName;
+  }
 
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
+  public String getMiddleName() {
+    return middleName;
+  }
+
+  public void setMiddleName(String middleName) {
+    this.middleName = middleName;
+  }
+
+  public LocalDate getBirthDate() {
+    return birthDate;
+  }
+
+  public void setBirthDate(LocalDate birthDate) {
+    this.birthDate = birthDate;
+  }
 }

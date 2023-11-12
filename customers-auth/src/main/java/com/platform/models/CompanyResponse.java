@@ -6,22 +6,23 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class CompanyResponse extends ClientResponse {
 
-    private String companyName;
-    private String companyNumber;
+  private String companyName;
 
-    public String getCompanyName() {
-        return companyName;
-    }
+  private String companyNumber;
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
+  public String getCompanyName() {
+    return companyName;
+  }
 
-    public String getCompanyNumber() {
-        return companyNumber;
-    }
+  public void setCompanyName(String companyName) {
+    this.companyName = companyName;
+  }
 
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
-    }
+  public String getCompanyNumber() {
+    return companyNumber;
+  }
+
+  public void setCompanyNumber(String companyNumber) {
+    this.companyNumber = companyNumber;
+  }
 }

@@ -2,45 +2,49 @@ package com.platform.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import java.time.LocalDate;
 
 @JsonInclude(Include.NON_NULL)
 public class PersonResponse extends ClientResponse {
 
-    private String familyName;
-    private String givenName;
-    private String middleName;
-    private LocalDate birthDate;
+  private String familyName;
 
-    public String getGivenName() {
-        return givenName;
-    }
+  private String givenName;
 
-    public void setGivenName(String givenName) {
-        this.givenName = givenName;
-    }
+  private String middleName;
 
-    public String getFamilyName() {
-        return familyName;
-    }
+  private LocalDate birthDate;
 
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
-    }
+  public String getGivenName() {
+    return givenName;
+  }
 
-    public String getMiddleName() {
-        return middleName;
-    }
+  public void setGivenName(String givenName) {
+    this.givenName = givenName;
+  }
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
+  public String getFamilyName() {
+    return familyName;
+  }
 
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
+  public void setFamilyName(String familyName) {
+    this.familyName = familyName;
+  }
 
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
+  public String getMiddleName() {
+    return middleName;
+  }
+
+  public void setMiddleName(String middleName) {
+    this.middleName = middleName;
+  }
+
+  public LocalDate getBirthDate() {
+    return birthDate;
+  }
+
+  public void setBirthDate(LocalDate birthDate) {
+    this.birthDate = birthDate;
+  }
 }

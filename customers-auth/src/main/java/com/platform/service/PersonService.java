@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class PersonService extends AbstractClientService<Person, Long, PersonRepository> {
 
-    protected PersonService(
-        PersonRepository repository,
-        PasswordEncoder encoder,
-        SessionRegistry sessionRegistry
-    ) {
-        super(repository, encoder, sessionRegistry);
-    }
+  protected PersonService(
+      PersonRepository repository,
+      PasswordEncoder encoder,
+      SessionRegistry sessionRegistry
+  ) {
+    super(repository, encoder, sessionRegistry);
+  }
 }

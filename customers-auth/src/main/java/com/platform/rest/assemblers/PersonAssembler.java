@@ -9,17 +9,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class PersonAssembler extends AbstractClientAssembler<PersonResponse, PersonRequest, Person> {
 
-    protected PersonAssembler(PasswordEncoder encoder) {
-        super(encoder);
-    }
+  protected PersonAssembler(PasswordEncoder encoder) {
+    super(encoder);
+  }
 
-    @Override
-    protected PersonResponse initResponse() {
-        return new PersonResponse();
-    }
+  @Override
+  protected PersonResponse initResponse() {
+    return new PersonResponse();
+  }
 
-    @Override
-    protected Person initEntity() {
-        return new Person();
-    }
+  @Override
+  protected Person initEntity() {
+    return new Person();
+  }
 }

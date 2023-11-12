@@ -35,74 +35,74 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 public class AuthConfig {
 
-    private static final RequestMatcher registerMatcher =
-        request -> request.getRequestURI().contains("/register");
+  private static final RequestMatcher registerMatcher =
+      request -> request.getRequestURI().contains("/register");
 
-    @Bean
-    @DependsOn({"personService", "companyService", "passwordEncoder"})
-    public AuthenticationManager authenticationManager(HttpSecurity http, PersonService personService,
-        CompanyService companyService, PasswordEncoder encoder) throws Exception {
+  @Bean
+  @DependsOn({"personService", "companyService", "passwordEncoder"})
+  public AuthenticationManager authenticationManager(HttpSecurity http, PersonService personService,
+                                                     CompanyService companyService, PasswordEncoder encoder) throws Exception {
 
-        return http
-            .getSharedObject(AuthenticationManagerBuilder.class)
-            .authenticationProvider(initDAOAuthProvider(personService, encoder))
-            .authenticationProvider(initDAOAuthProvider(companyService, encoder))
-            .build();
-    }
+    return http
+        .getSharedObject(AuthenticationManagerBuilder.class)
+        .authenticationProvider(initDAOAuthProvider(personService, encoder))
+        .authenticationProvider(initDAOAuthProvider(companyService, encoder))
+        .build();
+  }
 
-    @Bean
-    @DependsOn({"sessionRegistry"})
-    public SecurityFilterChain configuration(HttpSecurity http, SessionRegistry sessionRegistry,
-        StatefulAuthenticationFilter statefulAuthenticationFilter) throws Exception {
+  @Bean
+  @DependsOn({"sessionRegistry"})
+  public SecurityFilterChain configuration(HttpSecurity http, SessionRegistry sessionRegistry,
+                                           StatefulAuthenticationFilter statefulAuthenticationFilter) throws Exception {
 
-        http.csrf().disable().cors();
-        http.authorizeHttpRequests().requestMatchers(registerMatcher).permitAll();
-        http.authorizeHttpRequests().anyRequest().authenticated();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).maximumSessions(1).sessionRegistry(sessionRegistry);
-        http.addFilter(statefulAuthenticationFilter);
+    http.csrf().disable().cors();
+    http.authorizeHttpRequests().requestMatchers(registerMatcher).permitAll();
+    http.authorizeHttpRequests().anyRequest().authenticated();
+    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).maximumSessions(1).sessionRegistry(sessionRegistry);
+    http.addFilter(statefulAuthenticationFilter);
 
-        return http.build();
-    }
+    return http.build();
+  }
 
-    @Bean
-    public SessionRegistry sessionRegistry() {
-        return new SessionRegistryImpl();
-    }
+  @Bean
+  public SessionRegistry sessionRegistry() {
+    return new SessionRegistryImpl();
+  }
 
-    @Bean
-    public HttpSessionEventPublisher httpSessionEventPublisher() {
-        return new HttpSessionEventPublisher();
-    }
+  @Bean
+  public HttpSessionEventPublisher httpSessionEventPublisher() {
+    return new HttpSessionEventPublisher();
+  }
 
-    @Bean
-    public HttpSessionSecurityContextRepository httpSessionSecurityContextRepository() {
-        return new HttpSessionSecurityContextRepository();
-    }
+  @Bean
+  public HttpSessionSecurityContextRepository httpSessionSecurityContextRepository() {
+    return new HttpSessionSecurityContextRepository();
+  }
 
-    @Bean
-    public WebMvcConfigurer corsConfiguration() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                // That's going to be changed soon.
-                registry
-                    .addMapping("/**")
-                    .allowedOrigins("*")
-                    .allowedHeaders("*")
-                    .allowedMethods("*");
-            }
-        };
-    }
+  @Bean
+  public WebMvcConfigurer corsConfiguration() {
+    return new WebMvcConfigurer() {
+      @Override
+      public void addCorsMappings(CorsRegistry registry) {
+        // That's going to be changed soon.
+        registry
+            .addMapping("/**")
+            .allowedOrigins("*")
+            .allowedHeaders("*")
+            .allowedMethods("*");
+      }
+    };
+  }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder(10);
+  }
 
-    private AuthenticationProvider initDAOAuthProvider(UserDetailsService service, PasswordEncoder encoder) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setPasswordEncoder(encoder);
-        authProvider.setUserDetailsService(service);
-        return authProvider;
-    }
+  private AuthenticationProvider initDAOAuthProvider(UserDetailsService service, PasswordEncoder encoder) {
+    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+    authProvider.setPasswordEncoder(encoder);
+    authProvider.setUserDetailsService(service);
+    return authProvider;
+  }
 }

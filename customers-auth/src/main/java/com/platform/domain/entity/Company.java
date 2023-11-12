@@ -8,34 +8,36 @@ import jakarta.persistence.Table;
 @Table(name = "COMPANY")
 public class Company extends Client {
 
-    @Column(name = "COMPANY_NAME", nullable = false)
-    private String companyName;
-    @Column(name = "COMPANY_NUMBER", nullable = false)
-    private String companyNumber;
-    @Column(name = "CONTACT_PERSON", nullable = false)
-    private String contactPerson;
+  @Column(name = "COMPANY_NAME", nullable = false)
+  private String companyName;
 
-    public String getCompanyName() {
-        return companyName;
-    }
+  @Column(name = "COMPANY_NUMBER", nullable = false)
+  private String companyNumber;
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
+  @Column(name = "CONTACT_PERSON", nullable = false)
+  private String contactPerson;
 
-    public String getCompanyNumber() {
-        return companyNumber;
-    }
+  public String getCompanyName() {
+    return companyName;
+  }
 
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
-    }
+  public void setCompanyName(String companyName) {
+    this.companyName = companyName;
+  }
 
-    public String getContactPerson() {
-        return contactPerson;
-    }
+  public String getCompanyNumber() {
+    return companyNumber;
+  }
 
-    public void setContactPerson(String contactPerson) {
-        this.contactPerson = contactPerson;
-    }
+  public void setCompanyNumber(String companyNumber) {
+    this.companyNumber = companyNumber;
+  }
+
+  public String getContactPerson() {
+    return contactPerson;
+  }
+
+  public void setContactPerson(String contactPerson) {
+    this.contactPerson = contactPerson;
+  }
 }

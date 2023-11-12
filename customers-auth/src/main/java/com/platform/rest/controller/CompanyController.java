@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 )
 public class CompanyController {
 
-    private final CompanyRepository repository;
-    private final CompanyService service;
+  private final CompanyRepository repository;
 
-    public CompanyController(CompanyRepository repository, CompanyService service) {
-        this.repository = repository;
-        this.service = service;
-    }
+  private final CompanyService service;
+
+  public CompanyController(CompanyRepository repository, CompanyService service) {
+    this.repository = repository;
+    this.service = service;
+  }
 }

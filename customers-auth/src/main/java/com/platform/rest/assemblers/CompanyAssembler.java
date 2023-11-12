@@ -9,17 +9,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class CompanyAssembler extends AbstractClientAssembler<CompanyResponse, CompanyRequest, Company> {
 
-    protected CompanyAssembler(PasswordEncoder encoder) {
-        super(encoder);
-    }
+  protected CompanyAssembler(PasswordEncoder encoder) {
+    super(encoder);
+  }
 
-    @Override
-    protected CompanyResponse initResponse() {
-        return new CompanyResponse();
-    }
+  @Override
+  protected CompanyResponse initResponse() {
+    return new CompanyResponse();
+  }
 
-    @Override
-    protected Company initEntity() {
-        return new Company();
-    }
+  @Override
+  protected Company initEntity() {
+    return new Company();
+  }
 }

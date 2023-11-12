@@ -9,7 +9,7 @@ package com.platform.models;
  * <p>Author : Teodor Maeli</p>
  */
 public enum Role {
-    ADMIN,
-    PERSON,
-    COMPANY
+  ADMIN,
+  PERSON,
+  COMPANY
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -20,106 +21,116 @@ import java.util.Set;
 @JsonInclude(Include.NON_NULL)
 public class ClientResponse {
 
-    private Long id;
-    private String username;
-    private String emailAddress;
-    private String phoneNumber;
-    private Boolean enabled;
-    private Boolean premium;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime registeredDate;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime subscriptionStarts;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime subscriptionEnds;
-    private SessionResponse session;
-    private Set<Role> roles;
+  private Long id;
 
-    public Long getId() {
-        return id;
-    }
+  private String username;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  private String emailAddress;
 
-    public LocalDateTime getRegisteredDate() {
-        return registeredDate;
-    }
+  private String phoneNumber;
 
-    public void setRegisteredDate(LocalDateTime registeredDate) {
-        this.registeredDate = registeredDate;
-    }
+  private Boolean enabled;
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
+  private Boolean premium;
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  private LocalDateTime registeredDate;
 
-    public SessionResponse getSession() {
-        return session;
-    }
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  private LocalDateTime subscriptionStarts;
 
-    public void setSession(SessionResponse session) {
-        this.session = session;
-    }
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  private LocalDateTime subscriptionEnds;
 
-    public String getUsername() {
-        return username;
-    }
+  private SessionResponse session;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  private Set<Role> roles;
 
-    public Boolean getEnabled() {
-        return enabled;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public Boolean getPremium() {
-        return premium;
-    }
+  public LocalDateTime getRegisteredDate() {
+    return registeredDate;
+  }
 
-    public void setPremium(Boolean premium) {
-        this.premium = premium;
-    }
+  public void setRegisteredDate(LocalDateTime registeredDate) {
+    this.registeredDate = registeredDate;
+  }
 
-    public LocalDateTime getSubscriptionStarts() {
-        return subscriptionStarts;
-    }
+  public Set<Role> getRoles() {
+    return roles;
+  }
 
-    public void setSubscriptionStarts(LocalDateTime subscriptionStarts) {
-        this.subscriptionStarts = subscriptionStarts;
-    }
+  public void setRoles(Set<Role> roles) {
+    this.roles = roles;
+  }
 
-    public LocalDateTime getSubscriptionEnds() {
-        return subscriptionEnds;
-    }
+  public SessionResponse getSession() {
+    return session;
+  }
 
-    public void setSubscriptionEnds(LocalDateTime subscriptionEnds) {
-        this.subscriptionEnds = subscriptionEnds;
-    }
+  public void setSession(SessionResponse session) {
+    this.session = session;
+  }
 
-    public String getEmailAddress() {
-        return emailAddress;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+  public Boolean getEnabled() {
+    return enabled;
+  }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+  public void setEnabled(Boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public Boolean getPremium() {
+    return premium;
+  }
+
+  public void setPremium(Boolean premium) {
+    this.premium = premium;
+  }
+
+  public LocalDateTime getSubscriptionStarts() {
+    return subscriptionStarts;
+  }
+
+  public void setSubscriptionStarts(LocalDateTime subscriptionStarts) {
+    this.subscriptionStarts = subscriptionStarts;
+  }
+
+  public LocalDateTime getSubscriptionEnds() {
+    return subscriptionEnds;
+  }
+
+  public void setSubscriptionEnds(LocalDateTime subscriptionEnds) {
+    this.subscriptionEnds = subscriptionEnds;
+  }
+
+  public String getEmailAddress() {
+    return emailAddress;
+  }
+
+  public void setEmailAddress(String emailAddress) {
+    this.emailAddress = emailAddress;
+  }
+
+  public String getPhoneNumber() {
+    return phoneNumber;
+  }
+
+  public void setPhoneNumber(String phoneNumber) {
+    this.phoneNumber = phoneNumber;
+  }
 }

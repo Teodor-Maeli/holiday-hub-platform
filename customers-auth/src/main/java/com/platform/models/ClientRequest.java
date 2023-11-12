@@ -14,76 +14,83 @@ import java.time.LocalDateTime;
 
 public class ClientRequest {
 
-    private String username;
-    private String password;
-    private String emailAddress;
-    private String phoneNumber;
-    private Boolean premium;
-    private Boolean enabled;
-    private LocalDateTime subscriptionStarts;
-    private LocalDateTime subscriptionEnds;
+  private String username;
 
-    public String getUsername() {
-        return username;
-    }
+  private String password;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  private String emailAddress;
 
-    public String getPassword() {
-        return password;
-    }
+  private String phoneNumber;
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  private Boolean premium;
 
-    public Boolean getPremium() {
-        return premium;
-    }
+  private Boolean enabled;
 
-    public void setPremium(Boolean premium) {
-        this.premium = premium;
-    }
+  private LocalDateTime subscriptionStarts;
 
-    public Boolean getEnabled() {
-        return enabled;
-    }
+  private LocalDateTime subscriptionEnds;
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public LocalDateTime getSubscriptionStarts() {
-        return subscriptionStarts;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public void setSubscriptionStarts(LocalDateTime subscriptionStarts) {
-        this.subscriptionStarts = subscriptionStarts;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public LocalDateTime getSubscriptionEnds() {
-        return subscriptionEnds;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    public void setSubscriptionEnds(LocalDateTime subscriptionEnds) {
-        this.subscriptionEnds = subscriptionEnds;
-    }
+  public Boolean getPremium() {
+    return premium;
+  }
 
-    public String getEmailAddress() {
-        return emailAddress;
-    }
+  public void setPremium(Boolean premium) {
+    this.premium = premium;
+  }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
-    }
+  public Boolean getEnabled() {
+    return enabled;
+  }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+  public void setEnabled(Boolean enabled) {
+    this.enabled = enabled;
+  }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+  public LocalDateTime getSubscriptionStarts() {
+    return subscriptionStarts;
+  }
+
+  public void setSubscriptionStarts(LocalDateTime subscriptionStarts) {
+    this.subscriptionStarts = subscriptionStarts;
+  }
+
+  public LocalDateTime getSubscriptionEnds() {
+    return subscriptionEnds;
+  }
+
+  public void setSubscriptionEnds(LocalDateTime subscriptionEnds) {
+    this.subscriptionEnds = subscriptionEnds;
+  }
+
+  public String getEmailAddress() {
+    return emailAddress;
+  }
+
+  public void setEmailAddress(String emailAddress) {
+    this.emailAddress = emailAddress;
+  }
+
+  public String getPhoneNumber() {
+    return phoneNumber;
+  }
+
+  public void setPhoneNumber(String phoneNumber) {
+    this.phoneNumber = phoneNumber;
+  }
 }

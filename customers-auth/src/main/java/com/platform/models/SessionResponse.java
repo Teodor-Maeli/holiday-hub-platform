@@ -4,74 +4,81 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
 import java.time.LocalDateTime;
 
 @JsonInclude(Include.NON_NULL)
 public class SessionResponse {
 
-    private Long username;
-    private String currentSessionId;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime currentSessionInitiatedDate;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime lastEvictedSessionDate;
-    private String lastEvictedSessionId;
-    private String lastEvictedSessionComment;
-    private String otherComment;
+  private Long username;
 
-    public Long getUsername() {
-        return username;
-    }
+  private String currentSessionId;
 
-    public void setUsername(Long username) {
-        this.username = username;
-    }
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  private LocalDateTime currentSessionInitiatedDate;
 
-    public String getCurrentSessionId() {
-        return currentSessionId;
-    }
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  private LocalDateTime lastEvictedSessionDate;
 
-    public void setCurrentSessionId(String currentSessionId) {
-        this.currentSessionId = currentSessionId;
-    }
+  private String lastEvictedSessionId;
 
-    public LocalDateTime getCurrentSessionInitiatedDate() {
-        return currentSessionInitiatedDate;
-    }
+  private String lastEvictedSessionComment;
 
-    public void setCurrentSessionInitiatedDate(LocalDateTime currentSessionInitiatedDate) {
-        this.currentSessionInitiatedDate = currentSessionInitiatedDate;
-    }
+  private String otherComment;
 
-    public LocalDateTime getLastEvictedSessionDate() {
-        return lastEvictedSessionDate;
-    }
+  public Long getUsername() {
+    return username;
+  }
 
-    public void setLastEvictedSessionDate(LocalDateTime lastEvictedSessionDate) {
-        this.lastEvictedSessionDate = lastEvictedSessionDate;
-    }
+  public void setUsername(Long username) {
+    this.username = username;
+  }
 
-    public String getLastEvictedSessionId() {
-        return lastEvictedSessionId;
-    }
+  public String getCurrentSessionId() {
+    return currentSessionId;
+  }
 
-    public void setLastEvictedSessionId(String lastEvictedSessionId) {
-        this.lastEvictedSessionId = lastEvictedSessionId;
-    }
+  public void setCurrentSessionId(String currentSessionId) {
+    this.currentSessionId = currentSessionId;
+  }
 
-    public String getLastEvictedSessionComment() {
-        return lastEvictedSessionComment;
-    }
+  public LocalDateTime getCurrentSessionInitiatedDate() {
+    return currentSessionInitiatedDate;
+  }
 
-    public void setLastEvictedSessionComment(String lastEvictedSessionComment) {
-        this.lastEvictedSessionComment = lastEvictedSessionComment;
-    }
+  public void setCurrentSessionInitiatedDate(LocalDateTime currentSessionInitiatedDate) {
+    this.currentSessionInitiatedDate = currentSessionInitiatedDate;
+  }
 
-    public String getOtherComment() {
-        return otherComment;
-    }
+  public LocalDateTime getLastEvictedSessionDate() {
+    return lastEvictedSessionDate;
+  }
 
-    public void setOtherComment(String otherComment) {
-        this.otherComment = otherComment;
-    }
+  public void setLastEvictedSessionDate(LocalDateTime lastEvictedSessionDate) {
+    this.lastEvictedSessionDate = lastEvictedSessionDate;
+  }
+
+  public String getLastEvictedSessionId() {
+    return lastEvictedSessionId;
+  }
+
+  public void setLastEvictedSessionId(String lastEvictedSessionId) {
+    this.lastEvictedSessionId = lastEvictedSessionId;
+  }
+
+  public String getLastEvictedSessionComment() {
+    return lastEvictedSessionComment;
+  }
+
+  public void setLastEvictedSessionComment(String lastEvictedSessionComment) {
+    this.lastEvictedSessionComment = lastEvictedSessionComment;
+  }
+
+  public String getOtherComment() {
+    return otherComment;
+  }
+
+  public void setOtherComment(String otherComment) {
+    this.otherComment = otherComment;
+  }
 }

@@ -58,7 +58,7 @@ public class AuthConfig {
     http.csrf().disable().cors();
     http.authorizeHttpRequests().requestMatchers(registerMatcher).permitAll();
     http.authorizeHttpRequests().anyRequest().authenticated();
-    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).maximumSessions(1).sessionRegistry(sessionRegistry);
+    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).maximumSessions(1).maxSessionsPreventsLogin(true).sessionRegistry(sessionRegistry);
     http.addFilter(statefulAuthenticationFilter);
 
     return http.build();

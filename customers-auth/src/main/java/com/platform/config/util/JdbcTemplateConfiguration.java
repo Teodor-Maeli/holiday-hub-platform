@@ -5,8 +5,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.concurrent.Executors;
+
 /**
- * Purpose of this is to disable auto commit of jdbc template.
+ * Creates bean of {@link ImprovedJdbcTemplate} with required configurations.
  */
 @Configuration
 public class JdbcTemplateConfiguration {

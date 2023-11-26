@@ -25,11 +25,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * 10.06.2023.
- *
- * <p>Configuration of Spring security. Since 1.0
- *
- * <p>Author : Teodor Maeli
+ * Security configuration and beans initialization.
  */
 @Configuration
 @EnableWebSecurity

@@ -7,6 +7,10 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Extends logic of {@link org.springframework.jdbc.core.JdbcTemplate},
+ * disables auto commit and adding additional logic, relays on {@link PlatformSecondaryDataSource}
+ */
 public class ImprovedJdbcTemplate extends JdbcTemplate {
 
   public ImprovedJdbcTemplate(PlatformSecondaryDataSource dataSource) {

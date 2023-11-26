@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Handles authentication failures. Writes proper output response.
+ */
 public class StatefulAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
   private final ObjectMapper objectMapper;

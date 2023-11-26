@@ -4,13 +4,22 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.SmartDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Util DataSource, to be used only with {@link ImprovedJdbcTemplate}
+ */
 class PlatformSecondaryDataSource extends HikariDataSource implements SmartDataSource {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(PlatformSecondaryDataSource.class);
 
   private volatile static Cache<String, Connection> cache = CacheBuilder.newBuilder()
       .maximumSize(1000)
@@ -19,12 +28,19 @@ class PlatformSecondaryDataSource extends HikariDataSource implements SmartDataS
       .build();
 
   public PlatformSecondaryDataSource() {
+    scheduleExpirationCleanUp();
   }
 
   public PlatformSecondaryDataSource(HikariConfig configuration) {
     super(configuration);
   }
 
+  /**
+   * Gets cached or fresh database connection and caches it.
+   *
+   * @return {@link Connection}
+   * @throws SQLException If fails to fetch fresh connection from the pool.
+   */
   @Override
   public Connection getConnection() throws SQLException {
     Connection connection = cache.getIfPresent(getKey());
@@ -46,9 +62,30 @@ class PlatformSecondaryDataSource extends HikariDataSource implements SmartDataS
     return false;
   }
 
+  /**
+   * Clears cache.
+   */
+  public static void clearCache() {
+    cache.cleanUp();
+  }
+
   private String getKey() {
     Thread thread = Thread.currentThread();
     return thread.getName() + thread.getId();
+  }
+
+  private void scheduleExpirationCleanUp() {
+    //We need cleanup cache from expired connections, so we schedule a task.
+    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    Runnable cleaner = () -> {
+      try {
+        cache.cleanUp();
+      } catch (Exception e) {
+        LOGGER.error("A clean up error has occurred on the connections cache, please pay attention!", e);
+      }
+    };
+
+    scheduler.scheduleAtFixedRate(cleaner, 10, 10, TimeUnit.SECONDS);
   }
 
 }

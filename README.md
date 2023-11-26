@@ -26,4 +26,7 @@
 
 ## API Changelog:
 
-* 1.0.0 initial authorization + users session invalidation implemented.
+* 1.3.0 Added local cache and secondary DataSource implementation.
+
+
+* 1.0.0 Initial authorization + users session invalidation implemented.

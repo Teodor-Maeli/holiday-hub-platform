@@ -38,6 +38,7 @@ project("customers-auth") {
         implementation 'org.springframework.session:spring-session-core'
         implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'org.springframework.boot:spring-boot-starter-aop'
+        implementation group: 'com.google.guava', name: 'guava', version: '32.1.3-jre'
     }
 }
 

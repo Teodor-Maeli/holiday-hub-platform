@@ -1,17 +1,9 @@
 package com.platform.config.util;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * Purpose of this is to disable auto commit of jdbc template.
@@ -34,7 +26,7 @@ public class JdbcTemplateConfiguration {
 
   @Bean(value = "improvedJdbcTemplate")
   public JdbcTemplate jdbcTemplate() {
-    final PlatformDataSource ds = new PlatformDataSource();
+    final PlatformSecondaryDataSource ds = new PlatformSecondaryDataSource();
     ds.setMaximumPoolSize(100);
     ds.setDriverClassName(driver);
     ds.setJdbcUrl(url);
@@ -44,38 +36,4 @@ public class JdbcTemplateConfiguration {
     return new ImprovedJdbcTemplate(ds);
   }
 
-  public static class ImprovedJdbcTemplate extends JdbcTemplate {
-
-    public ImprovedJdbcTemplate(PlatformDataSource dataSource) {
-      super(dataSource);
-    }
-
-    public Connection getConnection() throws SQLException {
-      DataSource dataSource = getDataSource();
-
-      if (dataSource != null) {
-        return DataSourceUtils.getConnection(getDataSource());
-      } else {
-        throw new SQLException("No set datasource, could not obtain connection!");
-      }
-    }
-  }
-
-
-  private static class PlatformDataSource extends HikariDataSource {
-
-    public PlatformDataSource() {
-    }
-
-    public PlatformDataSource(HikariConfig configuration) {
-      super(configuration);
-    }
-
-    @Override
-    public Connection getConnection() throws SQLException {
-      Connection connection = super.getConnection();
-      connection.setAutoCommit(false);
-      return connection;
-    }
-  }
 }

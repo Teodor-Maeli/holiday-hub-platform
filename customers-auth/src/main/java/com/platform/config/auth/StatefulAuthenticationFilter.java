@@ -1,7 +1,7 @@
 package com.platform.config.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.platform.config.util.JdbcTemplateConfiguration.ImprovedJdbcTemplate;
+import com.platform.config.util.ImprovedJdbcTemplate;
 import com.platform.domain.entity.Client;
 import com.platform.exception.SessionFailureException;
 import jakarta.annotation.PostConstruct;
@@ -24,7 +24,6 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 /**
@@ -44,7 +43,7 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
           INITIATED_DATE,
           ACTIVE,
           INITIATED_BY)
-      VALUES (?,?,?,?,?)
+      VALUES (?,?,?,true,?)
       """;
 
   private static final String Q_INVALIDATE_SESSION = """
@@ -121,16 +120,16 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
           freshSessionId,
           client.getId(),
           LocalDateTime.now(),
-          Boolean.TRUE,
           client.getUsername()
       );
 
+      jdbc.commit();
       LOGGER.info("Successfully invalidated old sessions for client {} and {} rows affected.", client.getId(), updated);
-      commit();
     } catch (RuntimeException e) {
+      jdbc.rollback();
       throw e;
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
+    } finally {
+      jdbc.close();
     }
   }
 
@@ -149,19 +148,15 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
           freshSessionId
       );
 
-      commit();
+      jdbc.commit();
       LOGGER.info("Successfully invalidated old sessions for client {} and {} rows affected.", client.getId(), updated);
     } catch (RuntimeException e) {
+      jdbc.rollback();
       throw e;
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
+    } finally {
+      jdbc.close();
     }
   }
-
-  private void commit() throws SQLException {
-    jdbc.getConnection().commit();
-  }
-
 
   private void invalidateFreshlyCachedSession(String sessionId) {
     SessionInformation session = sessionRegistry.getSessionInformation(sessionId);

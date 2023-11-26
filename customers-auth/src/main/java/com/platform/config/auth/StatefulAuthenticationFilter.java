@@ -95,8 +95,12 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
   }
 
   @Override
-  protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                          FilterChain chain, Authentication authResult) throws ServletException, IOException {
+  protected void successfulAuthentication(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      FilterChain chain,
+      Authentication authResult
+  ) throws ServletException, IOException {
     String freshSessionId = request.getSession().getId();
     Client client = (Client) authResult.getPrincipal();
 
@@ -168,9 +172,9 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
 
   private AuthenticationException translateException(Exception e) {
     if (e instanceof DuplicateKeyException) {
-      return new SessionFailureException(e.getMessage(), e.getCause(), HttpStatus.FOUND);
+      return new SessionFailureException(e, HttpStatus.FOUND);
     }
 
-    return new SessionFailureException(e.getMessage(), e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
+    return new SessionFailureException(e, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

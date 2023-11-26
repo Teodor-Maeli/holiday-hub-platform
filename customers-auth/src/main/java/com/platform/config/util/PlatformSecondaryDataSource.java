@@ -2,12 +2,8 @@ package com.platform.config.util;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.RemovalListener;
-import com.google.common.cache.RemovalNotification;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.SmartDataSource;
 
 import java.sql.Connection;
@@ -16,10 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 class PlatformSecondaryDataSource extends HikariDataSource implements SmartDataSource {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(PlatformSecondaryDataSource.class);
-
   private volatile static Cache<String, Connection> cache = CacheBuilder.newBuilder()
-      .maximumSize(Integer.MAX_VALUE)
+      .maximumSize(1000)
       .expireAfterWrite(60, TimeUnit.SECONDS)
       .removalListener(new ConnectionsRemovalListener())
       .build();
@@ -45,11 +39,6 @@ class PlatformSecondaryDataSource extends HikariDataSource implements SmartDataS
     return connection;
   }
 
-  private String getKey() {
-    Thread thread = Thread.currentThread();
-    return thread.getName() + thread.getId();
-  }
-
   @Override
   public boolean shouldClose(Connection con) {
     // We don't care if connections should be closed, we want re-use JdbcTemplate logic, without closing the connection.
@@ -57,25 +46,9 @@ class PlatformSecondaryDataSource extends HikariDataSource implements SmartDataS
     return false;
   }
 
-  private static class ConnectionsRemovalListener implements RemovalListener<String, Connection> {
-
-    public ConnectionsRemovalListener() {
-    }
-
-    @Override
-    public void onRemoval(RemovalNotification<String, Connection> notification) {
-      if (notification.getValue() != null) {
-        try {
-          Connection conn = notification.getValue();
-
-          if (! conn.isClosed()) {
-            conn.close();
-            LOGGER.info("Expired a  jdbc connection created from thread " + notification.getValue());
-          }
-        } catch (SQLException e) {
-          LOGGER.error("Failed to close connection on cache expiration!");
-        }
-      }
-    }
+  private String getKey() {
+    Thread thread = Thread.currentThread();
+    return thread.getName() + thread.getId();
   }
+
 }

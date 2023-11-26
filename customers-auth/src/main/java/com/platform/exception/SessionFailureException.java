@@ -5,11 +5,11 @@ import org.springframework.security.core.AuthenticationException;
 
 public class SessionFailureException extends AuthenticationException {
 
-  private HttpStatus httpStatus;
+  private final HttpStatus httpStatus;
   private String redirectUrl;
 
-  public SessionFailureException(String msg, Throwable cause, HttpStatus httpStatus) {
-    super(msg, cause);
+  public SessionFailureException(Exception e, HttpStatus httpStatus) {
+    super(e.getMessage(), e.getCause());
     this.httpStatus = httpStatus;
   }
 

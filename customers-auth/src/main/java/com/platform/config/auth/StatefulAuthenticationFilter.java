@@ -1,18 +1,20 @@
 package com.platform.config.auth;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.platform.config.util.JdbcTemplateConfiguration.ImprovedJdbcTemplate;
 import com.platform.domain.entity.Client;
-import com.platform.exception.BackendException;
+import com.platform.exception.SessionFailureException;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.session.SessionInformation;
@@ -22,6 +24,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 /**
@@ -29,6 +32,7 @@ import java.time.LocalDateTime;
  * This class being a bean, benefit us from DI.
  */
 @Component(value = "authenticationFilter")
+@DependsOn(value = "improvedJdbcTemplate")
 public class StatefulAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(StatefulAuthenticationFilter.class);
@@ -53,20 +57,32 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
       AND ACTIVE = true
       """;
 
-  private final JdbcTemplate jdbc;
-
   private final SessionRegistry sessionRegistry;
 
+  private final SecurityContextRepository securityContextRepository;
+
+  private final ObjectMapper objectMapper;
+
+  private final ImprovedJdbcTemplate jdbc;
+
   public StatefulAuthenticationFilter(
-      JdbcTemplate jdbc,
       SessionRegistry sessionRegistry,
       AuthenticationManager authenticationManager,
-      SecurityContextRepository securityContextRepository
+      SecurityContextRepository securityContextRepository,
+      ObjectMapper objectMapper,
+      ImprovedJdbcTemplate jdbc
   ) {
     super(authenticationManager);
-    this.jdbc = jdbc;
     this.sessionRegistry = sessionRegistry;
+    this.securityContextRepository = securityContextRepository;
+    this.objectMapper = objectMapper;
+    this.jdbc = jdbc;
+  }
+
+  @PostConstruct
+  private void configure() {
     setSecurityContextRepository(securityContextRepository);
+    setAuthenticationFailureHandler(new StatefulAuthenticationFailureHandler(objectMapper));
   }
 
   @Override
@@ -82,25 +98,25 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
   @Override
   protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                           FilterChain chain, Authentication authResult) throws ServletException, IOException {
+    String freshSessionId = request.getSession().getId();
+    Client client = (Client) authResult.getPrincipal();
 
     try {
-      Client client = (Client) authResult.getPrincipal();
-      String freshSessionId = request.getSession().getId();
-
-      persistNew(client, response, freshSessionId);
-      invalidateOld(client, freshSessionId); // only one allowed
+      persistNew(client, freshSessionId);
       super.successfulAuthentication(request, response, chain, authResult);
-    } catch (Exception e) {
-      //probably we need extend this handler and register ours, this is not going to work.
-      super.getFailureHandler().onAuthenticationFailure(request, response, new AuthenticationServiceException(e.getMessage(), e.getCause()));
+    } catch (RuntimeException e) {
+      invalidateFreshlyCachedSession(freshSessionId);
+      getFailureHandler().onAuthenticationFailure(request, response, translateException(e));
+    } finally {
+      invalidateOld(client, freshSessionId); // only one allowed
     }
   }
 
-  private void persistNew(Client client, HttpServletResponse response, String freshSessionId) {
-    try {
-      sessionRegistry.registerNewSession(freshSessionId, client);
+  private void persistNew(Client client, String freshSessionId) {
+    sessionRegistry.registerNewSession(freshSessionId, client);
 
-      jdbc.update(
+    try {
+      int updated = jdbc.update(
           Q_INSERT_SESSION,
           freshSessionId,
           client.getId(),
@@ -108,29 +124,23 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
           Boolean.TRUE,
           client.getUsername()
       );
-      LOGGER.info("Successfully persisted session into the DB!");
+
+      LOGGER.info("Successfully invalidated old sessions for client {} and {} rows affected.", client.getId(), updated);
+      commit();
     } catch (RuntimeException e) {
-      invalidateFreshlyCachedSession(freshSessionId);
-
-      if (e instanceof DuplicateKeyException) {
-        //TODO this has to be improved, its working but need to be synchronized with the failure handler, anyway a single session is allowed.
-        response.setStatus(HttpStatus.FOUND.value());
-        throw e;
-      } else {
-        throw new BackendException("Session persistence failed for client " + client.getId() + " ! Invalidated session from cache!",
-            HttpStatus.INTERNAL_SERVER_ERROR, e);
-      }
-
+      throw e;
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
     }
   }
 
   private void invalidateOld(Client client, String freshSessionId) {
-    try {
-      sessionRegistry.getAllSessions(client, false)
-          .stream()
-          .filter(session -> ! session.getSessionId().equals(freshSessionId))
-          .forEach(SessionInformation::expireNow);
+    sessionRegistry.getAllSessions(client, false)
+        .stream()
+        .filter(session -> ! session.getSessionId().equals(freshSessionId))
+        .forEach(SessionInformation::expireNow);
 
+    try {
       int updated = jdbc.update(
           Q_INVALIDATE_SESSION,
           LocalDateTime.now(),
@@ -139,12 +149,19 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
           freshSessionId
       );
 
-      LOGGER.info("{} rows has been updated when invalidating old sessions!", updated);
-
+      commit();
+      LOGGER.info("Successfully invalidated old sessions for client {} and {} rows affected.", client.getId(), updated);
     } catch (RuntimeException e) {
-      LOGGER.error("Session invalidation failed for client {} !", client.getId(), e);
+      throw e;
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
     }
   }
+
+  private void commit() throws SQLException {
+    jdbc.getConnection().commit();
+  }
+
 
   private void invalidateFreshlyCachedSession(String sessionId) {
     SessionInformation session = sessionRegistry.getSessionInformation(sessionId);
@@ -152,5 +169,13 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
     if (session != null) {
       session.expireNow();
     }
+  }
+
+  private AuthenticationException translateException(Exception e) {
+    if (e instanceof DuplicateKeyException) {
+      return new SessionFailureException(e.getMessage(), e.getCause(), HttpStatus.FOUND);
+    }
+
+    return new SessionFailureException(e.getMessage(), e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

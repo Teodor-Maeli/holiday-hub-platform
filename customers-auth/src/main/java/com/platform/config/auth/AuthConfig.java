@@ -51,10 +51,11 @@ public class AuthConfig {
   public SecurityFilterChain configuration(HttpSecurity http, SessionRegistry sessionRegistry,
                                            StatefulAuthenticationFilter statefulAuthenticationFilter) throws Exception {
 
-    http.csrf().disable().cors();
+    http.csrf().disable();
+    http.cors();
     http.authorizeHttpRequests().requestMatchers(registerMatcher).permitAll();
     http.authorizeHttpRequests().anyRequest().authenticated();
-    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).maximumSessions(1).maxSessionsPreventsLogin(true).sessionRegistry(sessionRegistry);
+//    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).maximumSessions(1).maxSessionsPreventsLogin(true).sessionRegistry(sessionRegistry);
     http.addFilter(statefulAuthenticationFilter);
 
     return http.build();

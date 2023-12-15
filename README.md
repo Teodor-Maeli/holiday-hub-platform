@@ -24,7 +24,10 @@
 
 ### Stay tuned for more!
 
-## API Changelog:
+## Changelog:
+
+* 1.4.0 Fix namings, improve lazy load entities fetching and implement proper snapshots versioning.
+
 
 * 1.3.0 Added local cache and secondary DataSource implementation.
 

@@ -20,30 +20,37 @@ import java.util.Optional;
 @NoRepositoryBean
 public interface BaseClientRepository<E extends Client, ID> extends JpaRepository<E, ID> {
 
-  @Query("SELECT e FROM #{#entityName} e "
-      + "LEFT JOIN FETCH e.roles r "
-      + "WHERE e.username = :username")
-  Optional<E> findByUserName(@Param("username") String username);
+  @Query("""
+      SELECT e FROM #{#entityName} e
+      LEFT JOIN FETCH e.roles r
+      JOIN FETCH e.sessions s
+      WHERE e.username = :username
+      AND s.active = true
+       """)
+  Optional<E> findByUserNameAndActiveSession(@Param("username") String username);
 
   @Transactional
   @Modifying
-  @Query("DELETE #{#entityName} e "
-      + "WHERE e.username = :username")
+  @Query("DELETE #{#entityName} e WHERE e.username = :username")
   int deleteByUserName(String username);
 
   @Transactional
   @Modifying
-  @Query("UPDATE #{#entityName} e "
-      + "SET e.password = :password "
-      + "WHERE e.username = :username")
+  @Query("""
+      UPDATE #{#entityName} e
+      SET e.password = :password
+      WHERE e.username = :username
+      """)
   int updatePasswordByUsername(@Param("username") String username,
                                @Param("password") String password);
 
   @Transactional
   @Modifying
-  @Query("UPDATE #{#entityName} e "
-      + "SET e.enabled = :enabled "
-      + "WHERE e.username = :username")
+  @Query("""
+      UPDATE #{#entityName} e
+      SET e.enabled = :enabled
+      WHERE e.username = :username
+          """)
   int disableOrEnableByUsername(@Param("username") String username,
                                 @Param("enabled") Boolean enabled);
 

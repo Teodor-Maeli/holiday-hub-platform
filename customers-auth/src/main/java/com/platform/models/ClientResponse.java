@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,6 +33,7 @@ public class ClientResponse {
   private Boolean enabled;
 
   private Boolean premium;
+  private List<SessionResponse> sessions;
 
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime registeredDate;
@@ -41,8 +43,6 @@ public class ClientResponse {
 
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime subscriptionEnds;
-
-  private SessionResponse session;
 
   private Set<Role> roles;
 
@@ -68,14 +68,6 @@ public class ClientResponse {
 
   public void setRoles(Set<Role> roles) {
     this.roles = roles;
-  }
-
-  public SessionResponse getSession() {
-    return session;
-  }
-
-  public void setSession(SessionResponse session) {
-    this.session = session;
   }
 
   public String getUsername() {
@@ -132,5 +124,13 @@ public class ClientResponse {
 
   public void setPhoneNumber(String phoneNumber) {
     this.phoneNumber = phoneNumber;
+  }
+
+  public List<SessionResponse> getSessions() {
+    return sessions;
+  }
+
+  public void setSessions(List<SessionResponse> sessions) {
+    this.sessions = sessions;
   }
 }

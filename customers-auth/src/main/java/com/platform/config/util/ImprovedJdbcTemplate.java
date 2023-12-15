@@ -26,7 +26,7 @@ public class ImprovedJdbcTemplate extends JdbcTemplate {
     }
   }
 
-  public void close() {
+  public void closeConnection() {
     try {
       Connection connection = getConnection();
       connection.close();

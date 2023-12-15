@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 public class BackendException extends RuntimeException {
 
   private final String message;
-
   private final HttpStatus httpStatus;
 
   public BackendException(String message, HttpStatus httpStatus) {

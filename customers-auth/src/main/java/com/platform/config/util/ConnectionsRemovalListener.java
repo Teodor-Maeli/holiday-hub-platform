@@ -30,7 +30,7 @@ public class ConnectionsRemovalListener implements RemovalListener<String, Conne
 
         if (! conn.isClosed()) {
           conn.close();
-          LOGGER.info("Expired a  jdbc connection created from thread " + notification.getValue());
+          LOGGER.info("Expired a jdbc connection created from thread " + notification.getValue());
         }
       } catch (SQLException e) {
         LOGGER.error("Failed to close connection on cache expiration!");

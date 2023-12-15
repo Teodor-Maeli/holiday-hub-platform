@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * This filter should handle persist of new sessions and invalidate the old ones.
@@ -119,7 +120,7 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
     sessionRegistry.registerNewSession(freshSessionId, client);
 
     try {
-      int updated = jdbc.update(
+      jdbc.update(
           Q_INSERT_SESSION,
           freshSessionId,
           client.getId(),
@@ -128,12 +129,12 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
       );
 
       jdbc.commit();
-      LOGGER.info("Successfully invalidated old sessions for client {} and {} rows affected.", client.getId(), updated);
+      LOGGER.info("Successfully persisted new session for client {}", client.getId());
     } catch (RuntimeException e) {
       jdbc.rollback();
       throw e;
     } finally {
-      jdbc.close();
+      jdbc.closeConnection();
     }
   }
 
@@ -158,16 +159,13 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
       jdbc.rollback();
       throw e;
     } finally {
-      jdbc.close();
+      jdbc.closeConnection();
     }
   }
 
   private void invalidateFreshlyCachedSession(String sessionId) {
-    SessionInformation session = sessionRegistry.getSessionInformation(sessionId);
-
-    if (session != null) {
-      session.expireNow();
-    }
+    Optional.ofNullable(sessionRegistry.getSessionInformation(sessionId))
+        .ifPresent(SessionInformation::expireNow);
   }
 
   private AuthenticationException translateException(Exception e) {

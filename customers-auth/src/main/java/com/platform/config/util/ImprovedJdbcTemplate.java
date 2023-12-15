@@ -22,7 +22,6 @@ public class ImprovedJdbcTemplate extends JdbcTemplate {
       Connection connection = getConnection();
       connection.commit();
     } catch (SQLException e) {
-      rollback();
       throw new UncheckedSQLException(e);
     }
   }
@@ -51,7 +50,7 @@ public class ImprovedJdbcTemplate extends JdbcTemplate {
     if (dataSource != null) {
       return dataSource.getConnection();
     } else {
-      throw new SQLException("No set datasource, could not obtain connection!");
+      throw new SQLException("Datasource is null, could not obtain connection!");
     }
   }
 }

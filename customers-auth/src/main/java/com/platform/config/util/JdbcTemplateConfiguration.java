@@ -5,8 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.concurrent.Executors;
-
 /**
  * Creates bean of {@link ImprovedJdbcTemplate} with required configurations.
  */
@@ -28,7 +26,7 @@ public class JdbcTemplateConfiguration {
 
   @Bean(value = "improvedJdbcTemplate")
   public JdbcTemplate jdbcTemplate() {
-    final PlatformSecondaryDataSource ds = new PlatformSecondaryDataSource();
+    final PlatformSecondaryDataSource ds = PlatformSecondaryDataSource.getInstance();
     ds.setMaximumPoolSize(100);
     ds.setDriverClassName(driver);
     ds.setJdbcUrl(url);

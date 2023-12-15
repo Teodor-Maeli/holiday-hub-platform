@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-    path = "/customers-auth/v1/company",
+    path = CompanyController.CUSTOMERS_AUTH_V_1_COMPANY,
     consumes = MediaType.APPLICATION_JSON_VALUE,
     produces = MediaType.APPLICATION_JSON_VALUE
 )
 public class CompanyController {
+
+  public static final String CUSTOMERS_AUTH_V_1_COMPANY = "/customers-auth/v1/company";
 
   private final CompanyRepository repository;
 

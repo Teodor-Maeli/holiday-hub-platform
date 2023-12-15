@@ -2,7 +2,6 @@ package com.platform.config.util;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,22 +16,26 @@ import java.util.concurrent.TimeUnit;
 /**
  * Util DataSource, to be used only with {@link ImprovedJdbcTemplate}
  */
-class PlatformSecondaryDataSource extends HikariDataSource implements SmartDataSource {
+public class PlatformSecondaryDataSource extends HikariDataSource implements SmartDataSource {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PlatformSecondaryDataSource.class);
-
-  private volatile static Cache<String, Connection> cache = CacheBuilder.newBuilder()
+  private static PlatformSecondaryDataSource instance;
+  private volatile Cache<String, Connection> cache = CacheBuilder.newBuilder()
       .maximumSize(1000)
       .expireAfterWrite(60, TimeUnit.SECONDS)
       .removalListener(new ConnectionsRemovalListener())
       .build();
 
-  public PlatformSecondaryDataSource() {
+  private PlatformSecondaryDataSource() {
     scheduleExpirationCleanUp();
   }
 
-  public PlatformSecondaryDataSource(HikariConfig configuration) {
-    super(configuration);
+  public static synchronized PlatformSecondaryDataSource getInstance() {
+    if (instance == null) {
+      instance = new PlatformSecondaryDataSource();
+    }
+
+    return instance;
   }
 
   /**
@@ -65,7 +68,8 @@ class PlatformSecondaryDataSource extends HikariDataSource implements SmartDataS
   /**
    * Clears cache.
    */
-  public static void clearCache() {
+  public void clearCache() {
+    cache.invalidateAll();
     cache.cleanUp();
   }
 

@@ -1,6 +1,6 @@
 package com.platform.domain.entity;
 
-import com.platform.models.Role;
+import com.platform.rest.resource.Role;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

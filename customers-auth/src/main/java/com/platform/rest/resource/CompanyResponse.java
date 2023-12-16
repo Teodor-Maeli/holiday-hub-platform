@@ -1,6 +1,10 @@
-package com.platform.models;
+package com.platform.rest.resource;
 
-public class CompanyRequest extends ClientRequest {
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(Include.NON_NULL)
+public class CompanyResponse extends ClientResponse {
 
   private String companyName;
 

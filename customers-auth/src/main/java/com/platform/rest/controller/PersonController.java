@@ -2,9 +2,9 @@ package com.platform.rest.controller;
 
 import com.platform.aspect.logger.IOLogger;
 import com.platform.domain.entity.Person;
-import com.platform.models.PersonRequest;
-import com.platform.models.PersonResponse;
-import com.platform.rest.assemblers.PersonAssembler;
+import com.platform.rest.mapper.PersonMapper;
+import com.platform.rest.resource.PersonRequest;
+import com.platform.rest.resource.PersonResponse;
 import com.platform.service.PersonService;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.MediaType;
@@ -23,22 +23,22 @@ public class PersonController {
 
   public static final String CUSTOMERS_AUTH_V_1_PERSON = "/customers-auth/v1/person";
 
-  private final PersonAssembler assembler;
+  private final PersonMapper mapper;
 
   private final PersonService service;
 
-  public PersonController(PersonAssembler assembler, PersonService service) {
-    this.assembler = assembler;
+  public PersonController(PersonMapper mapper, PersonService service) {
+    this.mapper = mapper;
     this.service = service;
   }
 
   @IOLogger
   @PostMapping(path = "/register")
   public ResponseEntity<PersonResponse> register(@RequestBody PersonRequest request) {
-    Person entity = service.save(assembler.assembly(request));
+    Person entity = service.save(mapper.toEntity(request));
     return ResponseEntity
         .status(CREATED)
-        .body(assembler.assembly(entity));
+        .body(mapper.toResponse(entity));
   }
 
   @IOLogger
@@ -47,7 +47,7 @@ public class PersonController {
     Person entity = (Person) service.loadUserByUsername(username);
     return ResponseEntity
         .status(OK)
-        .body(assembler.assembly(entity));
+        .body(mapper.toResponse(entity));
   }
 
   @IOLogger

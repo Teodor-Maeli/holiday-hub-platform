@@ -2,8 +2,11 @@ plugins {
     id 'java'
 }
 
+def projectVersion = project.property('version')
+def projectVersionPrefix = '-SNAPSHOT'
+
 group = 'com.platform'
-version = '0.0.1-SNAPSHOT'
+version = projectVersion + projectVersionPrefix
 
 repositories {
     mavenCentral()

@@ -1,4 +1,4 @@
-package com.platform.models;
+package com.platform.rest.resource;
 
 /**
  * 27.05.2023.

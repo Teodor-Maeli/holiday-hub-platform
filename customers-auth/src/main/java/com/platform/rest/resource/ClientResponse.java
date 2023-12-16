@@ -1,4 +1,4 @@
-package com.platform.models;
+package com.platform.rest.resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -33,16 +33,13 @@ public class ClientResponse {
   private Boolean enabled;
 
   private Boolean premium;
+
+  private SubscriptionResponse subscription;
+
   private List<SessionResponse> sessions;
 
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime registeredDate;
-
-  @JsonSerialize(using = LocalDateTimeSerializer.class)
-  private LocalDateTime subscriptionStarts;
-
-  @JsonSerialize(using = LocalDateTimeSerializer.class)
-  private LocalDateTime subscriptionEnds;
 
   private Set<Role> roles;
 
@@ -94,22 +91,6 @@ public class ClientResponse {
     this.premium = premium;
   }
 
-  public LocalDateTime getSubscriptionStarts() {
-    return subscriptionStarts;
-  }
-
-  public void setSubscriptionStarts(LocalDateTime subscriptionStarts) {
-    this.subscriptionStarts = subscriptionStarts;
-  }
-
-  public LocalDateTime getSubscriptionEnds() {
-    return subscriptionEnds;
-  }
-
-  public void setSubscriptionEnds(LocalDateTime subscriptionEnds) {
-    this.subscriptionEnds = subscriptionEnds;
-  }
-
   public String getEmailAddress() {
     return emailAddress;
   }
@@ -124,6 +105,14 @@ public class ClientResponse {
 
   public void setPhoneNumber(String phoneNumber) {
     this.phoneNumber = phoneNumber;
+  }
+
+  public SubscriptionResponse getSubscription() {
+    return subscription;
+  }
+
+  public void setSubscription(SubscriptionResponse subscription) {
+    this.subscription = subscription;
   }
 
   public List<SessionResponse> getSessions() {

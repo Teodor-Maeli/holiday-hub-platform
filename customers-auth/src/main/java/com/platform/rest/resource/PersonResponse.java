@@ -1,4 +1,4 @@
-package com.platform.models;
+package com.platform.rest.resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

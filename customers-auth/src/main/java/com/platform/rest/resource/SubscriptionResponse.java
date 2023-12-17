@@ -1,13 +1,11 @@
 package com.platform.rest.resource;
 
-import java.time.LocalDateTime;
-
 public class SubscriptionResponse {
 
   private Long clientId;
-  private LocalDateTime subscriptionStarts;
+  private String subscriptionStarts;
 
-  private LocalDateTime subscriptionEnds;
+  private String subscriptionEnds;
   private Boolean activeSubscription;
 
   public Long getClientId() {
@@ -18,19 +16,19 @@ public class SubscriptionResponse {
     this.clientId = clientId;
   }
 
-  public LocalDateTime getSubscriptionStarts() {
+  public String getSubscriptionStarts() {
     return subscriptionStarts;
   }
 
-  public void setSubscriptionStarts(LocalDateTime subscriptionStarts) {
+  public void setSubscriptionStarts(String subscriptionStarts) {
     this.subscriptionStarts = subscriptionStarts;
   }
 
-  public LocalDateTime getSubscriptionEnds() {
+  public String getSubscriptionEnds() {
     return subscriptionEnds;
   }
 
-  public void setSubscriptionEnds(LocalDateTime subscriptionEnds) {
+  public void setSubscriptionEnds(String subscriptionEnds) {
     this.subscriptionEnds = subscriptionEnds;
   }
 

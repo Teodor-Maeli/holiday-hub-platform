@@ -26,6 +26,12 @@
 
 ## Changelog:
 
+* 1.5.0 Containerization - simply run "docker compose up" with following args:
+  - POSTGRES_USER=$POSTGRES_USER
+  - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+  - POSTGRES_DB=POSTGRES_DB
+
+
 * 1.4.0 Fix namings, improve lazy load entities fetching and implement proper snapshots versioning.
 
 

@@ -1,4 +1,4 @@
-## HOLIDAY HUB - VACATION PLATFORM.
+## HOLIDAY HUB - BACKEND PLATFORM SERVICES.
 
 ### Project short summary:
 
@@ -12,17 +12,21 @@
 
 * Module based monolithic architecture.
 
-### Technologies/paradigms/methods involved in development:
+### Technologies:
 
-* Java spring as backbone of the backend.
-* PostgreSQL as initial solution for database.
+* Java Spring as backbone of the backend server
+* PostgresSQL as initial solution for database.
 * Authentication and authorization - stateful session based authentication , spring security
-  provides core
-  functionalities that are enchanced by the developer.
-* Lombok
+  provides core functionalities that are enhanced by the developer.
 * AOP.
+* Docker.
+* MapStruct.
+* Google Guava Cache
 
-### Stay tuned for more!
+### How to start?
+
+  - You can set up everything yourself(database, java etc...) or download docker and execute "docker compose up" in terminal in the same directory.
+
 
 ## Changelog:
 

@@ -42,6 +42,7 @@ public class StatefulAuthenticationFailureHandler extends SimpleUrlAuthenticatio
 
       response.getOutputStream().println(objectMapper.writeValueAsString(data));
       response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+      response.sendRedirect(e.getRedirectUrl());
 
     } else {
       super.onAuthenticationFailure(request, response, exception);

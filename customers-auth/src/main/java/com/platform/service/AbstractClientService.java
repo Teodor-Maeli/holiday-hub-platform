@@ -56,7 +56,7 @@ public abstract class AbstractClientService
    */
   @Override
   public UserDetails loadUserByUsername(String username) {
-    Optional<E> user = repository.findByUserNameAndActiveSession(username);
+    Optional<E> user = repository.findByUserNameAndActiveSessionOrdered(username);
 
     if (user.isPresent()) {
       return user.get();

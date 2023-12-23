@@ -23,11 +23,10 @@ public interface BaseClientRepository<E extends Client, ID> extends JpaRepositor
   @Query("""
       SELECT e FROM #{#entityName} e
       LEFT JOIN FETCH e.roles r
-      JOIN FETCH e.sessions s
+      LEFT JOIN FETCH e.sessions s
       WHERE e.username = :username
-      AND s.active = true
-       """)
-  Optional<E> findByUserNameAndActiveSession(@Param("username") String username);
+      """)
+  Optional<E> findByUserNameAndActiveSessionOrdered(@Param("username") String username);
 
   @Transactional
   @Modifying
@@ -50,7 +49,7 @@ public interface BaseClientRepository<E extends Client, ID> extends JpaRepositor
       UPDATE #{#entityName} e
       SET e.enabled = :enabled
       WHERE e.username = :username
-          """)
+      """)
   int disableOrEnableByUsername(@Param("username") String username,
                                 @Param("enabled") Boolean enabled);
 

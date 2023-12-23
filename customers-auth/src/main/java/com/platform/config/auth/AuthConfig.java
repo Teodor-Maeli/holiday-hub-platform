@@ -2,6 +2,7 @@ package com.platform.config.auth;
 
 import com.platform.service.CompanyService;
 import com.platform.service.PersonService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -11,7 +12,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -34,6 +34,18 @@ public class AuthConfig {
   private static final RequestMatcher registerMatcher =
       request -> request.getRequestURI().contains("/register");
 
+  @Value("${platform.security.cors-config.allowedHeaders}")
+  private String allowedHeaders;
+
+  @Value("${platform.security.cors-config.allowedOrigins}")
+  private String allowedOrigins;
+
+  @Value("${platform.security.cors-config.allowedMethods}")
+  private String allowedMethods;
+
+  @Value("${platform.security.cors-config.path-mappings}")
+  private String pathMapping;
+
   @Bean
   @DependsOn({"personService", "companyService", "passwordEncoder"})
   public AuthenticationManager authenticationManager(HttpSecurity http, PersonService personService,
@@ -55,7 +67,6 @@ public class AuthConfig {
     http.cors();
     http.authorizeHttpRequests().requestMatchers(registerMatcher).permitAll();
     http.authorizeHttpRequests().anyRequest().authenticated();
-//    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).maximumSessions(1).maxSessionsPreventsLogin(true).sessionRegistry(sessionRegistry);
     http.addFilter(statefulAuthenticationFilter);
 
     return http.build();
@@ -81,12 +92,11 @@ public class AuthConfig {
     return new WebMvcConfigurer() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
-        // That's going to be changed soon.
         registry
-            .addMapping("/**")
-            .allowedOrigins("*")
-            .allowedHeaders("*")
-            .allowedMethods("*");
+            .addMapping(pathMapping)
+            .allowedOrigins(allowedOrigins)
+            .allowedHeaders(allowedHeaders)
+            .allowedMethods(allowedMethods);
       }
     };
   }

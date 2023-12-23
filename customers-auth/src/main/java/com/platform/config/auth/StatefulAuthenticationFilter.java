@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
@@ -65,6 +67,12 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
 
   private final ImprovedJdbcTemplate jdbc;
 
+  @Value("${platform.security.login.successUrl}")
+  private String successUrl;
+
+  @Value("${platform.security.login.failureUrl}")
+  private String failureUrl;
+
   public StatefulAuthenticationFilter(
       SessionRegistry sessionRegistry,
       AuthenticationManager authenticationManager,
@@ -83,6 +91,7 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
   private void configure() {
     setSecurityContextRepository(securityContextRepository);
     setAuthenticationFailureHandler(new StatefulAuthenticationFailureHandler(objectMapper));
+    setRedirectStrategy();
   }
 
   @Override
@@ -170,9 +179,15 @@ public class StatefulAuthenticationFilter extends UsernamePasswordAuthentication
 
   private AuthenticationException translateException(Exception e) {
     if (e instanceof DuplicateKeyException) {
-      return new SessionFailureException(e, HttpStatus.FOUND);
+      return new SessionFailureException(e, HttpStatus.FOUND, failureUrl);
     }
 
-    return new SessionFailureException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    return new SessionFailureException(e, HttpStatus.INTERNAL_SERVER_ERROR, failureUrl);
+  }
+
+  private void setRedirectStrategy() {
+    if (getSuccessHandler() instanceof SavedRequestAwareAuthenticationSuccessHandler handler) {
+      handler.setRedirectStrategy(new StatefulAuthenticationRedirectStrategy(successUrl));
+    }
   }
 }

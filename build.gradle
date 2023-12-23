@@ -43,7 +43,6 @@ allprojects {
 
 project("customers-auth") {
     dependencies {
-        implementation 'org.springframework.session:spring-session-core'
         implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'org.springframework.boot:spring-boot-starter-aop'
         implementation group: 'com.google.guava', name: 'guava', version: googleGuavaCacheVersion

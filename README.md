@@ -25,15 +25,15 @@
 
 ### How to start?
 
-  - You can set up everything yourself(database, java etc...) or download docker and execute "docker compose up" in terminal in the same directory.
-
+- You can set up everything yourself(database, java etc...) or download docker and execute "docker compose up" in
+  terminal in the same directory.
 
 ## Changelog:
 
 * 1.5.0 Containerization - simply run "docker compose up" with following args:
-  - POSTGRES_USER=$POSTGRES_USER
-  - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-  - POSTGRES_DB=POSTGRES_DB
+    - POSTGRES_USER=$POSTGRES_USER
+    - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+    - POSTGRES_DB=POSTGRES_DB
 
 
 * 1.4.0 Fix namings, improve lazy load entities fetching and implement proper snapshots versioning.

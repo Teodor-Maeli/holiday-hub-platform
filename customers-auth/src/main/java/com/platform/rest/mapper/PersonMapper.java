@@ -9,7 +9,6 @@ import org.mapstruct.Mapping;
 @Mapper(
     componentModel = "spring",
     uses = {
-        SessionMapper.class,
         SubscriptionMapper.class,
         PasswordEncoderMapper.class
     }

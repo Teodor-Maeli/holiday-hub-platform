@@ -12,14 +12,11 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -59,32 +56,22 @@ public class AuthConfig {
   }
 
   @Bean
-  @DependsOn({"sessionRegistry"})
-  public SecurityFilterChain configuration(HttpSecurity http, SessionRegistry sessionRegistry,
-                                           StatefulAuthenticationFilter statefulAuthenticationFilter) throws Exception {
+  @DependsOn({"initAuthenticationFilter", "processAuthenticationFilter"})
+  public SecurityFilterChain configuration(
+      HttpSecurity http,
+      InitAuthenticationFilter initAuthenticationFilter,
+      ProcessAuthenticationFilter processAuthenticationFilter
+  ) throws Exception {
 
     http.csrf().disable();
     http.cors();
     http.authorizeHttpRequests().requestMatchers(registerMatcher).permitAll();
     http.authorizeHttpRequests().anyRequest().authenticated();
-    http.addFilter(statefulAuthenticationFilter);
+    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    http.addFilter(initAuthenticationFilter);
+    http.addFilterBefore(processAuthenticationFilter, InitAuthenticationFilter.class);
 
     return http.build();
-  }
-
-  @Bean
-  public SessionRegistry sessionRegistry() {
-    return new SessionRegistryImpl();
-  }
-
-  @Bean
-  public HttpSessionEventPublisher httpSessionEventPublisher() {
-    return new HttpSessionEventPublisher();
-  }
-
-  @Bean
-  public HttpSessionSecurityContextRepository httpSessionSecurityContextRepository() {
-    return new HttpSessionSecurityContextRepository();
   }
 
   @Bean
@@ -112,4 +99,5 @@ public class AuthConfig {
     authProvider.setUserDetailsService(service);
     return authProvider;
   }
+
 }

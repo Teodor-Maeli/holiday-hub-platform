@@ -52,12 +52,11 @@ public abstract class Client implements UserDetails {
   private LocalDateTime registeredDate;
 
   @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
-  private List<Session> sessions;
+  private List<AuthTokenAuditInfo> authTokensAuditInfo;
 
   @PrimaryKeyJoinColumn(name = "SUBSCRIPTION")
   @OneToOne(mappedBy = "client", fetch = FetchType.LAZY)
   private Subscription subscription;
-
 
   @Column(name = "ROLES")
   @ElementCollection(targetClass = Role.class, fetch = FetchType.LAZY)
@@ -156,12 +155,12 @@ public abstract class Client implements UserDetails {
     this.phoneNumber = phoneNumber;
   }
 
-  public List<Session> getSessions() {
-    return sessions;
+  public List<AuthTokenAuditInfo> getAuthenticationTokenEntities() {
+    return authTokensAuditInfo;
   }
 
-  public void setSessions(List<Session> sessions) {
-    this.sessions = sessions;
+  public void setAuthenticationTokenEntities(List<AuthTokenAuditInfo> authTokensEntities) {
+    this.authTokensAuditInfo = authTokensEntities;
   }
 
   public Subscription getSubscription() {

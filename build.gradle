@@ -8,6 +8,7 @@ def projectVersion = project.property('version')
 def mapstructVersion = project.property('mapstruct.core-version')
 def googleGuavaCacheVersion = project.property('google.guava.cache-version')
 def projectVersionPrefix = '-SNAPSHOT'
+def auth0JavaJwtVersion = project.property('auth0.java-jwt-version')
 
 group = 'com.platform'
 version = projectVersion + projectVersionPrefix
@@ -46,6 +47,7 @@ project("customers-auth") {
         implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'org.springframework.boot:spring-boot-starter-aop'
         implementation group: 'com.google.guava', name: 'guava', version: googleGuavaCacheVersion
+        implementation "com.auth0:java-jwt:${auth0JavaJwtVersion}"
     }
 }
 

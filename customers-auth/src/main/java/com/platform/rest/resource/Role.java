@@ -10,6 +10,6 @@ package com.platform.rest.resource;
  */
 public enum Role {
   ADMIN,
-  PERSON,
-  COMPANY
+  CUSTOMER,
+  BRAND_REPRESENTATIVE
 }

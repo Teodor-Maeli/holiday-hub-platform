@@ -2,14 +2,11 @@ package com.platform.service;
 
 import com.platform.domain.entity.Client;
 import com.platform.domain.repository.BaseClientRepository;
-import com.platform.exception.BackendException;
-import org.springframework.security.core.session.SessionInformation;
-import org.springframework.security.core.session.SessionRegistry;
+import com.platform.exception.PlatformBackendException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -29,22 +26,17 @@ public abstract class AbstractClientService
 
   private final PasswordEncoder encoder;
 
-  private final SessionRegistry sessionRegistry;
-
   /**
    * Ensures dependencies are properly initialized.
    *
-   * @param repository      Repository used to perform generic operations.
-   * @param encoder         Used to encode sensitive information.
-   * @param sessionRegistry Principal cache.
+   * @param repository Repository used to perform generic operations.
+   * @param encoder    Used to encode sensitive information.
    */
   protected AbstractClientService(
       R repository,
-      PasswordEncoder encoder,
-      SessionRegistry sessionRegistry) {
+      PasswordEncoder encoder) {
     this.repository = repository;
     this.encoder = encoder;
-    this.sessionRegistry = sessionRegistry;
   }
 
   /**
@@ -52,17 +44,17 @@ public abstract class AbstractClientService
    *
    * @param username the username identifying the user whose data is required.
    * @return {@link UserDetails} The user details required in order to perform successful authentication.
-   * @throws BackendException if failed to load user with HTTP status 500 - Internal Server Error.
+   * @throws PlatformBackendException if failed to load user with HTTP status 500 - Internal Server Error.
    */
   @Override
   public UserDetails loadUserByUsername(String username) {
-    Optional<E> user = repository.findByUserNameAndActiveSessionOrdered(username);
+    Optional<E> user = repository.findByUserName(username);
 
     if (user.isPresent()) {
       return user.get();
     }
 
-    throw new BackendException("Failed to LOAD user, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
+    throw new PlatformBackendException("Failed to LOAD user, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
   }
 
   /**
@@ -70,13 +62,13 @@ public abstract class AbstractClientService
    *
    * @param entity Customer information that is to be persisted/updated into the database.
    * @return {@link Client} The already persisted/updated customer from the database.
-   * @throws BackendException if failed to persist/update into the database with HTTP status 500 - Internal Server Error.
+   * @throws PlatformBackendException if failed to persist/update into the database with HTTP status 500 - Internal Server Error.
    */
   public E save(E entity) {
     try {
       return repository.save(entity);
     } catch (RuntimeException e) {
-      throw new BackendException("Failed to SAVE entity with username: " + entity.getUsername(), INTERNAL_SERVER_ERROR, e);
+      throw new PlatformBackendException("Failed to SAVE entity with username: " + entity.getUsername(), INTERNAL_SERVER_ERROR, e);
     }
   }
 
@@ -87,7 +79,7 @@ public abstract class AbstractClientService
    */
   public void delete(String username) {
     if ((repository.deleteByUserName(username) <= 0)) {
-      throw new BackendException("Failed to DELETE, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
+      throw new PlatformBackendException("Failed to DELETE, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
     }
   }
 
@@ -96,44 +88,39 @@ public abstract class AbstractClientService
    *
    * @param newPassword Replacement for the current password.
    * @param username    Username to query the database.
-   * @throws BackendException with 400 BAD REQUEST if fail to change password or 500 INTERNAL SERVER ERROR if another error occurs.
+   * @throws PlatformBackendException with 400 BAD REQUEST if fail to change password or 500 INTERNAL SERVER ERROR if another error occurs.
    */
   public void changePassword(String newPassword, String username) {
     try {
       String encoded = encoder.encode(newPassword);
       if (repository.updatePasswordByUsername(username, encoded) > 0) {
-        invalidateSession(username);
+        blacklistAccessToken(username);
         return;
       }
-      throw new BackendException("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
+      throw new PlatformBackendException("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
     } catch (RuntimeException e) {
-      throw new BackendException("Failed to UPDATE password for USERNAME: %s".formatted(username), INTERNAL_SERVER_ERROR, e);
+      throw new PlatformBackendException("Failed to UPDATE password for USERNAME: %s".formatted(username), INTERNAL_SERVER_ERROR, e);
     }
   }
 
   /**
    * @param username Username to query the database.
    * @param enabled  Flag used to indicate account state.
-   * @throws BackendException with 400 BAD REQUEST if fail to change password or 500 INTERNAL SERVER ERROR if another error occurs.
+   * @throws PlatformBackendException with 400 BAD REQUEST if fail to change password or 500 INTERNAL SERVER ERROR if another error occurs.
    */
   public void disableOrEnableByUsername(String username, Boolean enabled) {
     try {
       if (repository.disableOrEnableByUsername(username, enabled) > 0) {
-        invalidateSession(username);
+        blacklistAccessToken(username);
         return;
       }
-      throw new BackendException("Failed account active status to %s, USERNAME: %s non-existent!".formatted(enabled, username), BAD_REQUEST);
+      throw new PlatformBackendException("Failed account active status to %s, USERNAME: %s non-existent!".formatted(enabled, username), BAD_REQUEST);
     } catch (RuntimeException e) {
-      throw new BackendException("Failed account active status to %s, USERNAME: %s".formatted(enabled, username), INTERNAL_SERVER_ERROR, e);
+      throw new PlatformBackendException("Failed account active status to %s, USERNAME: %s".formatted(enabled, username), INTERNAL_SERVER_ERROR, e);
     }
   }
 
-  private void invalidateSession(String username) {
-    sessionRegistry.getAllPrincipals()
-        .stream()
-        .map(Client.class::cast)
-        .filter(client -> Objects.equals(username, client.getUsername()))
-        .map(client -> sessionRegistry.getAllSessions(client, false))
-        .forEach(principalSessions -> principalSessions.forEach(SessionInformation::expireNow));
+  private void blacklistAccessToken(String username) {
   }
+
 }

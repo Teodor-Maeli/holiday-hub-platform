@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.platform.domain.entity.AuthTokenAuditInfo;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ClientResponse {
 
   private SubscriptionResponse subscription;
 
-  private List<SessionResponse> sessions;
+  private List<AuthTokenAuditInfo> authTokensAuditInfo;
 
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime registeredDate;
@@ -115,11 +116,11 @@ public class ClientResponse {
     this.subscription = subscription;
   }
 
-  public List<SessionResponse> getSessions() {
-    return sessions;
+  public List<AuthTokenAuditInfo> getAuthTokensAuditInfo() {
+    return authTokensAuditInfo;
   }
 
-  public void setSessions(List<SessionResponse> sessions) {
-    this.sessions = sessions;
+  public void setAuthTokensAuditInfo(List<AuthTokenAuditInfo> authTokensAuditInfo) {
+    this.authTokensAuditInfo = authTokensAuditInfo;
   }
 }

@@ -3,9 +3,11 @@ package com.platform.rest.resource;
 public class SubscriptionResponse {
 
   private Long clientId;
+
   private String subscriptionStarts;
 
   private String subscriptionEnds;
+
   private Boolean activeSubscription;
 
   public Long getClientId() {

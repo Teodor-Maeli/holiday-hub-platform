@@ -1,6 +1,6 @@
 package com.platform.aspect.logger;
 
-import com.platform.exception.BackendException;
+import com.platform.exception.PlatformBackendException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -78,6 +78,6 @@ public class LoggingAspect {
         .findAllMergedAnnotations(method, RequestMapping.class)
         .stream()
         .findFirst()
-        .orElseThrow(() -> new BackendException("Invalid or missing annotation!", INTERNAL_SERVER_ERROR));
+        .orElseThrow(() -> new PlatformBackendException("Invalid or missing annotation!", INTERNAL_SERVER_ERROR));
   }
 }

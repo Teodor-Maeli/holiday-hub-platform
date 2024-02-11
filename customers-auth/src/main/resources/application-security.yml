@@ -28,3 +28,4 @@ platform:
     login:
       successUrl: "http://localhost:3000"
       failureUrl: "http://localhost:3000"
+    jwt-issuer: "ticket-platform"

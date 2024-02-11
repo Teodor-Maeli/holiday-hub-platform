@@ -1,10 +1,10 @@
 package com.platform.domain.repository;
 
-import com.platform.domain.entity.Session;
+import com.platform.domain.entity.AuthTokenAuditInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SessionRepository extends JpaRepository<Session, Long> {
+public interface AuthTokenAuditInfoRepository extends JpaRepository<AuthTokenAuditInfo, Long> {
 
 }

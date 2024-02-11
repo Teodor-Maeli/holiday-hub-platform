@@ -15,10 +15,10 @@ public class PlatformExceptionHandler {
 
   private static final String STATUS = "status";
 
-  private static Logger LOGGER = LoggerFactory.getLogger(PlatformExceptionHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(PlatformExceptionHandler.class);
 
-  @ExceptionHandler(BackendException.class)
-  private ResponseEntity<Map<String, Object>> handleException(BackendException be) {
+  @ExceptionHandler(PlatformBackendException.class)
+  private ResponseEntity<Map<String, Object>> handleException(PlatformBackendException be) {
     LOGGER.error("Exception has occurred: ", be);
     return ResponseEntity
         .status(be.getHttpStatus())

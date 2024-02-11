@@ -23,10 +23,10 @@ public interface BaseClientRepository<E extends Client, ID> extends JpaRepositor
   @Query("""
       SELECT e FROM #{#entityName} e
       LEFT JOIN FETCH e.roles r
-      LEFT JOIN FETCH e.sessions s
+      LEFT JOIN FETCH e.authTokensAuditInfo t
       WHERE e.username = :username
       """)
-  Optional<E> findByUserNameAndActiveSessionOrdered(@Param("username") String username);
+  Optional<E> findByUserName(@Param("username") String username);
 
   @Transactional
   @Modifying

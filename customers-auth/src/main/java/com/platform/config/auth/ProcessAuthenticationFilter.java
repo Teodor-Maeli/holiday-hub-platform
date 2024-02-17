@@ -3,13 +3,15 @@ package com.platform.config.auth;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.platform.config.model.JWTAuthenticationToken;
 import com.platform.config.util.JWTUtil;
-import com.platform.rest.resource.Role;
+import com.platform.common.model.Role;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -42,15 +44,22 @@ public class ProcessAuthenticationFilter extends OncePerRequestFilter {
       String subject = decodedJWT.getSubject();
       List<Role> roles = decodedJWT.getClaim("roles").asList(Role.class);
 
-      Set<SimpleGrantedAuthority> authorities = roles.stream()
-          .map(role -> new SimpleGrantedAuthority(role.name()))
-          .collect(Collectors.toSet());
+      Set<SimpleGrantedAuthority> authorities = toSimpleGrantedAuthorities(roles);
+      JWTAuthenticationToken authentication = new JWTAuthenticationToken(authorities, subject);
 
+      SecurityContextHolder.getContext().setAuthentication(authentication);
+      filterChain.doFilter(request, response);
 
     } catch (Exception e) {
       filterChain.doFilter(request, response);
     }
 
+  }
+
+  private static Set<SimpleGrantedAuthority> toSimpleGrantedAuthorities(List<Role> roles) {
+    return roles.stream()
+        .map(role -> new SimpleGrantedAuthority(role.name()))
+        .collect(Collectors.toSet());
   }
 
   private DecodedJWT verifyJWT(String encodedJWT) {

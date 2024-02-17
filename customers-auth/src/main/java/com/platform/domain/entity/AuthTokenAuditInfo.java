@@ -1,5 +1,7 @@
 package com.platform.domain.entity;
 
+import com.platform.common.model.AuthenticationStatus;
+import com.platform.common.model.AuthenticationStatusReason;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -34,6 +36,9 @@ public class AuthTokenAuditInfo {
   @Column(name = "STATUS_REASON", nullable = false)
   @Enumerated(EnumType.STRING)
   private AuthenticationStatusReason statusReason;
+
+  @Column(name = "STATUS_RESOLVED")
+  private Boolean statusResolved;
 
 
   public Long getId() {
@@ -82,5 +87,13 @@ public class AuthTokenAuditInfo {
 
   public void setStatusReason(AuthenticationStatusReason statusReason) {
     this.statusReason = statusReason;
+  }
+
+  public Boolean getStatusResolved() {
+    return statusResolved;
+  }
+
+  public void setStatusResolved(Boolean statusResolved) {
+    this.statusResolved = statusResolved;
   }
 }

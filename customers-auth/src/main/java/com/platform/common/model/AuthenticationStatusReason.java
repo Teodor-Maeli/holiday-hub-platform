@@ -1,4 +1,4 @@
-package com.platform.domain.entity;
+package com.platform.common.model;
 
 public enum AuthenticationStatusReason {
   INVALID_CREDENTIALS,

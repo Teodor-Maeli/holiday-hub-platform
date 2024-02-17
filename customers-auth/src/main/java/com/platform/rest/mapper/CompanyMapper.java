@@ -1,6 +1,6 @@
 package com.platform.rest.mapper;
 
-import com.platform.domain.entity.Company;
+import com.platform.domain.entity.CompanyRepresentative;
 import com.platform.rest.resource.CompanyRequest;
 import com.platform.rest.resource.CompanyResponse;
 import org.mapstruct.Mapper;
@@ -15,8 +15,8 @@ import org.mapstruct.Mapping;
 )
 public interface CompanyMapper {
 
-  CompanyResponse toResponse(Company entity);
+  CompanyResponse toResponse(CompanyRepresentative entity);
 
   @Mapping(target = "password", qualifiedBy = EncodedMapping.class)
-  Company toEntity(CompanyRequest request);
+  CompanyRepresentative toEntity(CompanyRequest request);
 }

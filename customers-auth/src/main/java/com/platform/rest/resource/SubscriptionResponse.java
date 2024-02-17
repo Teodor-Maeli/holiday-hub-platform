@@ -1,14 +1,18 @@
 package com.platform.rest.resource;
 
+import com.platform.common.model.SubscriptionType;
+
 public class SubscriptionResponse {
 
   private Long clientId;
 
-  private String subscriptionStarts;
+  private String startDate;
 
-  private String subscriptionEnds;
+  private String endDate;
 
   private Boolean activeSubscription;
+
+  private SubscriptionType subscriptionType;
 
   public Long getClientId() {
     return clientId;
@@ -18,20 +22,20 @@ public class SubscriptionResponse {
     this.clientId = clientId;
   }
 
-  public String getSubscriptionStarts() {
-    return subscriptionStarts;
+  public String getStartDate() {
+    return startDate;
   }
 
-  public void setSubscriptionStarts(String subscriptionStarts) {
-    this.subscriptionStarts = subscriptionStarts;
+  public void setStartDate(String startDate) {
+    this.startDate = startDate;
   }
 
-  public String getSubscriptionEnds() {
-    return subscriptionEnds;
+  public String getEndDate() {
+    return endDate;
   }
 
-  public void setSubscriptionEnds(String subscriptionEnds) {
-    this.subscriptionEnds = subscriptionEnds;
+  public void setEndDate(String endDate) {
+    this.endDate = endDate;
   }
 
   public Boolean getActiveSubscription() {
@@ -40,5 +44,13 @@ public class SubscriptionResponse {
 
   public void setActiveSubscription(Boolean activeSubscription) {
     this.activeSubscription = activeSubscription;
+  }
+
+  public SubscriptionType getSubscriptionType() {
+    return subscriptionType;
+  }
+
+  public void setSubscriptionType(SubscriptionType subscriptionType) {
+    this.subscriptionType = subscriptionType;
   }
 }

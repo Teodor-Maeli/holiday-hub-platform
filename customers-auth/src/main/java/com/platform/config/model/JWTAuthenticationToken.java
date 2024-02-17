@@ -6,14 +6,13 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 public class JWTAuthenticationToken extends AbstractAuthenticationToken {
-  /**
-   * Creates a token with the supplied array of authorities.
-   *
-   * @param authorities the collection of <tt>GrantedAuthority</tt>s for the principal
-   *                    represented by this authentication object.
-   */
-  public JWTAuthenticationToken(Collection<? extends GrantedAuthority> authorities) {
+
+  private String subject;
+
+  public JWTAuthenticationToken(Collection<? extends GrantedAuthority> authorities, String subject) {
     super(authorities);
+    this.subject = subject;
+    setAuthenticated(true);
   }
 
   @Override
@@ -23,6 +22,6 @@ public class JWTAuthenticationToken extends AbstractAuthenticationToken {
 
   @Override
   public Object getPrincipal() {
-    return null;
+    return subject;
   }
 }

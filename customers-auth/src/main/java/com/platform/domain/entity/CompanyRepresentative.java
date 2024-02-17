@@ -6,7 +6,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "COMPANY")
-public class Company extends Client {
+public class CompanyRepresentative extends Client {
 
   @Column(name = "COMPANY_NAME", nullable = false)
   private String companyName;

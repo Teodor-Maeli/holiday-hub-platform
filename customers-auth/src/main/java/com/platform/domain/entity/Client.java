@@ -1,6 +1,7 @@
 package com.platform.domain.entity;
 
-import com.platform.rest.resource.Role;
+import com.platform.common.model.AuthenticationStatus;
+import com.platform.common.model.Role;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,12 +16,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 27.05.2023.
- *
- * <p>Base entity class.</p>
+ * Base entity class.
  * Since 1.0
- *
- * <p>Author : Teodor Maeli</p>
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -44,9 +41,6 @@ public abstract class Client implements UserDetails {
   @Column(name = "EMAIL_ADDRESS", unique = true, nullable = false)
   private String emailAddress;
 
-  @Column(name = "ENABLED", nullable = false)
-  private Boolean enabled;
-
   @Column(name = "REGISTERED_DATE", updatable = false, nullable = false)
   @CreatedDate
   private LocalDateTime registeredDate;
@@ -54,9 +48,8 @@ public abstract class Client implements UserDetails {
   @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
   private List<AuthTokenAuditInfo> authTokensAuditInfo;
 
-  @PrimaryKeyJoinColumn(name = "SUBSCRIPTION")
-  @OneToOne(mappedBy = "client", fetch = FetchType.LAZY)
-  private Subscription subscription;
+  @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+  private List<Subscription> subscriptions;
 
   @Column(name = "ROLES")
   @ElementCollection(targetClass = Role.class, fetch = FetchType.LAZY)
@@ -89,7 +82,17 @@ public abstract class Client implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return Boolean.TRUE.equals(getEnabled());
+    if (roles == null || roles.isEmpty()) {
+      return false;
+    }
+
+   return authTokensAuditInfo.stream().anyMatch(this::isLocked);
+  }
+
+  private boolean isLocked(AuthTokenAuditInfo authInfo) {
+    return (authInfo.getAuthenticationStatus() == AuthenticationStatus.LOCKED
+        || authInfo.getAuthenticationStatus() == AuthenticationStatus.BLACKLISTED)
+        && Boolean.FALSE.equals(authInfo.getStatusResolved());
   }
 
   @Override
@@ -105,14 +108,6 @@ public abstract class Client implements UserDetails {
   @Override
   public boolean isCredentialsNonExpired() {
     return true;
-  }
-
-  public Boolean getEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(Boolean enabled) {
-    this.enabled = enabled;
   }
 
   public Long getId() {
@@ -163,11 +158,19 @@ public abstract class Client implements UserDetails {
     this.authTokensAuditInfo = authTokensEntities;
   }
 
-  public Subscription getSubscription() {
-    return subscription;
+  public List<AuthTokenAuditInfo> getAuthTokensAuditInfo() {
+    return authTokensAuditInfo;
   }
 
-  public void setSubscription(Subscription subscription) {
-    this.subscription = subscription;
+  public void setAuthTokensAuditInfo(List<AuthTokenAuditInfo> authTokensAuditInfo) {
+    this.authTokensAuditInfo = authTokensAuditInfo;
+  }
+
+  public List<Subscription> getSubscriptions() {
+    return subscriptions;
+  }
+
+  public void setSubscriptions(List<Subscription> subscriptions) {
+    this.subscriptions = subscriptions;
   }
 }

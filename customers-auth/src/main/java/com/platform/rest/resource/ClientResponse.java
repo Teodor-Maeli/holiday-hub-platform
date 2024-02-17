@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.platform.common.model.Role;
 import com.platform.domain.entity.AuthTokenAuditInfo;
 
 import java.time.LocalDateTime;
@@ -11,13 +12,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 27.05.2023.
- *
- * <p>Base response class.</p>
- * <p>
+ * Base response class.
  * Since 1.0
- *
- * <p>Author : Teodor Maeli</p>
  */
 
 @JsonInclude(Include.NON_NULL)
@@ -33,9 +29,7 @@ public class ClientResponse {
 
   private Boolean enabled;
 
-  private Boolean premium;
-
-  private SubscriptionResponse subscription;
+  private List<SubscriptionResponse> subscriptions;
 
   private List<AuthTokenAuditInfo> authTokensAuditInfo;
 
@@ -84,14 +78,6 @@ public class ClientResponse {
     this.enabled = enabled;
   }
 
-  public Boolean getPremium() {
-    return premium;
-  }
-
-  public void setPremium(Boolean premium) {
-    this.premium = premium;
-  }
-
   public String getEmailAddress() {
     return emailAddress;
   }
@@ -108,12 +94,12 @@ public class ClientResponse {
     this.phoneNumber = phoneNumber;
   }
 
-  public SubscriptionResponse getSubscription() {
-    return subscription;
+  public List<SubscriptionResponse> getSubscriptions() {
+    return subscriptions;
   }
 
-  public void setSubscription(SubscriptionResponse subscription) {
-    this.subscription = subscription;
+  public void setSubscriptions(List<SubscriptionResponse> subscriptions) {
+    this.subscriptions = subscriptions;
   }
 
   public List<AuthTokenAuditInfo> getAuthTokensAuditInfo() {

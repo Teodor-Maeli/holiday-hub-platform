@@ -3,13 +3,8 @@ package com.platform.rest.resource;
 import java.time.LocalDateTime;
 
 /**
- * 27.05.2023.
- *
- * <p>Base request class.</p>
- * <p>
+ * Base request class.
  * Since 1.0
- *
- * <p>Author : Teodor Maeli</p>
  */
 
 public class ClientRequest {
@@ -21,10 +16,6 @@ public class ClientRequest {
   private String emailAddress;
 
   private String phoneNumber;
-
-  private Boolean premium;
-
-  private Boolean enabled;
 
   private LocalDateTime subscriptionStarts;
 
@@ -44,22 +35,6 @@ public class ClientRequest {
 
   public void setPassword(String password) {
     this.password = password;
-  }
-
-  public Boolean getPremium() {
-    return premium;
-  }
-
-  public void setPremium(Boolean premium) {
-    this.premium = premium;
-  }
-
-  public Boolean getEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(Boolean enabled) {
-    this.enabled = enabled;
   }
 
   public LocalDateTime getSubscriptionStarts() {

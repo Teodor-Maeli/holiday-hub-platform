@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.platform.common.model.Role;
-import com.platform.domain.entity.AuthTokenAuditInfo;
+import com.platform.domain.entity.AuthenticationAuditLog;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,11 +27,9 @@ public class ClientResponse {
 
   private String phoneNumber;
 
-  private Boolean enabled;
-
   private List<SubscriptionResponse> subscriptions;
 
-  private List<AuthTokenAuditInfo> authTokensAuditInfo;
+  private List<AuthenticationAuditLog> authenticationAuditLogs;
 
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime registeredDate;
@@ -70,14 +68,6 @@ public class ClientResponse {
     this.username = username;
   }
 
-  public Boolean getEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(Boolean enabled) {
-    this.enabled = enabled;
-  }
-
   public String getEmailAddress() {
     return emailAddress;
   }
@@ -102,11 +92,11 @@ public class ClientResponse {
     this.subscriptions = subscriptions;
   }
 
-  public List<AuthTokenAuditInfo> getAuthTokensAuditInfo() {
-    return authTokensAuditInfo;
+  public List<AuthenticationAuditLog> getAuthenticationAuditLogs() {
+    return authenticationAuditLogs;
   }
 
-  public void setAuthTokensAuditInfo(List<AuthTokenAuditInfo> authTokensAuditInfo) {
-    this.authTokensAuditInfo = authTokensAuditInfo;
+  public void setAuthenticationAuditLogs(List<AuthenticationAuditLog> authenticationAuditLogs) {
+    this.authenticationAuditLogs = authenticationAuditLogs;
   }
 }

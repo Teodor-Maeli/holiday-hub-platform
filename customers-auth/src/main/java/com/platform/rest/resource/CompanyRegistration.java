@@ -1,6 +1,6 @@
 package com.platform.rest.resource;
 
-public class CompanyRequest extends ClientRequest {
+public class CompanyRegistration extends RegistrationRequest {
 
   private String companyName;
 

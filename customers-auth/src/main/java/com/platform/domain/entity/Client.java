@@ -1,5 +1,6 @@
 package com.platform.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.platform.common.model.AuthenticationStatus;
 import com.platform.common.model.Role;
 import jakarta.persistence.*;
@@ -46,9 +47,11 @@ public abstract class Client implements UserDetails {
   private LocalDateTime registeredDate;
 
   @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
-  private List<AuthTokenAuditInfo> authTokensAuditInfo;
+  @JsonManagedReference
+  private List<AuthenticationAuditLog> authenticationAuditLogs;
 
   @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+  @JsonManagedReference
   private List<Subscription> subscriptions;
 
   @Column(name = "ROLES")
@@ -83,13 +86,13 @@ public abstract class Client implements UserDetails {
   @Override
   public boolean isEnabled() {
     if (roles == null || roles.isEmpty()) {
-      return false;
+      return true;
     }
 
-   return authTokensAuditInfo.stream().anyMatch(this::isLocked);
+   return authenticationAuditLogs.stream().noneMatch(this::isLocked);
   }
 
-  private boolean isLocked(AuthTokenAuditInfo authInfo) {
+  private boolean isLocked(AuthenticationAuditLog authInfo) {
     return (authInfo.getAuthenticationStatus() == AuthenticationStatus.LOCKED
         || authInfo.getAuthenticationStatus() == AuthenticationStatus.BLACKLISTED)
         && Boolean.FALSE.equals(authInfo.getStatusResolved());
@@ -150,20 +153,20 @@ public abstract class Client implements UserDetails {
     this.phoneNumber = phoneNumber;
   }
 
-  public List<AuthTokenAuditInfo> getAuthenticationTokenEntities() {
-    return authTokensAuditInfo;
+  public List<AuthenticationAuditLog> getAuthenticationTokenEntities() {
+    return authenticationAuditLogs;
   }
 
-  public void setAuthenticationTokenEntities(List<AuthTokenAuditInfo> authTokensEntities) {
-    this.authTokensAuditInfo = authTokensEntities;
+  public void setAuthenticationTokenEntities(List<AuthenticationAuditLog> authTokensEntities) {
+    this.authenticationAuditLogs = authTokensEntities;
   }
 
-  public List<AuthTokenAuditInfo> getAuthTokensAuditInfo() {
-    return authTokensAuditInfo;
+  public List<AuthenticationAuditLog> getAuthenticationAuditLogs() {
+    return authenticationAuditLogs;
   }
 
-  public void setAuthTokensAuditInfo(List<AuthTokenAuditInfo> authTokensAuditInfo) {
-    this.authTokensAuditInfo = authTokensAuditInfo;
+  public void setAuthenticationAuditLogs(List<AuthenticationAuditLog> authenticationAuditLogs) {
+    this.authenticationAuditLogs = authenticationAuditLogs;
   }
 
   public List<Subscription> getSubscriptions() {

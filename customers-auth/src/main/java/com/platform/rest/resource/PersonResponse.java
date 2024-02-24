@@ -16,6 +16,8 @@ public class PersonResponse extends ClientResponse {
 
   private LocalDate birthDate;
 
+  private CompanyResponse company;
+
   public String getGivenName() {
     return givenName;
   }
@@ -46,5 +48,13 @@ public class PersonResponse extends ClientResponse {
 
   public void setBirthDate(LocalDate birthDate) {
     this.birthDate = birthDate;
+  }
+
+  public CompanyResponse getCompany() {
+    return company;
+  }
+
+  public void setCompany(CompanyResponse company) {
+    this.company = company;
   }
 }

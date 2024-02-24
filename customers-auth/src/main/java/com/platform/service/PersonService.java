@@ -10,8 +10,11 @@ public class PersonService extends AbstractClientService<Person, Long, PersonRep
 
   protected PersonService(
       PersonRepository repository,
-      PasswordEncoder encoder
+      PasswordEncoder encoder,
+      SubscriptionService subscriptionService,
+      AuthenticationAuditLogService authenticationAuditLogService
   ) {
-    super(repository, encoder);
+    super(repository, encoder, subscriptionService, authenticationAuditLogService);
   }
+
 }

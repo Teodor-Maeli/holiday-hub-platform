@@ -2,7 +2,7 @@ package com.platform.rest.resource;
 
 import java.time.LocalDate;
 
-public class PersonRequest extends ClientRequest {
+public class PersonRegistration extends RegistrationRequest {
 
   private String familyName;
 

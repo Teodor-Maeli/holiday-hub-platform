@@ -1,17 +1,30 @@
 package com.platform.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.platform.common.model.AuthenticationStatus;
 import com.platform.common.model.AuthenticationStatusReason;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "AUTH_TOKEN_AUDIT_INFO")
+@Table(name = "AUTHENTICATION_AUDIT_LOG")
 @EntityListeners(AuditingEntityListener.class)
-public class AuthTokenAuditInfo {
+public class AuthenticationAuditLog {
 
   @Id
   @Column(name = "ID", updatable = false, unique = true, nullable = false)
@@ -20,14 +33,15 @@ public class AuthTokenAuditInfo {
 
   @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
   @JoinColumn(name = "CLIENT_ID", nullable = false)
+  @JsonBackReference
   private Client client;
 
   @CreatedDate
   @Column(name = "CREATED_DATE")
   private LocalDateTime createdDate;
 
-  @Column(name = "BLACK_LISTED_DATE")
-  private LocalDateTime blackListedDate;
+  @Column(name = "UPDATED_DATE")
+  private LocalDateTime updatedDate;
 
   @Column(name = "AUTHENTICATION_STATUS")
   @Enumerated(EnumType.STRING)
@@ -65,12 +79,12 @@ public class AuthTokenAuditInfo {
     this.createdDate = createdDate;
   }
 
-  public LocalDateTime getBlackListedDate() {
-    return blackListedDate;
+  public LocalDateTime getUpdatedDate() {
+    return updatedDate;
   }
 
-  public void setBlackListedDate(LocalDateTime blackListedDate) {
-    this.blackListedDate = blackListedDate;
+  public void setUpdatedDate(LocalDateTime updatedDate) {
+    this.updatedDate = updatedDate;
   }
 
   public AuthenticationStatus getAuthenticationStatus() {

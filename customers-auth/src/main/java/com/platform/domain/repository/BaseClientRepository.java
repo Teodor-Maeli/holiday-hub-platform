@@ -15,7 +15,6 @@ import java.util.Optional;
  *
  * @param <E>  Entity
  * @param <ID> ID
- * @author Teodor Maeli
  */
 @NoRepositoryBean
 public interface BaseClientRepository<E extends Client, ID> extends JpaRepository<E, ID> {
@@ -23,10 +22,19 @@ public interface BaseClientRepository<E extends Client, ID> extends JpaRepositor
   @Query("""
       SELECT e FROM #{#entityName} e
       LEFT JOIN FETCH e.roles r
-      LEFT JOIN FETCH e.authTokensAuditInfo t
+      LEFT JOIN FETCH e.authenticationAuditLogs t
+      WHERE e.username = :username
+      AND t.statusReason not in ('BLACKLISTED', 'LOCKED')
+      AND (t.statusResolved = true OR t.statusResolved is NULL)
+      """)
+  Optional<E> findByUsernameAndNotLockedOrBlacklisted(@Param("username") String username);
+
+  @Query("""
+      SELECT e FROM #{#entityName} e
+      LEFT JOIN FETCH e.roles r
       WHERE e.username = :username
       """)
-  Optional<E> findByUserName(@Param("username") String username);
+  Optional<E> findByUsername(@Param("username") String username);
 
   @Transactional
   @Modifying
@@ -42,15 +50,5 @@ public interface BaseClientRepository<E extends Client, ID> extends JpaRepositor
       """)
   int updatePasswordByUsername(@Param("username") String username,
                                @Param("password") String password);
-
-  @Transactional
-  @Modifying
-  @Query("""
-      UPDATE #{#entityName} e
-      SET e.enabled = :enabled
-      WHERE e.username = :username
-      """)
-  int disableOrEnableByUsername(@Param("username") String username,
-                                @Param("enabled") Boolean enabled);
 
 }

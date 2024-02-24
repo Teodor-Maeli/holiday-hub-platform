@@ -3,14 +3,13 @@ package com.platform.config.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.config.model.JWTComposite;
 import com.platform.config.util.JWTGenerator;
-import com.platform.domain.entity.AuthTokenAuditInfo;
+import com.platform.domain.entity.AuthenticationAuditLog;
 import com.platform.common.model.AuthenticationStatus;
 import com.platform.common.model.AuthenticationStatusReason;
 import com.platform.domain.entity.Client;
-import com.platform.domain.repository.AuthTokenAuditInfoRepository;
+import com.platform.domain.repository.AuthenticationAuditLogRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -25,19 +24,16 @@ public class StatelessAuthenticationSuccessHandler implements AuthenticationSucc
 
   private final ObjectMapper objectMapper;
 
-  private final AuthTokenAuditInfoRepository authTokenAuditInfoRepository;
-
-  @Value("${platform.security.login.successUrl}")
-  private String successUrl;
+  private final AuthenticationAuditLogRepository authenticationAuditLogRepository;
 
   public StatelessAuthenticationSuccessHandler(
       JWTGenerator JWTGenerator,
       ObjectMapper objectMapper,
-      AuthTokenAuditInfoRepository authTokenAuditInfoRepository
+      AuthenticationAuditLogRepository authenticationAuditLogRepository
   ) {
     this.JWTGenerator = JWTGenerator;
     this.objectMapper = objectMapper;
-    this.authTokenAuditInfoRepository = authTokenAuditInfoRepository;
+    this.authenticationAuditLogRepository = authenticationAuditLogRepository;
   }
 
   @Override
@@ -55,12 +51,13 @@ public class StatelessAuthenticationSuccessHandler implements AuthenticationSucc
   }
 
   private void persistAuthTokenInfo(Client client) {
-    AuthTokenAuditInfo authTokenAuditInfo = new AuthTokenAuditInfo();
-    authTokenAuditInfo.setClient(client);
-    authTokenAuditInfo.setAuthenticationStatus(AuthenticationStatus.AUTHORIZED);
-    authTokenAuditInfo.setStatusReason(AuthenticationStatusReason.SUCCESSFUL_AUTHENTICATION);
+    AuthenticationAuditLog authenticationAuditLog = new AuthenticationAuditLog();
+    authenticationAuditLog.setClient(client);
+    authenticationAuditLog.setAuthenticationStatus(AuthenticationStatus.AUTHORIZED);
+    authenticationAuditLog.setStatusReason(AuthenticationStatusReason.SUCCESSFUL_AUTHENTICATION);
+    authenticationAuditLog.setStatusResolved(Boolean.TRUE);
 
-    authTokenAuditInfoRepository.save(authTokenAuditInfo);
+    authenticationAuditLogRepository.save(authenticationAuditLog);
   }
 
 }

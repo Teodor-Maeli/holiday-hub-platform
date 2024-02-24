@@ -1,8 +1,6 @@
 package com.platform.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
@@ -21,6 +19,10 @@ public class Person extends Client {
 
   @Column(name = "BIRTH_DATE", nullable = false)
   private LocalDate birthDate;
+
+  @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+  @JoinColumn(name = "COMPANY_ID")
+  private Company company;
 
   public String getGivenName() {
     return givenName;

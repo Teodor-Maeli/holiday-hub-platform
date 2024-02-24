@@ -1,5 +1,6 @@
 package com.platform.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.platform.common.model.SubscriptionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,12 +19,13 @@ import java.time.LocalDateTime;
 public class Subscription {
 
   @Id
-  @Column(name = "CLIENT_ID", updatable = false, unique = true, nullable = false)
+  @Column(name = "ID", updatable = false, unique = true, nullable = false)
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "CLIENT_ID", nullable = false)
+  @JsonBackReference
   private Client client;
 
   @Column(name = "START_DATE")
@@ -32,8 +34,8 @@ public class Subscription {
   @Column(name = "END_DATE")
   private LocalDateTime endDate;
 
-  @Column(name = "ACTIVE_SUBSCRIPTION")
-  private Boolean activeSubscription;
+  @Column(name = "ACTIVE")
+  private Boolean active;
 
   @Column(name = "SUBSCRIPTION_TYPE")
   private SubscriptionType subscriptionType;
@@ -70,12 +72,12 @@ public class Subscription {
     this.endDate = endDate;
   }
 
-  public Boolean getActiveSubscription() {
-    return activeSubscription;
+  public Boolean getActive() {
+    return active;
   }
 
-  public void setActiveSubscription(Boolean activeSubscription) {
-    this.activeSubscription = activeSubscription;
+  public void setActive(Boolean active) {
+    this.active = active;
   }
 
   public SubscriptionType getSubscriptionType() {

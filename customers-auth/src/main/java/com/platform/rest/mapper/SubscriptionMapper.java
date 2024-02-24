@@ -6,11 +6,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface SubscriptionMapper {
 
-  List<SubscriptionResponse> toResponse(List<Subscription> subscriptionsList);
+  Set<SubscriptionResponse> toResponse(Set<Subscription> subscriptionsList);
 
   @Mapping(source = "id", target = "clientId")
   SubscriptionResponse toResponse(Subscription subscription);

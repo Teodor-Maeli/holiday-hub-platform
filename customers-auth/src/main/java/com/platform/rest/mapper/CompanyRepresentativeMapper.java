@@ -1,7 +1,7 @@
 package com.platform.rest.mapper;
 
-import com.platform.domain.entity.CompanyRepresentative;
-import com.platform.rest.resource.CompanyRequest;
+import com.platform.domain.entity.Company;
+import com.platform.rest.resource.CompanyRegistration;
 import com.platform.rest.resource.CompanyResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,10 +13,10 @@ import org.mapstruct.Mapping;
         PasswordEncoderMapper.class
     }
 )
-public interface CompanyMapper {
+public interface CompanyRepresentativeMapper extends LazyLoadingAwareMapper {
 
-  CompanyResponse toResponse(CompanyRepresentative entity);
+  CompanyResponse toResponse(Company entity);
 
   @Mapping(target = "password", qualifiedBy = EncodedMapping.class)
-  CompanyRepresentative toEntity(CompanyRequest request);
+  Company toEntity(CompanyRegistration request);
 }

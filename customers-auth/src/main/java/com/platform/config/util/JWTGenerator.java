@@ -19,9 +19,9 @@ public class JWTGenerator {
 
   private static final String EMAIL = "email";
 
-  private static final Long ACCESS_TOKEN_EXPIRATION = 5000L;
+  private static final Long ACCESS_TOKEN_EXPIRATION = 5000000L;
 
-  private static final Long REFRESH_TOKEN_EXPIRATION = ACCESS_TOKEN_EXPIRATION + 10000L;
+  private static final Long REFRESH_TOKEN_EXPIRATION = ACCESS_TOKEN_EXPIRATION + 100000L;
 
   private final ObjectMapper objectMapper;
 

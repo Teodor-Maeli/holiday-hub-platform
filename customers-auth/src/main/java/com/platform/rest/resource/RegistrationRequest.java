@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
  * Since 1.0
  */
 
-public class ClientRequest {
+public class RegistrationRequest {
 
   private String username;
 

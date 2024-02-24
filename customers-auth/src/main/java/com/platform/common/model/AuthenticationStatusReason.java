@@ -4,5 +4,5 @@ public enum AuthenticationStatusReason {
   INVALID_CREDENTIALS,
   SUCCESSFUL_AUTHENTICATION,
   HACKED,
-  RULE_VIOLATION
+  RULE_VIOLATION,
 }

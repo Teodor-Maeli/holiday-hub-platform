@@ -1,12 +1,12 @@
 package com.platform.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "COMPANY")
-public class CompanyRepresentative extends Client {
+public class Company extends Client {
 
   @Column(name = "COMPANY_NAME", nullable = false)
   private String companyName;
@@ -14,8 +14,8 @@ public class CompanyRepresentative extends Client {
   @Column(name = "COMPANY_NUMBER", nullable = false)
   private String companyNumber;
 
-  @Column(name = "CONTACT_PERSON", nullable = false)
-  private String contactPerson;
+  @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+  private Set<Person> representatives;
 
   public String getCompanyName() {
     return companyName;
@@ -33,11 +33,12 @@ public class CompanyRepresentative extends Client {
     this.companyNumber = companyNumber;
   }
 
-  public String getContactPerson() {
-    return contactPerson;
+  public Set<Person> getRepresentatives() {
+    return representatives;
   }
 
-  public void setContactPerson(String contactPerson) {
-    this.contactPerson = contactPerson;
+  public void setRepresentatives(Set<Person> representatives) {
+    this.representatives = representatives;
   }
+
 }

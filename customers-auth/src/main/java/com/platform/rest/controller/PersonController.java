@@ -1,15 +1,17 @@
 package com.platform.rest.controller;
 
 import com.platform.aspect.logger.IOLogger;
+import com.platform.common.model.AggregationOptions;
 import com.platform.domain.entity.Person;
 import com.platform.rest.mapper.PersonMapper;
-import com.platform.rest.resource.PersonRequest;
+import com.platform.rest.resource.PersonRegistration;
 import com.platform.rest.resource.PersonResponse;
 import com.platform.service.PersonService;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -34,7 +36,7 @@ public class PersonController {
 
   @IOLogger
   @PostMapping(path = "/register")
-  public ResponseEntity<PersonResponse> register(@RequestBody PersonRequest request) {
+  public ResponseEntity<PersonResponse> register(@RequestBody PersonRegistration request) {
     Person entity = service.save(mapper.toEntity(request));
     return ResponseEntity
         .status(CREATED)
@@ -42,9 +44,10 @@ public class PersonController {
   }
 
   @IOLogger
-  @GetMapping(path = "/get/{username}")
-  public ResponseEntity<PersonResponse> getByUsername(@PathVariable("username") String username) {
-    Person entity = (Person) service.loadUserByUsername(username);
+  @GetMapping(path = "/get/{clientUsername}")
+  public ResponseEntity<PersonResponse> getByUsername(@RequestParam("include") Set<AggregationOptions> aggregations,
+                                                      @PathVariable("clientUsername") String clientUsername) {
+    Person entity = service.loadUserByUsernameAggregated(aggregations, clientUsername);
     return ResponseEntity
         .status(OK)
         .body(mapper.toResponse(entity));
@@ -55,16 +58,6 @@ public class PersonController {
   public ResponseEntity<Void> updatePassword(@RequestHeader String password,
                                              @RequestHeader String username) {
     service.changePassword(password, username);
-    return ResponseEntity
-        .noContent()
-        .build();
-  }
-
-  @IOLogger
-  @PatchMapping(path = "/update/{username}")
-  public ResponseEntity<Void> disableOrEnableAccount(@PathVariable("username") String username,
-                                                     @Param("enabled") Boolean enabled) {
-    service.disableOrEnableByUsername(username, enabled);
     return ResponseEntity
         .noContent()
         .build();

@@ -1,6 +1,7 @@
 package com.platform.config.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.platform.config.model.AuthenticationFailure;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,11 +34,12 @@ public class StatelessAuthenticationFailureHandler extends SimpleUrlAuthenticati
       AuthenticationException exception
   ) throws IOException {
 
-    Map<String, Object> data = new HashMap<>();
-    data.put("timestamp", LocalDateTime.now().toString());
-    data.put("message", exception.getMessage());
+    AuthenticationFailure failure = AuthenticationFailure.create()
+        .withMessage(exception.getMessage())
+        .withTimestamp(LocalDateTime.now().toString());
 
-    response.getOutputStream().println(objectMapper.writeValueAsString(data));
+    response.getOutputStream().println(objectMapper.writeValueAsString(failure));
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
   }
+
 }

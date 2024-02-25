@@ -1,11 +1,10 @@
 package com.platform.rest.mapper;
 
-import com.platform.domain.entity.Subscription;
+import com.platform.persistence.entity.Subscription;
 import com.platform.rest.resource.SubscriptionResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
 import java.util.Set;
 
 @Mapper(componentModel = "spring")

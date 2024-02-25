@@ -1,6 +1,6 @@
 package com.platform.rest.mapper;
 
-import com.platform.domain.entity.Person;
+import com.platform.persistence.entity.Person;
 import com.platform.rest.resource.PersonRegistration;
 import com.platform.rest.resource.PersonResponse;
 import org.mapstruct.Mapper;
@@ -19,6 +19,5 @@ public interface PersonMapper extends LazyLoadingAwareMapper {
 
   @Mapping(target = "password", qualifiedBy = EncodedMapping.class)
   Person toEntity(PersonRegistration request);
-
 
 }

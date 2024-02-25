@@ -1,6 +1,6 @@
-package com.platform.domain.repository;
+package com.platform.persistence.repository;
 
-import com.platform.domain.entity.Client;
+import com.platform.persistence.entity.Client;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,7 +21,7 @@ public interface BaseClientRepository<E extends Client, ID> extends JpaRepositor
 
   @Query("""
       SELECT e FROM #{#entityName} e
-      LEFT JOIN FETCH e.roles r
+      LEFT JOIN FETCH e.authorities r
       LEFT JOIN FETCH e.authenticationAuditLogs t
       WHERE e.username = :username
       AND t.statusReason not in ('BLACKLISTED', 'LOCKED')
@@ -31,10 +31,12 @@ public interface BaseClientRepository<E extends Client, ID> extends JpaRepositor
 
   @Query("""
       SELECT e FROM #{#entityName} e
-      LEFT JOIN FETCH e.roles r
+      LEFT JOIN FETCH e.authorities r
       WHERE e.username = :username
       """)
   Optional<E> findByUsername(@Param("username") String username);
+
+  boolean existsByUsername(String username);
 
   @Transactional
   @Modifying

@@ -4,5 +4,4 @@ public enum AuthenticationStatus {
   AUTHORIZED,
   BLACKLISTED,
   LOCKED,
-  CREDENTIALS_UPDATED
 }

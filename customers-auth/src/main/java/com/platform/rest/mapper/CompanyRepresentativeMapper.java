@@ -1,6 +1,6 @@
 package com.platform.rest.mapper;
 
-import com.platform.domain.entity.Company;
+import com.platform.persistence.entity.Company;
 import com.platform.rest.resource.CompanyRegistration;
 import com.platform.rest.resource.CompanyResponse;
 import org.mapstruct.Mapper;

@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 @Component(value = "initAuthenticationFilter")
 public class InitAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+  private static final String PASSWORD = "password";
+  private static final String USERNAME = "username";
+
   public InitAuthenticationFilter(
       AuthenticationManager authenticationManager,
       StatelessAuthenticationFailureHandler statelessAuthenticationFailureHandler,
@@ -23,12 +26,12 @@ public class InitAuthenticationFilter extends UsernamePasswordAuthenticationFilt
 
   @Override
   protected String obtainPassword(HttpServletRequest request) {
-    return request.getHeader("password");
+    return request.getHeader(PASSWORD);
   }
 
   @Override
   protected String obtainUsername(HttpServletRequest request) {
-    return request.getHeader("username");
+    return request.getHeader(USERNAME);
   }
 
 }

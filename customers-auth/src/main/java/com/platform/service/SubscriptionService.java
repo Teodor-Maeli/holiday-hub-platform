@@ -1,7 +1,7 @@
 package com.platform.service;
 
-import com.platform.domain.entity.Subscription;
-import com.platform.domain.repository.SubscriptionRepository;
+import com.platform.persistence.entity.Subscription;
+import com.platform.persistence.repository.SubscriptionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

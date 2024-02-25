@@ -1,5 +1,6 @@
-package com.platform.domain.entity;
+package com.platform.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ public class Person extends Client {
 
   @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
   @JoinColumn(name = "COMPANY_ID")
+  @JsonBackReference
   private Company company;
 
   public String getGivenName() {
@@ -54,5 +56,13 @@ public class Person extends Client {
 
   public void setBirthDate(LocalDate birthDate) {
     this.birthDate = birthDate;
+  }
+
+  public Company getCompany() {
+    return company;
+  }
+
+  public void setCompany(Company company) {
+    this.company = company;
   }
 }

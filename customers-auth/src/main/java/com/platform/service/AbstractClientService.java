@@ -1,16 +1,14 @@
 package com.platform.service;
 
-import com.platform.common.model.AggregationOptions;
-import com.platform.domain.entity.AuthenticationAuditLog;
-import com.platform.domain.entity.Client;
-import com.platform.domain.entity.Subscription;
-import com.platform.domain.repository.BaseClientRepository;
+import com.platform.common.model.DecoratingOptions;
+import com.platform.common.model.ClientAuthority;
+import com.platform.persistence.entity.Client;
+import com.platform.persistence.repository.BaseClientRepository;
 import com.platform.exception.PlatformBackendException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,29 +25,21 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 public abstract class AbstractClientService
     <E extends Client, ID, R extends BaseClientRepository<E, ID>> implements UserDetailsService {
 
-  private final R repository;
-  private final PasswordEncoder encoder;
-  private final SubscriptionService subscriptionService;
-  private final AuthenticationAuditLogService authenticationAuditLogService;
+   final R repository;
+   final PasswordEncoder encoder;
 
   /**
    * Ensures dependencies are properly initialized.
    *
    * @param repository                       Repository used to perform generic operations.
    * @param encoder                          Used to encode sensitive information.
-   * @param subscriptionService              Subscriptions service.
-   * @param authenticationAuditLogService    Authentication logs service.
    */
   protected AbstractClientService(
       R repository,
-      PasswordEncoder encoder,
-      SubscriptionService subscriptionService,
-      AuthenticationAuditLogService authenticationAuditLogService
+      PasswordEncoder encoder
   ) {
     this.repository = repository;
     this.encoder = encoder;
-    this.subscriptionService = subscriptionService;
-    this.authenticationAuditLogService = authenticationAuditLogService;
   }
 
   /**
@@ -74,42 +64,19 @@ public abstract class AbstractClientService
    * Performs aggregations against client object.
    *
    * @param username                        The username identifying the user whose data is required.
-   * @param aggregations             Aggregations objects to be included, like subscriptions and other.
+   * @param decoratingOptions               Decorating options, like subscriptions and other.
    * @return {@link UserDetails}            The user details required in order to perform successful authentication.
    * @throws PlatformBackendException       If failed to load user with HTTP status 500 - Internal Server Error.
    */
 
-  public E loadUserByUsernameAggregated(Set<AggregationOptions> aggregations, String username) {
+  public E loadUserByUsername(Set<DecoratingOptions> decoratingOptions, String username) {
     Optional<E> user = repository.findByUsername(username);
 
     if (user.isPresent()) {
-      return doAggregate(aggregations, user.get());
+      return user.get();
     }
 
     throw new PlatformBackendException("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username), BAD_REQUEST);
-  }
-
-  private E doAggregate(Set<AggregationOptions> includeAggregations, E clientEntity) {
-    if (! includeAggregations.isEmpty()) {
-
-      for (AggregationOptions aggregation : includeAggregations) {
-        switch (aggregation) {
-          case SUBSCRIPTIONS -> clientEntity.setSubscriptions(getSubscriptions(clientEntity.getUsername()));
-          case AUTHENTICATION_AUDIT_LOG -> clientEntity.setAuthenticationAuditLogs(getAuthenticationLogs(clientEntity.getUsername()));
-        }
-      }
-
-    }
-
-    return clientEntity;
-  }
-
-  private List<AuthenticationAuditLog> getAuthenticationLogs(String username) {
-   return authenticationAuditLogService.getClientAuthenticationLogs(username);
-  }
-
-  private List<Subscription> getSubscriptions(String username) {
-    return subscriptionService.getClientSubscriptions(username);
   }
 
   /**
@@ -121,6 +88,11 @@ public abstract class AbstractClientService
    */
   public E save(E entity) {
     try {
+
+      if(!repository.existsByUsername(entity.getUsername())) {
+        entity.setAuthorities(Set.of(ClientAuthority.BASE_CLIENT));
+      }
+
       return repository.save(entity);
     } catch (RuntimeException e) {
       throw new PlatformBackendException("Failed to SAVE entity with username: " + entity.getUsername(), INTERNAL_SERVER_ERROR, e);

@@ -1,7 +1,7 @@
 package com.platform.service;
 
-import com.platform.domain.entity.AuthenticationAuditLog;
-import com.platform.domain.repository.AuthenticationAuditLogRepository;
+import com.platform.persistence.entity.AuthenticationAuditLog;
+import com.platform.persistence.repository.AuthenticationAuditLogRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

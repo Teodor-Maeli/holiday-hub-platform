@@ -1,6 +1,9 @@
 package com.platform.rest.resource;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.platform.common.model.SubscriptionType;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class SubscriptionResponse {
 

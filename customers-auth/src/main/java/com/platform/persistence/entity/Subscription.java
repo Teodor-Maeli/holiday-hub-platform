@@ -1,4 +1,4 @@
-package com.platform.domain.entity;
+package com.platform.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.platform.common.model.SubscriptionType;

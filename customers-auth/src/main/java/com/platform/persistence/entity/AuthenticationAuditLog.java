@@ -1,6 +1,7 @@
-package com.platform.domain.entity;
+package com.platform.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.platform.common.model.AuthenticationStatus;
 import com.platform.common.model.AuthenticationStatusReason;
 import jakarta.persistence.CascadeType;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "AUTHENTICATION_AUDIT_LOG")
 @EntityListeners(AuditingEntityListener.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthenticationAuditLog {
 
   @Id
@@ -50,6 +52,9 @@ public class AuthenticationAuditLog {
   @Column(name = "STATUS_REASON", nullable = false)
   @Enumerated(EnumType.STRING)
   private AuthenticationStatusReason statusReason;
+
+  @Column(name = "MESSAGE")
+  private String message;
 
   @Column(name = "STATUS_RESOLVED")
   private Boolean statusResolved;
@@ -109,5 +114,13 @@ public class AuthenticationAuditLog {
 
   public void setStatusResolved(Boolean statusResolved) {
     this.statusResolved = statusResolved;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 }

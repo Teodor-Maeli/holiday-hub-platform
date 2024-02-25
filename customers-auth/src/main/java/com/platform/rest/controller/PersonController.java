@@ -1,8 +1,8 @@
 package com.platform.rest.controller;
 
 import com.platform.aspect.logger.IOLogger;
-import com.platform.common.model.AggregationOptions;
-import com.platform.domain.entity.Person;
+import com.platform.common.model.DecoratingOptions;
+import com.platform.persistence.entity.Person;
 import com.platform.rest.mapper.PersonMapper;
 import com.platform.rest.resource.PersonRegistration;
 import com.platform.rest.resource.PersonResponse;
@@ -26,7 +26,6 @@ public class PersonController {
   public static final String CUSTOMERS_AUTH_V_1_PERSON = "/customers-auth/v1/person";
 
   private final PersonMapper mapper;
-
   private final PersonService service;
 
   public PersonController(PersonMapper mapper, PersonService service) {
@@ -45,9 +44,9 @@ public class PersonController {
 
   @IOLogger
   @GetMapping(path = "/get/{clientUsername}")
-  public ResponseEntity<PersonResponse> getByUsername(@RequestParam("include") Set<AggregationOptions> aggregations,
+  public ResponseEntity<PersonResponse> getByUsername(@RequestParam("include") Set<DecoratingOptions> aggregations,
                                                       @PathVariable("clientUsername") String clientUsername) {
-    Person entity = service.loadUserByUsernameAggregated(aggregations, clientUsername);
+    Person entity = service.loadUserByUsername(aggregations, clientUsername);
     return ResponseEntity
         .status(OK)
         .body(mapper.toResponse(entity));

@@ -1,5 +1,6 @@
-package com.platform.domain.entity;
+package com.platform.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -15,6 +16,7 @@ public class Company extends Client {
   private String companyNumber;
 
   @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+  @JsonManagedReference
   private Set<Person> representatives;
 
   public String getCompanyName() {

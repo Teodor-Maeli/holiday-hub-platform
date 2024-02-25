@@ -5,4 +5,5 @@ public enum AuthenticationStatusReason {
   SUCCESSFUL_AUTHENTICATION,
   HACKED,
   RULE_VIOLATION,
+  CLIENT_OPERATION
 }

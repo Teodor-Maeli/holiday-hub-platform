@@ -4,14 +4,14 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.platform.common.model.Role;
+import com.platform.common.model.ClientAuthority;
 import com.platform.config.model.JWTAuthenticationToken;
 import com.platform.config.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public class ProcessAuthenticationFilter extends OncePerRequestFilter {
 
   private static final String AUTHORIZATION_HEADER = "Authorization";
+  private static final String ROLES = "roles";
 
   private final JWTUtil jwtUtil;
 
@@ -45,28 +46,18 @@ public class ProcessAuthenticationFilter extends OncePerRequestFilter {
     try {
       DecodedJWT decodedJWT = verifyJWT(encodedJWT);
       String subject = decodedJWT.getSubject();
-      List<Role> roles = decodedJWT.getClaim("roles").asList(Role.class);
+      List<ClientAuthority> roles = decodedJWT.getClaim(ROLES).asList(ClientAuthority.class);
 
-      Set<SimpleGrantedAuthority> authorities = toSimpleGrantedAuthorities(roles);
-      UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(subject, null, authorities);
+      Set<SimpleGrantedAuthority> authorities = ClientAuthority.toSimpleGrantedAuthority(roles);
+      Authentication authentication = new JWTAuthenticationToken(subject, authorities);
 
-      SecurityContextHolder.getContext().setAuthentication(authToken);
+      SecurityContextHolder.getContext().setAuthentication(authentication);
       filterChain.doFilter(request, response);
 
     } catch (JWTVerificationException e) {
       filterChain.doFilter(request, response);
     }
 
-  }
-
-  private static Set<SimpleGrantedAuthority> toSimpleGrantedAuthorities(List<Role> roles) {
-    if (roles == null) {
-      return Collections.emptySet();
-    }
-
-    return roles.stream()
-        .map(role -> new SimpleGrantedAuthority(role.name()))
-        .collect(Collectors.toSet());
   }
 
   private DecodedJWT verifyJWT(String encodedJWT) {

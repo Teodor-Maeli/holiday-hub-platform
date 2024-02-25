@@ -4,15 +4,16 @@ import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.config.model.JWTComposite;
-import com.platform.domain.entity.Client;
-import com.platform.common.model.Role;
+import com.platform.persistence.entity.Client;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.io.UncheckedIOException;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class JWTGenerator {
@@ -57,7 +58,7 @@ public class JWTGenerator {
           .withIssuer(issuer)
           .withSubject(client.getId().toString())
           .withClaim(EMAIL, client.getUsername())
-          .withClaim("roles", toJson(client.getRoles()))
+          .withClaim("roles", toJson(client.getAuthorities()))
           .withIssuedAt(new Date())
           .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
           .withJWTId(UUID.randomUUID().toString())
@@ -68,8 +69,10 @@ public class JWTGenerator {
     }
   }
 
-  private String toJson(Set<Role> roles) throws JsonProcessingException {
-    return objectMapper.writeValueAsString(roles);
+  private String toJson(Collection<? extends GrantedAuthority> authorities) throws JsonProcessingException {
+    return objectMapper.writeValueAsString(authorities.stream()
+        .map(GrantedAuthority::getAuthority)
+        .collect(Collectors.toSet()));
   }
 
 }

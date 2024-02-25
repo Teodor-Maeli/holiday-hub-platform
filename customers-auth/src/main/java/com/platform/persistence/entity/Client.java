@@ -1,8 +1,8 @@
-package com.platform.domain.entity;
+package com.platform.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.platform.common.model.AuthenticationStatus;
-import com.platform.common.model.Role;
+import com.platform.common.model.ClientAuthority;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -55,14 +55,12 @@ public abstract class Client implements UserDetails {
   private List<Subscription> subscriptions;
 
   @Column(name = "ROLES")
-  @ElementCollection(targetClass = Role.class, fetch = FetchType.LAZY)
-  private Set<Role> roles;
+  @ElementCollection(targetClass = ClientAuthority.class, fetch = FetchType.LAZY)
+  private Set<ClientAuthority> authorities;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return roles.stream()
-        .map(role -> new SimpleGrantedAuthority(role.name()))
-        .collect(Collectors.toSet());
+    return ClientAuthority.toSimpleGrantedAuthority(authorities);
   }
 
   @Override
@@ -85,7 +83,7 @@ public abstract class Client implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    if (roles == null || roles.isEmpty()) {
+    if (authorities == null || authorities.isEmpty()) {
       return true;
     }
 
@@ -129,12 +127,8 @@ public abstract class Client implements UserDetails {
     this.registeredDate = registeredDate;
   }
 
-  public Set<Role> getRoles() {
-    return roles;
-  }
-
-  public void setRoles(Set<Role> roles) {
-    this.roles = roles;
+  public void setAuthorities(Set<ClientAuthority> authorities) {
+    this.authorities = authorities;
   }
 
   public String getEmailAddress() {

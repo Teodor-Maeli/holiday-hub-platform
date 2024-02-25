@@ -1,6 +1,6 @@
-package com.platform.domain.repository;
+package com.platform.persistence.repository;
 
-import com.platform.domain.entity.Subscription;
+import com.platform.persistence.entity.Subscription;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

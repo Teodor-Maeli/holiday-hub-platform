@@ -9,6 +9,7 @@ import com.platform.rest.resource.CompanyResponse;
 import com.platform.service.CompanyService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -46,6 +47,7 @@ public class CompanyController {
 
   @IOLogger
   @GetMapping(path = "/get/{clientUsername}")
+  @PreAuthorize("#clientUsername == authentication.principal")
   public ResponseEntity<CompanyResponse> getByUsername(@RequestParam("include") Set<DecoratingOptions> aggregations,
                                                        @PathVariable("clientUsername") String clientUsername) {
     Company entity = service.loadUserByUsername(aggregations, clientUsername);
@@ -56,6 +58,7 @@ public class CompanyController {
 
   @IOLogger
   @PatchMapping(path = "/update/password")
+  @PreAuthorize("#clientUsername == authentication.principal")
   public ResponseEntity<Void> updatePassword(@RequestHeader String password,
                                              @RequestHeader String username) {
     service.changePassword(password, username);

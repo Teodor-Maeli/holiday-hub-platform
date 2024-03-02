@@ -49,15 +49,20 @@ public class ProcessAuthenticationFilter extends OncePerRequestFilter {
       List<ClientAuthority> roles = decodedJWT.getClaim(ROLES).asList(ClientAuthority.class);
 
       Set<SimpleGrantedAuthority> authorities = ClientAuthority.toSimpleGrantedAuthority(roles);
-      Authentication authentication = new JWTAuthenticationToken(subject, authorities);
+      setAuthentication(subject, authorities);
 
-      SecurityContextHolder.getContext().setAuthentication(authentication);
       filterChain.doFilter(request, response);
 
     } catch (JWTVerificationException e) {
       filterChain.doFilter(request, response);
     }
 
+  }
+
+  private void setAuthentication(String subject, Set<SimpleGrantedAuthority> authorities) {
+    Authentication authentication = new JWTAuthenticationToken(subject, authorities);
+
+    SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 
   private DecodedJWT verifyJWT(String encodedJWT) {

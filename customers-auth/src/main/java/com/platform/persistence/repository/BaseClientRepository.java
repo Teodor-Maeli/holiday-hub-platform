@@ -24,8 +24,11 @@ public interface BaseClientRepository<E extends Client, ID> extends JpaRepositor
       LEFT JOIN FETCH e.authorities r
       LEFT JOIN FETCH e.authenticationAuditLogs t
       WHERE e.username = :username
-      AND t.statusReason not in ('BLACKLISTED', 'LOCKED')
-      AND (t.statusResolved = true OR t.statusResolved is NULL)
+      AND CASE
+            WHEN t IS NULL THEN TRUE
+            WHEN t.authenticationStatus NOT IN ('BLACKLISTED', 'LOCKED') THEN TRUE
+            ELSE t.statusResolved
+          END
       """)
   Optional<E> findByUsernameAndNotLockedOrBlacklisted(@Param("username") String username);
 

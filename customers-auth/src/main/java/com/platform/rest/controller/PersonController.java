@@ -9,6 +9,7 @@ import com.platform.rest.resource.PersonResponse;
 import com.platform.service.PersonService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -44,6 +45,7 @@ public class PersonController {
 
   @IOLogger
   @GetMapping(path = "/get/{clientUsername}")
+  @PreAuthorize("#clientUsername == authentication.principal")
   public ResponseEntity<PersonResponse> getByUsername(@RequestParam("include") Set<DecoratingOptions> aggregations,
                                                       @PathVariable("clientUsername") String clientUsername) {
     Person entity = service.loadUserByUsername(aggregations, clientUsername);
@@ -54,6 +56,7 @@ public class PersonController {
 
   @IOLogger
   @PatchMapping(path = "/update/password")
+  @PreAuthorize("#clientUsername == authentication.principal")
   public ResponseEntity<Void> updatePassword(@RequestHeader String password,
                                              @RequestHeader String username) {
     service.changePassword(password, username);

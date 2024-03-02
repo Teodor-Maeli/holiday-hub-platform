@@ -57,7 +57,11 @@ public abstract class AbstractClientService
       return user.get();
     }
 
-    throw new PlatformBackendException("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username), BAD_REQUEST);
+    throw PlatformBackendException.builder()
+        .message("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username))
+        .httpStatus(BAD_REQUEST)
+        .build();
+
   }
 
   /**
@@ -76,7 +80,11 @@ public abstract class AbstractClientService
       return user.get();
     }
 
-    throw new PlatformBackendException("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username), BAD_REQUEST);
+    throw PlatformBackendException.builder()
+        .message("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username))
+        .httpStatus(BAD_REQUEST)
+        .build();
+
   }
 
   /**
@@ -89,13 +97,18 @@ public abstract class AbstractClientService
   public E save(E entity) {
     try {
 
-      if(!repository.existsByUsername(entity.getUsername())) {
+      if (! repository.existsByUsername(entity.getUsername())) {
         entity.setAuthorities(Set.of(ClientAuthority.BASE_CLIENT));
       }
 
       return repository.save(entity);
     } catch (RuntimeException e) {
-      throw new PlatformBackendException("Failed to SAVE entity with username: " + entity.getUsername(), INTERNAL_SERVER_ERROR, e);
+
+      throw PlatformBackendException.builder()
+          .message("Failed to SAVE entity with username: %s".formatted(entity.getUsername()))
+          .httpStatus(INTERNAL_SERVER_ERROR)
+          .cause(e)
+          .build();
     }
   }
 
@@ -106,7 +119,10 @@ public abstract class AbstractClientService
    */
   public void delete(String username) {
     if ((repository.deleteByUserName(username) <= 0)) {
-      throw new PlatformBackendException("Failed to DELETE, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
+      throw PlatformBackendException.builder()
+          .message("Failed to DELETE, USERNAME: %s non-existent!".formatted(username))
+          .httpStatus(BAD_REQUEST)
+          .build();
     }
   }
 
@@ -118,15 +134,27 @@ public abstract class AbstractClientService
    * @throws PlatformBackendException       If fail to change password or 500 INTERNAL SERVER ERROR if another error occurs.
    */
   public void changePassword(String newPassword, String username) {
+
     try {
       String encoded = encoder.encode(newPassword);
       if (repository.updatePasswordByUsername(username, encoded) > 0) {
         return;
       }
-      throw new PlatformBackendException("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username), BAD_REQUEST);
+
+      throw PlatformBackendException.builder()
+          .message("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username))
+          .httpStatus(BAD_REQUEST)
+          .build();
+
     } catch (RuntimeException e) {
-      throw new PlatformBackendException("Failed to UPDATE password for USERNAME: %s".formatted(username), INTERNAL_SERVER_ERROR, e);
+
+      throw PlatformBackendException.builder()
+          .message("Failed to UPDATE password for USERNAME: %s".formatted(username))
+          .httpStatus(INTERNAL_SERVER_ERROR)
+          .cause(e)
+          .build();
     }
+
   }
 
 }

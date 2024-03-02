@@ -4,19 +4,18 @@ import org.springframework.http.HttpStatus;
 
 public class PlatformBackendException extends RuntimeException {
 
-  private final String message;
+  private HttpStatus httpStatus;
 
-  private final HttpStatus httpStatus;
+  private String message;
 
-  public PlatformBackendException(String message, HttpStatus httpStatus) {
-    this.message = message;
-    this.httpStatus = httpStatus;
+  private Throwable cause;
+
+  private PlatformBackendException() {
+    super();
   }
 
-  public PlatformBackendException(String message, HttpStatus httpStatus, Throwable cause) {
-    super(cause);
-    this.message = message;
-    this.httpStatus = httpStatus;
+  public HttpStatus getHttpStatus() {
+    return httpStatus;
   }
 
   @Override
@@ -24,9 +23,39 @@ public class PlatformBackendException extends RuntimeException {
     return message;
   }
 
-  public HttpStatus getHttpStatus() {
-    return httpStatus;
+  @Override
+  public Throwable getCause() {
+    return cause;
   }
+
+  public static PlatformBackendExceptionBuilder builder() {
+    return new PlatformBackendExceptionBuilder(new PlatformBackendException());
+  }
+
+  public record PlatformBackendExceptionBuilder(PlatformBackendException exception) {
+
+    public PlatformBackendExceptionBuilder httpStatus(HttpStatus httpStatus) {
+        this.exception.httpStatus = httpStatus;
+        return this;
+      }
+
+
+      public PlatformBackendExceptionBuilder message(String message) {
+        this.exception.message = message;
+        return this;
+      }
+
+
+      public PlatformBackendExceptionBuilder cause(Throwable cause) {
+        this.exception.cause = cause;
+        return this;
+      }
+
+      public PlatformBackendException build() {
+        return this.exception;
+      }
+    }
+
 }
 
 

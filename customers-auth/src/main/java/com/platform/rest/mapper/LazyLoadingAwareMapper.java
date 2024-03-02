@@ -8,8 +8,8 @@ import java.util.Collection;
 public interface LazyLoadingAwareMapper {
 
   @Condition
-  default boolean isNotLazyLoaded(Collection<?> sourceCollection){
-   return Hibernate.isInitialized(sourceCollection);
+  default boolean isLazyLoaded(Collection<?> sourceCollection){
+    return sourceCollection != null && Hibernate.isInitialized(sourceCollection);
   }
 
 }

@@ -21,12 +21,8 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
- * 27.05.2023.
- *
- * <p>Logs input and output of method invocation.</p>
+ * Logs input and output of method invocation.
  * Since 1.0.
- *
- * <p>Author : Teodor Maeli</p>
  */
 
 @Aspect
@@ -78,6 +74,9 @@ public class LoggingAspect {
         .findAllMergedAnnotations(method, RequestMapping.class)
         .stream()
         .findFirst()
-        .orElseThrow(() -> new PlatformBackendException("Invalid or missing annotation!", INTERNAL_SERVER_ERROR));
+        .orElseThrow(PlatformBackendException.builder()
+            .message("Invalid or missing annotation!")
+            .httpStatus(INTERNAL_SERVER_ERROR)::build);
+
   }
 }

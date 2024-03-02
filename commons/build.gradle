@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+def projectVersion = project.property('version')
+def projectVersionPrefix = '-SNAPSHOT'
+
+group = 'com.platform'
+version = projectVersion + projectVersionPrefix
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
+
+test {
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}

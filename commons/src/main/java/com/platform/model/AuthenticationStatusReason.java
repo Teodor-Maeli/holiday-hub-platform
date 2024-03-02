@@ -1,4 +1,4 @@
-package com.platform.common.model;
+package com.platform.model;
 
 public enum AuthenticationStatusReason {
   INVALID_CREDENTIALS,

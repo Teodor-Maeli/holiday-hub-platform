@@ -1,6 +1,6 @@
 package com.platform.service;
 
-import com.platform.common.model.DecoratingOptions;
+import com.platform.service.decorator.DecoratingOptions;
 import com.platform.persistence.entity.Company;
 import com.platform.persistence.repository.CompanyRepository;
 import com.platform.service.decorator.CompanyDecorator;

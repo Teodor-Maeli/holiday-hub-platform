@@ -1,7 +1,7 @@
 package com.platform.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.platform.common.model.SubscriptionType;
+import com.platform.model.SubscriptionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

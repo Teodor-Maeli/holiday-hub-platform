@@ -3,9 +3,28 @@ server:
 spring:
   application:
     name: platform
+  profiles:
+    include:
+      - security
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${dbUrl:jdbc:postgresql://localhost:5432/platform}
+    username: ${dbuser:platform}
+    password: ${dbpass:platformdev}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    generate-ddl: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   output:
     ansi:
       enabled: always
 logging:
   level:
     org.springframework.jdbc.core: TRACE
+

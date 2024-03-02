@@ -1,4 +1,5 @@
 rootProject.name = 'platform'
 include 'customers-auth'
 include 'customers-resources'
+include 'commons'
 

@@ -1,10 +1,9 @@
 package com.platform.service.decorator;
 
-import com.platform.common.model.DecoratingOptions;
 import com.platform.persistence.entity.AuthenticationAuditLog;
 import com.platform.persistence.entity.Client;
 import com.platform.persistence.entity.Subscription;
-import com.platform.persistence.repository.BaseClientRepository;
+import com.platform.persistence.BaseClientRepository;
 import com.platform.service.AbstractClientService;
 import com.platform.service.AuthenticationAuditLogService;
 import com.platform.service.SubscriptionService;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
  * @param <ID> ID of entity
  * @param <R>  Repository
  */
-public abstract class ClientServiceDecorator<E extends Client, ID, R extends BaseClientRepository<E, ID>>
+public abstract class ClientServiceDecorator<E extends Client, ID extends Number, R extends BaseClientRepository<E, ID>>
     extends AbstractClientService<E, ID, R> {
 
   private final SubscriptionService subscriptionService;
@@ -51,7 +50,7 @@ public abstract class ClientServiceDecorator<E extends Client, ID, R extends Bas
     return client;
   }
 
-  private E decorate(Set<DecoratingOptions> decoratingOptions, E clientEntity) {
+  private void decorate(Set<DecoratingOptions> decoratingOptions, E clientEntity) {
     for (DecoratingOptions option : decoratingOptions) {
       switch (option) {
         case SUBSCRIPTIONS -> decorateWithSubscriptions(clientEntity);
@@ -60,7 +59,6 @@ public abstract class ClientServiceDecorator<E extends Client, ID, R extends Bas
       }
     }
 
-    return clientEntity;
   }
 
   abstract void decorateWithClients(E clientEntity);

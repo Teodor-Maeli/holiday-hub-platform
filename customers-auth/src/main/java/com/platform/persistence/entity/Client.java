@@ -1,20 +1,20 @@
 package com.platform.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.platform.common.model.AuthenticationStatus;
-import com.platform.common.model.ClientAuthority;
+import com.platform.config.util.SecurityUtils;
+import com.platform.model.AuthenticationStatus;
+import com.platform.model.ConsumerAuthority;
+import com.platform.persistence.Consumer;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Base entity class.
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @EntityListeners(AuditingEntityListener.class)
-public abstract class Client implements UserDetails {
+public abstract class Client implements UserDetails, Consumer {
 
   @Id
   @Column(name = "ID", updatable = false, unique = true, nullable = false)
@@ -55,12 +55,12 @@ public abstract class Client implements UserDetails {
   private List<Subscription> subscriptions;
 
   @Column(name = "ROLES")
-  @ElementCollection(targetClass = ClientAuthority.class, fetch = FetchType.LAZY)
-  private Set<ClientAuthority> authorities;
+  @ElementCollection(targetClass = ConsumerAuthority.class, fetch = FetchType.LAZY)
+  private Set<ConsumerAuthority> authorities;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return ClientAuthority.toSimpleGrantedAuthority(authorities);
+    return SecurityUtils.toSimpleGrantedAuthority(authorities);
   }
 
   @Override
@@ -84,7 +84,7 @@ public abstract class Client implements UserDetails {
   @Override
   public boolean isEnabled() {
     if (authorities == null || authorities.isEmpty()) {
-      return true;
+      return false;
     }
 
    return authenticationAuditLogs.stream().noneMatch(this::isLocked);
@@ -127,7 +127,7 @@ public abstract class Client implements UserDetails {
     this.registeredDate = registeredDate;
   }
 
-  public void setAuthorities(Set<ClientAuthority> authorities) {
+  public void setAuthorities(Set<ConsumerAuthority> authorities) {
     this.authorities = authorities;
   }
 

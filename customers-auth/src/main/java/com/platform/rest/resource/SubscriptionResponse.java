@@ -1,10 +1,9 @@
 package com.platform.rest.resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.platform.common.model.SubscriptionType;
+import com.platform.model.SubscriptionType;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
 public class SubscriptionResponse {
 
   private Long clientId;

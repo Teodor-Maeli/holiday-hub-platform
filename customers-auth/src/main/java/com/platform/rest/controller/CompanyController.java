@@ -1,7 +1,7 @@
 package com.platform.rest.controller;
 
 import com.platform.aspect.logger.IOLogger;
-import com.platform.common.model.DecoratingOptions;
+import com.platform.service.decorator.DecoratingOptions;
 import com.platform.persistence.entity.Company;
 import com.platform.rest.mapper.CompanyRepresentativeMapper;
 import com.platform.rest.resource.CompanyRegistration;
@@ -28,7 +28,6 @@ public class CompanyController {
   public static final String CUSTOMERS_AUTH_V_1_COMPANY = "/customers-auth/v1/company";
 
   private final CompanyRepresentativeMapper mapper;
-
   private final CompanyService service;
 
   public CompanyController(CompanyRepresentativeMapper mapper, CompanyService service) {

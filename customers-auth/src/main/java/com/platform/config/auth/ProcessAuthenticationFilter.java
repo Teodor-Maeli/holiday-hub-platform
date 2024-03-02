@@ -4,9 +4,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.platform.common.model.ClientAuthority;
+import com.platform.model.ConsumerAuthority;
 import com.platform.config.model.JWTAuthenticationToken;
-import com.platform.config.util.JWTUtil;
+import com.platform.config.util.SecurityUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,10 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Performs a Client authentication.
@@ -32,13 +30,6 @@ public class ProcessAuthenticationFilter extends OncePerRequestFilter {
   private static final String AUTHORIZATION_HEADER = "Authorization";
   private static final String ROLES = "roles";
 
-  private final JWTUtil jwtUtil;
-
-  public ProcessAuthenticationFilter(JWTUtil jwtUtil) {
-    this.jwtUtil = jwtUtil;
-  }
-
-
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     String encodedJWT = request.getHeader(AUTHORIZATION_HEADER);
@@ -46,9 +37,9 @@ public class ProcessAuthenticationFilter extends OncePerRequestFilter {
     try {
       DecodedJWT decodedJWT = verifyJWT(encodedJWT);
       String subject = decodedJWT.getSubject();
-      List<ClientAuthority> roles = decodedJWT.getClaim(ROLES).asList(ClientAuthority.class);
+      List<ConsumerAuthority> roles = decodedJWT.getClaim(ROLES).asList(ConsumerAuthority.class);
 
-      Set<SimpleGrantedAuthority> authorities = ClientAuthority.toSimpleGrantedAuthority(roles);
+      Set<SimpleGrantedAuthority> authorities = SecurityUtils.toSimpleGrantedAuthority(roles);
       setAuthentication(subject, authorities);
 
       filterChain.doFilter(request, response);
@@ -70,7 +61,7 @@ public class ProcessAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private JWTVerifier getJWTVerifier() {
-    return JWT.require(jwtUtil.getSignAlgorithm())
+    return JWT.require(SecurityUtils.getSignAlgorithm())
         .build();
   }
 

@@ -1,9 +1,9 @@
 package com.platform.service;
 
-import com.platform.common.model.DecoratingOptions;
-import com.platform.common.model.ClientAuthority;
+import com.platform.service.decorator.DecoratingOptions;
+import com.platform.model.ConsumerAuthority;
 import com.platform.persistence.entity.Client;
-import com.platform.persistence.repository.BaseClientRepository;
+import com.platform.persistence.BaseClientRepository;
 import com.platform.exception.PlatformBackendException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,7 +23,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
  * @param <R>                               Repository
  */
 public abstract class AbstractClientService
-    <E extends Client, ID, R extends BaseClientRepository<E, ID>> implements UserDetailsService {
+    <E extends Client, ID extends Number, R extends BaseClientRepository<E, ID>> implements UserDetailsService {
 
    final R repository;
    final PasswordEncoder encoder;
@@ -51,7 +51,7 @@ public abstract class AbstractClientService
    */
   @Override
   public E loadUserByUsername(String username) {
-    Optional<E> user = repository.findByUsernameAndNotLockedOrBlacklisted(username);
+    Optional<E> user = repository.findByUsernameEligibleForLogin(username);
 
     if (user.isPresent()) {
       return user.get();
@@ -98,7 +98,7 @@ public abstract class AbstractClientService
     try {
 
       if (! repository.existsByUsername(entity.getUsername())) {
-        entity.setAuthorities(Set.of(ClientAuthority.BASE_CLIENT));
+        entity.setAuthorities(Set.of(ConsumerAuthority.BASE_CLIENT));
       }
 
       return repository.save(entity);

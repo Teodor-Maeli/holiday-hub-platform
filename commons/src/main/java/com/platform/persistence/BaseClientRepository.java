@@ -1,6 +1,5 @@
-package com.platform.persistence.repository;
+package com.platform.persistence;
 
-import com.platform.persistence.entity.Client;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,13 +10,13 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 /**
- * Base repository interface, override if needed.
+ * Base repository interface, extend and override if needed.
  *
  * @param <E>  Entity
  * @param <ID> ID
  */
 @NoRepositoryBean
-public interface BaseClientRepository<E extends Client, ID> extends JpaRepository<E, ID> {
+public interface BaseClientRepository<E extends Consumer, ID extends Number> extends JpaRepository<E, ID> {
 
   @Query("""
       SELECT e FROM #{#entityName} e
@@ -30,7 +29,7 @@ public interface BaseClientRepository<E extends Client, ID> extends JpaRepositor
             ELSE t.statusResolved
           END
       """)
-  Optional<E> findByUsernameAndNotLockedOrBlacklisted(@Param("username") String username);
+  Optional<E> findByUsernameEligibleForLogin(@Param("username") String username);
 
   @Query("""
       SELECT e FROM #{#entityName} e

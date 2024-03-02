@@ -1,7 +1,6 @@
 package com.platform.service;
 
-import com.platform.common.model.DecoratingOptions;
-import com.platform.persistence.entity.Company;
+import com.platform.service.decorator.DecoratingOptions;
 import com.platform.persistence.entity.Person;
 import com.platform.persistence.repository.PersonRepository;
 import com.platform.service.decorator.PersonDecorator;

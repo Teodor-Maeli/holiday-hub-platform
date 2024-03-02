@@ -1,11 +1,11 @@
 package com.platform.rest.controller;
 
 import com.platform.aspect.logger.IOLogger;
-import com.platform.common.model.DecoratingOptions;
-import com.platform.persistence.entity.Person;
-import com.platform.rest.mapper.PersonMapper;
+import com.platform.service.decorator.DecoratingOptions;
 import com.platform.rest.resource.PersonRegistration;
 import com.platform.rest.resource.PersonResponse;
+import com.platform.persistence.entity.Person;
+import com.platform.rest.mapper.PersonMapper;
 import com.platform.service.PersonService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

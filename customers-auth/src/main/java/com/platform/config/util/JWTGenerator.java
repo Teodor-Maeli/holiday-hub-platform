@@ -26,14 +26,11 @@ public class JWTGenerator {
 
   private final ObjectMapper objectMapper;
 
-  private final JWTUtil jwtUtil;
-
   @Value("${platform.security.jwt-issuer}")
   private String issuer;
 
-  public JWTGenerator(ObjectMapper objectMapper, JWTUtil jwtUtil) {
+  public JWTGenerator(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
-    this.jwtUtil = jwtUtil;
   }
 
   public JWTComposite generate(Client client) {
@@ -63,7 +60,7 @@ public class JWTGenerator {
           .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
           .withJWTId(UUID.randomUUID().toString())
           .withNotBefore(new Date(System.currentTimeMillis() + 1000L))
-          .sign(jwtUtil.getSignAlgorithm());
+          .sign(SecurityUtils.getSignAlgorithm());
     } catch (JsonProcessingException e) {
       throw new UncheckedIOException("Failed to authenticate client with id:" + client.getId(), e);
     }

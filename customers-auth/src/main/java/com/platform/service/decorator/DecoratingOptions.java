@@ -1,4 +1,4 @@
-package com.platform.common.model;
+package com.platform.service.decorator;
 
 import com.platform.persistence.entity.Client;
 import com.platform.persistence.entity.Company;

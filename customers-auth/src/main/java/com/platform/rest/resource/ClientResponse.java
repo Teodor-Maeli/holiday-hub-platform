@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.platform.common.model.ClientAuthority;
+import com.platform.model.ConsumerAuthority;
 import com.platform.persistence.entity.AuthenticationAuditLog;
 
 import java.time.LocalDateTime;
@@ -34,7 +34,7 @@ public class ClientResponse {
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime registeredDate;
 
-  private Set<ClientAuthority> authorities;
+  private Set<ConsumerAuthority> authorities;
 
   public Long getId() {
     return id;
@@ -52,11 +52,11 @@ public class ClientResponse {
     this.registeredDate = registeredDate;
   }
 
-  public Set<ClientAuthority> getRoles() {
+  public Set<ConsumerAuthority> getRoles() {
     return authorities;
   }
 
-  public void setRoles(Set<ClientAuthority> authorities) {
+  public void setRoles(Set<ConsumerAuthority> authorities) {
     this.authorities = authorities;
   }
 

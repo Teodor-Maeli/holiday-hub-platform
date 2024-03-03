@@ -13,7 +13,7 @@ spring:
     password: ${dbpass:platformdev}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
     generate-ddl: true
     open-in-view: false
@@ -27,4 +27,4 @@ spring:
 logging:
   level:
     org.springframework.jdbc.core: TRACE
-
+    org.springframework.security: TRACE

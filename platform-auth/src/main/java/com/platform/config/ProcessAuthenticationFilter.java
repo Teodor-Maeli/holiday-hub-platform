@@ -1,12 +1,12 @@
-package com.platform.config.auth;
+package com.platform.config;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.platform.model.ConsumerAuthority;
-import com.platform.config.model.JWTAuthenticationToken;
-import com.platform.config.util.SecurityUtils;
+import com.platform.model.JWTAuthenticationToken;
+import com.platform.util.SecurityUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.platform.config.model;
+package com.platform.model;
 
 public class AuthenticationFailure {
 
@@ -6,11 +6,18 @@ public class AuthenticationFailure {
 
   private String message;
 
+  private String details;
+
   private AuthenticationFailure() {
   }
 
   public static AuthenticationFailure create() {
     return new AuthenticationFailure();
+  }
+
+  public AuthenticationFailure withDetails(String details) {
+    this.details = details;
+    return this;
   }
 
   public AuthenticationFailure withTimestamp(String timestamp) {
@@ -29,5 +36,9 @@ public class AuthenticationFailure {
 
   public String getMessage() {
     return message;
+  }
+
+  public String getDetails() {
+    return details;
   }
 }

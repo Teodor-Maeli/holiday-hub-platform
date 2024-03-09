@@ -51,7 +51,9 @@ project("platform-auth") {
 
 project("customers-resources") {
     dependencies {
+        implementation project(':platform-auth')
         implementation project(path: ':platform-core')
+        implementation 'org.springframework.security:spring-security-core'
     }
 }
 

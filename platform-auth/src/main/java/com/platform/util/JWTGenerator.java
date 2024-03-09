@@ -1,10 +1,10 @@
-package com.platform.config.util;
+package com.platform.util;
 
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.platform.config.model.ClientUserDetails;
-import com.platform.config.model.JWTComposite;
+import com.platform.model.ClientUserDetails;
+import com.platform.model.JWTComposite;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;

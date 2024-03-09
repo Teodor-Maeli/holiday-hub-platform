@@ -5,7 +5,7 @@ import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.entity.SubscriptionEntity;
 import com.platform.persistence.repository.BaseClientRepository;
 import com.platform.service.AbstractClientService;
-import com.platform.service.AuthenticationAuditLogService;
+import com.platform.service.AuthenticationLogService;
 import com.platform.service.Encoder;
 import com.platform.service.SubscriptionService;
 
@@ -25,17 +25,17 @@ public abstract class ClientServiceDecorator<E extends ClientEntity, ID extends 
 
   private final SubscriptionService subscriptionService;
 
-  private final AuthenticationAuditLogService authenticationAuditLogService;
+  private final AuthenticationLogService authenticationLogService;
 
   protected ClientServiceDecorator(
       R repository,
       Encoder encoder,
       SubscriptionService subscriptionService,
-      AuthenticationAuditLogService authenticationAuditLogService
+      AuthenticationLogService authenticationLogService
   ) {
     super(repository, encoder);
     this.subscriptionService = subscriptionService;
-    this.authenticationAuditLogService = authenticationAuditLogService;
+    this.authenticationLogService = authenticationLogService;
   }
 
   @Override
@@ -64,7 +64,7 @@ public abstract class ClientServiceDecorator<E extends ClientEntity, ID extends 
   abstract void decorateWithClients(E clientEntity);
 
   private void decorateWithAuthenticationLogs(E clientEntity) {
-    List<AuthenticationLogEntity> clientAuthenticationLogs = authenticationAuditLogService.getClientAuthenticationLogs(clientEntity.getUsername());
+    List<AuthenticationLogEntity> clientAuthenticationLogs = authenticationLogService.getClientAuthenticationLogs(clientEntity.getUsername());
     clientEntity.setAuthenticationAuditLogs(clientAuthenticationLogs);
   }
 

@@ -4,4 +4,5 @@ public enum AuthenticationStatus {
   AUTHORIZED,
   BLACKLISTED,
   LOCKED,
+  FAILURE
 }

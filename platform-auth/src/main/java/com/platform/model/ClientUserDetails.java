@@ -1,8 +1,7 @@
-package com.platform.config.model;
+package com.platform.model;
 
-import com.platform.config.util.SecurityUtils;
+import com.platform.util.SecurityUtils;
 import com.platform.exception.PlatformBackendException;
-import com.platform.model.AuthenticationStatus;
 import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
 import org.springframework.security.core.GrantedAuthority;

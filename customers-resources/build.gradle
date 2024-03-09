@@ -25,8 +25,3 @@ bootJar {
 jar {
     enabled = true
 }
-
-dependencies {
-    implementation project(path: ':platform-core')
-    implementation project(path: ':platform-auth')
-}

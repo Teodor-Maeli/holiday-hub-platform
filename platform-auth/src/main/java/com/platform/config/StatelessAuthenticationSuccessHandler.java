@@ -1,13 +1,10 @@
-package com.platform.config.auth;
+package com.platform.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.platform.config.model.ClientUserDetails;
-import com.platform.config.model.JWTComposite;
-import com.platform.config.util.JWTGenerator;
-import com.platform.persistence.entity.AuthenticationLogEntity;
-import com.platform.model.AuthenticationStatus;
-import com.platform.model.AuthenticationStatusReason;
-import com.platform.persistence.repository.AuthenticationLogRepository;
+import com.platform.aspect.annotation.LogAuthentication;
+import com.platform.model.ClientUserDetails;
+import com.platform.model.JWTComposite;
+import com.platform.util.JWTGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
@@ -24,19 +21,16 @@ public class StatelessAuthenticationSuccessHandler implements AuthenticationSucc
 
   private final ObjectMapper objectMapper;
 
-  private final AuthenticationLogRepository authenticationAuditLogRepository;
-
   public StatelessAuthenticationSuccessHandler(
       JWTGenerator JWTGenerator,
-      ObjectMapper objectMapper,
-      AuthenticationLogRepository authenticationAuditLogRepository
+      ObjectMapper objectMapper
   ) {
     this.JWTGenerator = JWTGenerator;
     this.objectMapper = objectMapper;
-    this.authenticationAuditLogRepository = authenticationAuditLogRepository;
   }
 
   @Override
+  @LogAuthentication(async = true)
   public void onAuthenticationSuccess(
       HttpServletRequest request,
       HttpServletResponse response,
@@ -44,21 +38,9 @@ public class StatelessAuthenticationSuccessHandler implements AuthenticationSucc
   ) throws IOException {
     ClientUserDetails details = (ClientUserDetails) authentication.getPrincipal();
     JWTComposite authTokensComposite = JWTGenerator.generate(details);
-    persistAuthTokenInfo(details);
 
     response.getOutputStream().println(objectMapper.writeValueAsString(authTokensComposite));
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-  }
-
-  private void persistAuthTokenInfo(ClientUserDetails details) {
-
-    AuthenticationLogEntity authenticationAuditLog = new AuthenticationLogEntity();
-    authenticationAuditLog.setClient(details.client());
-    authenticationAuditLog.setAuthenticationStatus(AuthenticationStatus.AUTHORIZED);
-    authenticationAuditLog.setStatusReason(AuthenticationStatusReason.SUCCESSFUL_AUTHENTICATION);
-    authenticationAuditLog.setStatusResolved(Boolean.TRUE);
-
-    authenticationAuditLogRepository.save(authenticationAuditLog);
   }
 
 }

@@ -7,16 +7,20 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class AuthenticationAuditLogService {
+public class AuthenticationLogService {
 
   private final AuthenticationLogRepository repository;
 
-  public AuthenticationAuditLogService(AuthenticationLogRepository repository) {
+  public AuthenticationLogService(AuthenticationLogRepository repository) {
     this.repository = repository;
   }
 
   public List<AuthenticationLogEntity> getClientAuthenticationLogs(String username) {
    return repository.findByClientUsername(username);
+  }
+
+  public AuthenticationLogEntity logAuthenticationResult(AuthenticationLogEntity entity) {
+    return repository.save(entity);
   }
 
 }

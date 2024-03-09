@@ -4,7 +4,7 @@ import com.platform.persistence.entity.CompanyEntity;
 import com.platform.persistence.entity.PersonEntity;
 import com.platform.persistence.repository.CompanyRepository;
 import com.platform.persistence.repository.PersonRepository;
-import com.platform.service.AuthenticationAuditLogService;
+import com.platform.service.AuthenticationLogService;
 import com.platform.service.Encoder;
 import com.platform.service.SubscriptionService;
 import org.springframework.stereotype.Component;
@@ -18,9 +18,9 @@ public class PersonDecorator extends ClientServiceDecorator<PersonEntity, Long, 
       PersonRepository repository,
       Encoder encoder,
       SubscriptionService subscriptionService,
-      AuthenticationAuditLogService authenticationAuditLogService,
+      AuthenticationLogService authenticationLogService,
       CompanyRepository companyRepository) {
-    super(repository, encoder, subscriptionService, authenticationAuditLogService);
+    super(repository, encoder, subscriptionService, authenticationLogService);
     this.companyRepository = companyRepository;
   }
 

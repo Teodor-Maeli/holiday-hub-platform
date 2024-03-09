@@ -1,10 +1,10 @@
 package com.platform.service;
 
-import com.platform.service.decorator.DecoratingOptions;
+import com.platform.exception.PlatformBackendException;
 import com.platform.model.ConsumerAuthority;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.repository.BaseClientRepository;
-import com.platform.exception.PlatformBackendException;
+import com.platform.service.decorator.DecoratingOptions;
 import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package com.platform.rest.controller;
 
-import com.platform.aspect.logger.IOLogger;
+import com.platform.aspect.annotation.IOLogger;
 import com.platform.service.decorator.DecoratingOptions;
 import com.platform.persistence.entity.CompanyEntity;
 import com.platform.mapper.CompanyRepresentativeMapper;

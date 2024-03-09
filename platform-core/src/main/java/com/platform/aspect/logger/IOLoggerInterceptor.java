@@ -27,11 +27,11 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Aspect
 @Component
-public class LoggingAspect {
+public class IOLoggerInterceptor {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(LoggingAspect.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(IOLoggerInterceptor.class);
 
-  @Pointcut("@annotation(com.platform.aspect.logger.IOLogger) && execution(* *(..))")
+  @Pointcut("@annotation(com.platform.aspect.annotation.IOLogger) && execution(* *(..))")
   public void pointCut() {
   }
 

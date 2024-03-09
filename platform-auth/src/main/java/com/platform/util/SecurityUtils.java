@@ -1,4 +1,4 @@
-package com.platform.config.util;
+package com.platform.util;
 
 import com.auth0.jwt.algorithms.Algorithm;
 import com.platform.model.ConsumerAuthority;

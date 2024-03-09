@@ -1,17 +1,17 @@
-package com.platform.aspect.logger;
+package com.platform.aspect.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Logs input and output of method invocations.
- * Since 1.0.
- */
-
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IOLogger {
+public @interface LogAuthentication {
 
+
+  /**
+   * This field is used to instruct to interceptor to log into the database synchronously or asynchronously.
+   */
+  boolean async();
 }

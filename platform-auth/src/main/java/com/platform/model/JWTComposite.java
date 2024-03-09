@@ -1,4 +1,4 @@
-package com.platform.config.model;
+package com.platform.model;
 
 public class JWTComposite {
 

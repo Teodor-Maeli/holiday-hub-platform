@@ -1,6 +1,6 @@
 package com.platform.rest.controller;
 
-import com.platform.aspect.logger.IOLogger;
+import com.platform.aspect.annotation.IOLogger;
 import com.platform.service.decorator.DecoratingOptions;
 import com.platform.model.PersonRegistration;
 import com.platform.model.Person;
@@ -10,7 +10,7 @@ import com.platform.service.PersonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,7 +51,7 @@ public class PersonController {
 
   @IOLogger
   @GetMapping(path = "/get/{clientUsername}")
-//  @PreAuthorize("#clientUsername == authentication.principal")
+  @PreAuthorize("#clientUsername == authentication.principal")
   public ResponseEntity<Person> getByUsername(@RequestParam("include") Set<DecoratingOptions> aggregations,
                                               @PathVariable("clientUsername") String clientUsername) {
     PersonEntity entity = service.loadUserByUsername(aggregations, clientUsername);
@@ -62,7 +62,7 @@ public class PersonController {
 
   @IOLogger
   @PatchMapping(path = "/update/password")
-//  @PreAuthorize("#clientUsername == authentication.principal")
+  @PreAuthorize("#clientUsername == authentication.principal")
   public ResponseEntity<Void> updatePassword(@RequestHeader String password,
                                              @RequestHeader String username) {
     service.changePassword(password, username);

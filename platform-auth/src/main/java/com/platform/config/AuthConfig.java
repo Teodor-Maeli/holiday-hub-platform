@@ -1,4 +1,4 @@
-package com.platform.config.auth;
+package com.platform.config;
 
 import com.platform.service.ClientAuthService;
 import org.springframework.beans.factory.annotation.Value;

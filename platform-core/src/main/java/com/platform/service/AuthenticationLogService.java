@@ -15,8 +15,8 @@ public class AuthenticationLogService {
     this.repository = repository;
   }
 
-  public List<AuthenticationLogEntity> getClientAuthenticationLogs(String username) {
-   return repository.findByClientUsername(username);
+  public List<AuthenticationLogEntity> getClientAuthenticationLogs(Long id) {
+   return repository.findByClientId(id);
   }
 
   public AuthenticationLogEntity logAuthenticationResult(AuthenticationLogEntity entity) {

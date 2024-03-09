@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface AuthenticationLogRepository extends JpaRepository<AuthenticationLogEntity, Long> {
 
-  List<AuthenticationLogEntity> findByClientUsername(String clientUsername);
+  List<AuthenticationLogEntity> findByClientId(Long id);
 }

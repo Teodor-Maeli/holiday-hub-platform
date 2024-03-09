@@ -25,7 +25,7 @@ import java.util.Set;
  * Since 1.0
  */
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
 public abstract class ClientEntity {
 

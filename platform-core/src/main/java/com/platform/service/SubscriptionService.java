@@ -15,8 +15,8 @@ public class SubscriptionService {
     this.repository = repository;
   }
 
-  public List<SubscriptionEntity> getClientSubscriptions(String username) {
-    return repository.findByClientUsername(username);
+  public List<SubscriptionEntity> getClientSubscriptions(Long id) {
+    return repository.findByClientId(id);
   }
 
 }

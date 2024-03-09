@@ -64,12 +64,12 @@ public abstract class ClientServiceDecorator<E extends ClientEntity, ID extends 
   abstract void decorateWithClients(E clientEntity);
 
   private void decorateWithAuthenticationLogs(E clientEntity) {
-    List<AuthenticationLogEntity> clientAuthenticationLogs = authenticationLogService.getClientAuthenticationLogs(clientEntity.getUsername());
+    List<AuthenticationLogEntity> clientAuthenticationLogs = authenticationLogService.getClientAuthenticationLogs(clientEntity.getId());
     clientEntity.setAuthenticationAuditLogs(clientAuthenticationLogs);
   }
 
   private void decorateWithSubscriptions(E clientEntity) {
-    List<SubscriptionEntity> clientSubscriptions = subscriptionService.getClientSubscriptions(clientEntity.getUsername());
+    List<SubscriptionEntity> clientSubscriptions = subscriptionService.getClientSubscriptions(clientEntity.getId());
     clientEntity.setSubscriptions(clientSubscriptions);
   }
 

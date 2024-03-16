@@ -1,4 +1,4 @@
-package com.platform.persistence.repository;
+package com.platform.util;
 
 import com.platform.persistence.entity.ClientEntity;
 import jakarta.persistence.criteria.Join;

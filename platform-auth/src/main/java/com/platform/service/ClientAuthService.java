@@ -5,7 +5,7 @@ import com.platform.model.ClientUserDetails;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.entity.CompanyEntity;
 import com.platform.persistence.entity.PersonEntity;
-import com.platform.persistence.repository.AuthenticationSpecification;
+import com.platform.util.AuthenticationSpecification;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

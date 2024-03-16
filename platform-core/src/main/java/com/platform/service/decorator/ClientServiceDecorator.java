@@ -54,7 +54,7 @@ public abstract class ClientServiceDecorator<E extends ClientEntity, ID extends 
     for (DecoratingOptions option : decoratingOptions) {
       switch (option) {
         case SUBSCRIPTIONS -> decorateWithSubscriptions(clientEntity);
-        case AUTHENTICATION_AUDIT_LOGS -> decorateWithAuthenticationLogs(clientEntity);
+        case AUTHENTICATION_LOGS -> decorateWithAuthenticationLogs(clientEntity);
         case COMPANY_REPRESENTATIVES, REPRESENTATIVE_COMPANY -> decorateWithClients(clientEntity);
       }
     }
@@ -65,7 +65,7 @@ public abstract class ClientServiceDecorator<E extends ClientEntity, ID extends 
 
   private void decorateWithAuthenticationLogs(E clientEntity) {
     List<AuthenticationLogEntity> clientAuthenticationLogs = authenticationLogService.getClientAuthenticationLogs(clientEntity.getId());
-    clientEntity.setAuthenticationAuditLogs(clientAuthenticationLogs);
+    clientEntity.setAuthenticationLogs(clientAuthenticationLogs);
   }
 
   private void decorateWithSubscriptions(E clientEntity) {

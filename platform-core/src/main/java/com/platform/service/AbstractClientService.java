@@ -6,6 +6,7 @@ import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.repository.BaseClientRepository;
 import com.platform.service.decorator.DecoratingOptions;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Optional;
 import java.util.Set;
@@ -43,11 +44,11 @@ public abstract class AbstractClientService
   /**
    * Use to authenticate a user against the server.
    *
-   * @param username                        The username identifying the user whose data is required.
+   * @param specification                   The specification used to fetch client from datasource.
    * @return {@link Optional of client}     The user details required in order to perform successful authentication.
    */
-  public Optional<E> loadClientByUsername(String username) {
-    return repository.findByUsernameEligibleForLogin(username);
+  public Optional<E> loadClientBySpecification(Specification<E> specification) {
+    return repository.findOne(specification);
   }
 
   /**

@@ -13,7 +13,7 @@ import org.mapstruct.Mapping;
         PasswordEncoderMapper.class
     }
 )
-public interface PersonMapper extends LazyLoadingAwareMapper {
+public interface PersonMapper {
 
   Person toResponse(PersonEntity entity);
 

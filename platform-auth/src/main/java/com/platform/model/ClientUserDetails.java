@@ -1,9 +1,9 @@
 package com.platform.model;
 
-import com.platform.util.SecurityUtils;
 import com.platform.exception.PlatformBackendException;
 import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
+import com.platform.util.SecurityUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -43,7 +43,8 @@ public record ClientUserDetails(ClientEntity client) implements UserDetails {
 
   @Override
   public boolean isAccountNonLocked() {
-    return true;
+    return client.getAuthenticationLogs().stream().noneMatch(this::isAutoLocked)
+        && !Boolean.TRUE.equals(client.getAccountLocked());
   }
 
   @Override
@@ -53,16 +54,16 @@ public record ClientUserDetails(ClientEntity client) implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    if (client.getConsumerAuthorities() == null || client.getConsumerAuthorities().isEmpty()) {
-      return false;
-    }
-
-    return client.getAuthenticationAuditLogs().stream().noneMatch(this::isLocked);
+//    return client.getConsumerAuthorities() != null && ! client.getConsumerAuthorities().isEmpty();
+    return true;
   }
 
-  private boolean isLocked(AuthenticationLogEntity log) {
-    return (log.getAuthenticationStatus() == AuthenticationStatus.LOCKED
-        || log.getAuthenticationStatus() == AuthenticationStatus.BLACKLISTED)
-        && Boolean.FALSE.equals(log.getStatusResolved());
+  private boolean isAutoLocked(AuthenticationLogEntity log) {
+    return (
+        log.getAuthenticationStatus() == AuthenticationStatus.LOCKED
+            || log.getAuthenticationStatus() == AuthenticationStatus.BLACKLISTED
+            || log.getStatusReason().equals(AuthenticationStatusReason.BAD_CREDENTIALS)
+    ) && Boolean.FALSE.equals(log.getStatusResolved());
   }
+
 }

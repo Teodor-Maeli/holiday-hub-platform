@@ -13,7 +13,7 @@ import org.mapstruct.Mapping;
         PasswordEncoderMapper.class
     }
 )
-public interface CompanyRepresentativeMapper extends LazyLoadingAwareMapper {
+public interface CompanyRepresentativeMapper {
 
   Company toResponse(CompanyEntity entity);
 

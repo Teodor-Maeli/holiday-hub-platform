@@ -2,21 +2,13 @@ package com.platform.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.platform.model.ConsumerAuthority;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -52,7 +44,7 @@ public abstract class ClientEntity {
 
   @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
   @JsonManagedReference
-  private List<AuthenticationLogEntity> authenticationAuditLogs;
+  private List<AuthenticationLogEntity> authenticationLogs;
 
   @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
   @JsonManagedReference
@@ -61,6 +53,10 @@ public abstract class ClientEntity {
   @Column(name = "CONSUMER_AUTHORITIES")
   @ElementCollection(targetClass = ConsumerAuthority.class, fetch = FetchType.LAZY)
   private Set<ConsumerAuthority> consumerAuthorities;
+
+  @Column(name = "ACCOUNT_LOCKED")
+  private Boolean accountLocked;
+
 
   public String getPassword() {
     return this.password;
@@ -100,7 +96,11 @@ public abstract class ClientEntity {
   }
 
   public Set<ConsumerAuthority> getConsumerAuthorities() {
-    return consumerAuthorities;
+    if (Hibernate.isInitialized(consumerAuthorities)) {
+      return consumerAuthorities;
+    }
+
+    return Collections.emptySet();
   }
 
   public String getEmailAddress() {
@@ -119,27 +119,35 @@ public abstract class ClientEntity {
     this.phoneNumber = phoneNumber;
   }
 
-  public List<AuthenticationLogEntity> getAuthenticationTokenEntities() {
-    return authenticationAuditLogs;
+  public List<AuthenticationLogEntity> getAuthenticationLogs() {
+    if (Hibernate.isInitialized(authenticationLogs)) {
+      return authenticationLogs;
+    }
+
+    return Collections.emptyList();
   }
 
-  public void setAuthenticationTokenEntities(List<AuthenticationLogEntity> authTokensEntities) {
-    this.authenticationAuditLogs = authTokensEntities;
-  }
-
-  public List<AuthenticationLogEntity> getAuthenticationAuditLogs() {
-    return authenticationAuditLogs;
-  }
-
-  public void setAuthenticationAuditLogs(List<AuthenticationLogEntity> authenticationAuditLogs) {
-    this.authenticationAuditLogs = authenticationAuditLogs;
+  public void setAuthenticationLogs(List<AuthenticationLogEntity> authenticationLogs) {
+    this.authenticationLogs = authenticationLogs;
   }
 
   public List<SubscriptionEntity> getSubscriptions() {
-    return subscriptions;
+    if (Hibernate.isInitialized(subscriptions)) {
+      return subscriptions;
+    }
+
+    return Collections.emptyList();
   }
 
   public void setSubscriptions(List<SubscriptionEntity> subscriptions) {
     this.subscriptions = subscriptions;
+  }
+
+  public Boolean getAccountLocked() {
+    return accountLocked;
+  }
+
+  public void setAccountLocked(Boolean accountLocked) {
+    this.accountLocked = accountLocked;
   }
 }

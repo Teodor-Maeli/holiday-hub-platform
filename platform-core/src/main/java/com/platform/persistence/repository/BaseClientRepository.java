@@ -1,13 +1,14 @@
 package com.platform.persistence.repository;
 
+import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
 import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -17,27 +18,15 @@ import java.util.Optional;
  * @param <ID> ID
  */
 @NoRepositoryBean
-public interface BaseClientRepository<E extends ClientEntity, ID extends Number> extends JpaRepository<E, ID> {
+public interface BaseClientRepository<E extends ClientEntity, ID extends Number> extends JpaRepository<E, ID>, JpaSpecificationExecutor<E> {
 
   @Query("""
       SELECT e FROM #{#entityName} e
-      LEFT JOIN FETCH e.consumerAuthorities auths
-      LEFT JOIN FETCH e.authenticationAuditLogs logs
-      WHERE e.username = :username
-      AND CASE
-            WHEN logs IS NULL THEN TRUE
-            WHEN logs.authenticationStatus NOT IN ('BLACKLISTED', 'LOCKED') THEN TRUE
-            ELSE logs.statusResolved
-          END
-      """)
-  Optional<E> findByUsernameEligibleForLogin(@Param("username") String username);
-
-  @Query("""
-      SELECT e FROM #{#entityName} e
-      LEFT JOIN FETCH e.authenticationAuditLogs logs
+      LEFT JOIN FETCH e.authenticationLogs logs
       WHERE e.username = :username
       """)
   Optional<E> findByUsername(@Param("username") String username);
+
 
   boolean existsByUsername(String username);
 

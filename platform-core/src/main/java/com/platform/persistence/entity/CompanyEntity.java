@@ -2,7 +2,9 @@ package com.platform.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.hibernate.Hibernate;
 
+import java.util.Collections;
 import java.util.Set;
 
 @Entity
@@ -36,7 +38,11 @@ public class CompanyEntity extends ClientEntity {
   }
 
   public Set<PersonEntity> getRepresentatives() {
-    return representatives;
+    if (Hibernate.isInitialized(representatives)) {
+      return representatives;
+    }
+
+    return Collections.emptySet();
   }
 
   public void setRepresentatives(Set<PersonEntity> representatives) {

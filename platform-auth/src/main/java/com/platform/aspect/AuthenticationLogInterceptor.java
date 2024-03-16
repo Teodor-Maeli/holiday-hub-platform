@@ -1,12 +1,12 @@
 package com.platform.aspect;
 
+import com.platform.AuthenticationLogFacts;
 import com.platform.config.StatelessAuthenticationFailureHandler;
 import com.platform.config.StatelessAuthenticationSuccessHandler;
 import com.platform.model.AuthenticationStatus;
 import com.platform.model.AuthenticationStatusReason;
 import com.platform.model.ClientUserDetails;
 import com.platform.persistence.entity.AuthenticationLogEntity;
-import com.platform.persistence.entity.ClientEntity;
 import com.platform.service.AuthenticationLogService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;
@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Logs client authentication attempts.
@@ -35,11 +37,7 @@ public class AuthenticationLogInterceptor {
 
   private static final String DISABLED_ACCOUNT_EXCEPTION = "DisabledAccountException";
 
-  private static final String ACCOUNT_EXPIRED_EXCEPTION = "AccountExpiredException";
-
   private static final String ACCOUNT_LOCKED_EXCEPTION = "AccountLockedException";
-
-  private static final String CREDENTIALS_EXCEPTION = "CredentialsException";
 
   private final AuthenticationLogService service;
 
@@ -73,42 +71,72 @@ public class AuthenticationLogInterceptor {
 
   }
 
+  private void logAuthenticationSuccess() {
+    ClientUserDetails clientUserDetails = extractUserDetailsFromRequest();
+
+    AuthenticationLogEntity log = AuthenticationLogFacts.initialize()
+        .withStatus(AuthenticationStatus.AUTHORIZED)
+        .withReason(AuthenticationStatusReason.SUCCESSFUL_AUTHENTICATION)
+        .withClientDetails(clientUserDetails)
+        .withStatusResolved(Boolean.TRUE)
+        .toEntity();
+
+    service.logAuthenticationResult(log);
+  }
+
   private void logAuthenticationFailure(Object[] args) {
     if (args == null || args.length == 0) {
       return;
     }
 
+    ClientUserDetails clientUserDetails = extractUserDetailsFromRequest();
     Exception exception = extractException(args);
 
-    AuthenticationLogInfo info = new AuthenticationLogInfo()
-        .withStatus(AuthenticationStatus.FAILURE)
-        .withResolved(Boolean.TRUE);
-
-    switch (exception.getClass().getSimpleName()) {
-      case BAD_CREDENTIALS_EXCEPTION, CREDENTIALS_EXCEPTION -> info.withReason(AuthenticationStatusReason.BAD_CREDENTIALS);
-      case DISABLED_ACCOUNT_EXCEPTION, ACCOUNT_EXPIRED_EXCEPTION -> info.withReason(AuthenticationStatusReason.ACCOUNT_EXPIRED);
-      case ACCOUNT_LOCKED_EXCEPTION -> info.withReason(AuthenticationStatusReason.ACCOUNT_LOCKED);
-      default -> info.withReason(AuthenticationStatusReason.UNKNOWN);
-    }
-
-    ClientUserDetails clientUserDetails = extractUserDetailsFromRequest();
-
-    AuthenticationLogEntity authenticationLog = prepareAuthenticationLogBase(clientUserDetails.client());
-    authenticationLog.setAuthenticationStatus(info.getStatus());
-    authenticationLog.setStatusReason(info.getReason());
-    authenticationLog.setStatusResolved(info.getResolved());
-
+    AuthenticationLogEntity authenticationLog = prepareAuthenticationLogEntry(exception, clientUserDetails);
     service.logAuthenticationResult(authenticationLog);
   }
 
-  private void logAuthenticationSuccess() {
-    ClientUserDetails clientUserDetails = extractUserDetailsFromRequest();
-    AuthenticationLogEntity authenticationLog = prepareAuthenticationLogBase(clientUserDetails.client());
-    authenticationLog.setAuthenticationStatus(AuthenticationStatus.AUTHORIZED);
-    authenticationLog.setStatusReason(AuthenticationStatusReason.SUCCESSFUL_AUTHENTICATION);
-    authenticationLog.setStatusResolved(Boolean.TRUE);
+  private AuthenticationLogEntity prepareAuthenticationLogEntry(Exception exception, ClientUserDetails clientUserDetails) {
+    return AuthenticationLogFacts.initialize()
+        .withStatus(AuthenticationStatus.FAILURE)
+        .withReason(determineReason(exception))
+        .withClientDetails(clientUserDetails)
+        .withStatusResolved(determineStatusResolved(clientUserDetails))
+        .toEntity();
+  }
 
-    service.logAuthenticationResult(authenticationLog);
+  private Boolean determineStatusResolved(ClientUserDetails clientUserDetails) {
+    List<AuthenticationLogEntity> logs = clientUserDetails.client().getAuthenticationLogs();
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime last30Minutes = now.minusMinutes(30);
+
+    if (logs == null || logs.isEmpty()) {
+      return true;
+    }
+
+
+    List<AuthenticationLogEntity> filteredLogs = logs.stream()
+        .filter(log -> log.getStatusReason().equals(AuthenticationStatusReason.BAD_CREDENTIALS))
+        .filter(log -> log.getCreatedDate().isBefore(now) && log.getCreatedDate().isAfter(last30Minutes))
+        .toList();
+
+    boolean isResolved = filteredLogs.size() < 3;
+
+
+    if (!isResolved) {
+      LOGGER.warn("Client might be locked for the next 1h!");
+    }
+
+    return isResolved;
+  }
+
+  private AuthenticationStatusReason determineReason(Exception exception) {
+    return switch (exception.getClass().getSimpleName()) {
+      case BAD_CREDENTIALS_EXCEPTION -> AuthenticationStatusReason.BAD_CREDENTIALS;
+      case DISABLED_ACCOUNT_EXCEPTION -> AuthenticationStatusReason.ACCOUNT_DISABLED;
+      case ACCOUNT_LOCKED_EXCEPTION -> AuthenticationStatusReason.ACCOUNT_LOCKED;
+      default -> AuthenticationStatusReason.UNKNOWN;
+    };
   }
 
   private ClientUserDetails extractUserDetailsFromRequest() {
@@ -124,48 +152,6 @@ public class AuthenticationLogInterceptor {
     }
 
     throw new IllegalArgumentException("Failed to extract exception or one did not exist at all!");
-  }
-
-  private AuthenticationLogEntity prepareAuthenticationLogBase(ClientEntity client) {
-    AuthenticationLogEntity authenticationLog = new AuthenticationLogEntity();
-    authenticationLog.setClient(client);
-    return authenticationLog;
-  }
-
-  private static class AuthenticationLogInfo {
-
-    private AuthenticationStatusReason reason;
-
-    private AuthenticationStatus status;
-
-    private Boolean resolved;
-
-    public AuthenticationStatusReason getReason() {
-      return reason;
-    }
-
-    public AuthenticationLogInfo withReason(AuthenticationStatusReason reason) {
-      this.reason = reason;
-      return this;
-    }
-
-    public AuthenticationStatus getStatus() {
-      return status;
-    }
-
-    public AuthenticationLogInfo withStatus(AuthenticationStatus status) {
-      this.status = status;
-      return this;
-    }
-
-    public Boolean getResolved() {
-      return resolved;
-    }
-
-    public AuthenticationLogInfo withResolved(Boolean resolved) {
-      this.resolved = resolved;
-      return this;
-    }
   }
 
 }

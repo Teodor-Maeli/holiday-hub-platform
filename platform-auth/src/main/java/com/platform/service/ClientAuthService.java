@@ -5,6 +5,7 @@ import com.platform.model.ClientUserDetails;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.entity.CompanyEntity;
 import com.platform.persistence.entity.PersonEntity;
+import com.platform.persistence.repository.AuthenticationSpecification;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -34,15 +35,16 @@ public class ClientAuthService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
     Optional<PersonEntity> person =
-        personService.loadClientByUsername(username);
+        personService.loadClientBySpecification(AuthenticationSpecification.getForLogin(username));
 
     if (person.isPresent()) {
       return cacheAndGetAsUserDetails(person.get());
     }
 
     Optional<CompanyEntity> company =
-        companyService.loadClientByUsername(username);
+        companyService.loadClientBySpecification(AuthenticationSpecification.getForLogin(username));
 
     if (company.isPresent()) {
       return cacheAndGetAsUserDetails(company.get());

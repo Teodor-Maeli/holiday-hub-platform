@@ -2,7 +2,17 @@ package com.platform.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.platform.model.ConsumerAuthority;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
 import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -91,16 +101,16 @@ public abstract class ClientEntity {
     this.registeredDate = registeredDate;
   }
 
-  public void setConsumerAuthorities(Set<ConsumerAuthority> consumerAuthorities) {
-    this.consumerAuthorities = consumerAuthorities;
-  }
-
   public Set<ConsumerAuthority> getConsumerAuthorities() {
     if (Hibernate.isInitialized(consumerAuthorities)) {
       return consumerAuthorities;
     }
 
     return Collections.emptySet();
+  }
+
+  public void setConsumerAuthorities(Set<ConsumerAuthority> consumerAuthorities) {
+    this.consumerAuthorities = consumerAuthorities;
   }
 
   public String getEmailAddress() {

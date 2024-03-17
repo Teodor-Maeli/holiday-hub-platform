@@ -39,13 +39,13 @@ public class AuthenticationLogEntity {
   private ClientEntity client;
 
   @CreatedDate
-  @Column(name = "CREATED_DATE")
+  @Column(name = "CREATED_DATE", nullable = false)
   private LocalDateTime createdDate;
 
   @Column(name = "UPDATED_DATE")
   private LocalDateTime updatedDate;
 
-  @Column(name = "AUTHENTICATION_STATUS")
+  @Column(name = "AUTHENTICATION_STATUS", nullable = false)
   @Enumerated(EnumType.STRING)
   private AuthenticationStatus authenticationStatus;
 
@@ -58,6 +58,9 @@ public class AuthenticationLogEntity {
 
   @Column(name = "STATUS_RESOLVED")
   private Boolean statusResolved;
+
+  @Column(name = "UPDATED_BY")
+  private String updatedBy;
 
 
   public Long getId() {
@@ -122,5 +125,13 @@ public class AuthenticationLogEntity {
 
   public void setMessage(String message) {
     this.message = message;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
   }
 }

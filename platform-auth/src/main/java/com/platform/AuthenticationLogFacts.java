@@ -33,6 +33,8 @@ public class AuthenticationLogFacts {
   }
 
   public AuthenticationLogEntity toEntity() {
+    validate();
+
     AuthenticationLogEntity authenticationLog = new AuthenticationLogEntity();
     authenticationLog.setAuthenticationStatus(status);
     authenticationLog.setStatusReason(reason);

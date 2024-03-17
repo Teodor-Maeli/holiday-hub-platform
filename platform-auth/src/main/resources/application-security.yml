@@ -1,5 +1,10 @@
 platform:
   security:
+    accounts:
+      auto-locking:
+        bad-credentials:
+          max-consecutive: 3
+          expiry-time: 30
     cors-config:
       allowedHeaders: "*"
       allowedOrigins: "http://localhost:3000"
@@ -8,4 +13,4 @@ platform:
     login:
       successUrl: "http://localhost:3000"
       failureUrl: "http://localhost:3000"
-    jwt-issuer: "ticket-platform"
+    jwt-issuer: "platform-backend"

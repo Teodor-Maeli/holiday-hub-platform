@@ -1,12 +1,14 @@
 package com.platform.aspect;
 
 import com.platform.AuthenticationLogFacts;
+import com.platform.aspect.annotation.LogAuthentication;
 import com.platform.config.StatelessAuthenticationFailureHandler;
 import com.platform.config.StatelessAuthenticationSuccessHandler;
 import com.platform.model.AuthenticationStatus;
 import com.platform.model.AuthenticationStatusReason;
 import com.platform.model.ClientUserDetails;
 import com.platform.persistence.entity.AuthenticationLogEntity;
+import com.platform.persistence.entity.ClientEntity;
 import com.platform.service.AuthenticationLogService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;
@@ -16,11 +18,16 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Logs client authentication attempts.
@@ -39,9 +46,24 @@ public class AuthenticationLogInterceptor {
 
   private static final String ACCOUNT_LOCKED_EXCEPTION = "AccountLockedException";
 
+  private static final List<AuthenticationStatusReason> DISALLOWED_REASONS;
+
+  static {
+    DISALLOWED_REASONS = new ArrayList<>();
+    DISALLOWED_REASONS.add(AuthenticationStatusReason.ACCOUNT_DISABLED);
+    DISALLOWED_REASONS.add(AuthenticationStatusReason.ACCOUNT_HACKED);
+    DISALLOWED_REASONS.add(AuthenticationStatusReason.ACCOUNT_LOCKED);
+  }
+
   private final AuthenticationLogService service;
 
   private final HttpServletRequest request;
+
+  @Value("${platform.security.accounts.auto-locking.bad-credentials.max-consecutive}")
+  private Integer badCredentialsMaxAttempts;
+
+  @Value("${platform.security.accounts.auto-locking.bad-credentials.expiry-time}")
+  private Integer badCredentialsExpiryTime;
 
   public AuthenticationLogInterceptor(AuthenticationLogService service, HttpServletRequest request) {
     this.service = service;
@@ -56,78 +78,97 @@ public class AuthenticationLogInterceptor {
   public void logInput(JoinPoint joinPoint) {
     try {
       Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+      LogAuthentication annotation = method.getAnnotation(LogAuthentication.class);
       Class<?> caller = method.getDeclaringClass();
+      ClientUserDetails clientUserDetails = extractUserDetailsFromRequest();
+      Runnable loggingJob = () -> logAuthenticationResult(caller, clientUserDetails, joinPoint.getArgs());
 
-      if (StatelessAuthenticationFailureHandler.class.equals(caller)) {
-        logAuthenticationFailure(joinPoint.getArgs());
+      if (annotation.async()) {
+        CompletableFuture.runAsync(loggingJob);
+      } else {
+        loggingJob.run();
       }
 
-      if (StatelessAuthenticationSuccessHandler.class.equals(caller)) {
-        logAuthenticationSuccess();
-      }
     } catch (Exception e) {
       LOGGER.error("Authentication log failed with error!", e);
     }
 
   }
 
-  private void logAuthenticationSuccess() {
-    ClientUserDetails clientUserDetails = extractUserDetailsFromRequest();
+  private void logAuthenticationResult(Class<?> caller, ClientUserDetails clientUserDetails, Object... args) {
+    if (clientUserDetails == null) {
+      return;
+    }
 
-    AuthenticationLogEntity log = AuthenticationLogFacts.initialize()
+    if (StatelessAuthenticationFailureHandler.class.equals(caller)) {
+      logAuthenticationFailure(clientUserDetails, args);
+    }
+
+    if (StatelessAuthenticationSuccessHandler.class.equals(caller)) {
+      logAuthenticationSuccess(clientUserDetails);
+    }
+  }
+
+  private void logAuthenticationSuccess(ClientUserDetails clientUserDetails) {
+
+    AuthenticationLogEntity entry = AuthenticationLogFacts.initialize()
         .withStatus(AuthenticationStatus.AUTHORIZED)
         .withReason(AuthenticationStatusReason.SUCCESSFUL_AUTHENTICATION)
         .withClientDetails(clientUserDetails)
         .withStatusResolved(Boolean.TRUE)
         .toEntity();
 
-    service.logAuthenticationResult(log);
+    service.logAuthenticationResult(entry);
   }
 
-  private void logAuthenticationFailure(Object[] args) {
+  private void logAuthenticationFailure(ClientUserDetails clientUserDetails, Object[] args) {
     if (args == null || args.length == 0) {
       return;
     }
 
-    ClientUserDetails clientUserDetails = extractUserDetailsFromRequest();
     Exception exception = extractException(args);
 
-    AuthenticationLogEntity authenticationLog = prepareAuthenticationLogEntry(exception, clientUserDetails);
-    service.logAuthenticationResult(authenticationLog);
+    AuthenticationLogEntity entry = prepareAuthenticationLogEntry(exception, clientUserDetails);
+    service.logAuthenticationResult(entry);
   }
 
   private AuthenticationLogEntity prepareAuthenticationLogEntry(Exception exception, ClientUserDetails clientUserDetails) {
+    AuthenticationStatusReason authenticationStatusReason = determineReason(exception);
+    Boolean statusResolved = determineStatusResolved(clientUserDetails, authenticationStatusReason);
+
     return AuthenticationLogFacts.initialize()
         .withStatus(AuthenticationStatus.FAILURE)
-        .withReason(determineReason(exception))
+        .withReason(authenticationStatusReason)
         .withClientDetails(clientUserDetails)
-        .withStatusResolved(determineStatusResolved(clientUserDetails))
+        .withStatusResolved(statusResolved)
         .toEntity();
   }
 
-  private Boolean determineStatusResolved(ClientUserDetails clientUserDetails) {
-    List<AuthenticationLogEntity> logs = clientUserDetails.client().getAuthenticationLogs();
-    LocalDateTime now = LocalDateTime.now();
-    LocalDateTime last30Minutes = now.minusMinutes(30);
+  private Boolean determineStatusResolved(ClientUserDetails clientUserDetails, AuthenticationStatusReason inputStatusReason) {
+    List<AuthenticationLogEntity> logs = Optional.ofNullable(clientUserDetails.client())
+        .map(ClientEntity::getAuthenticationLogs)
+        .orElse(Collections.emptyList());
 
-    if (logs == null || logs.isEmpty()) {
+    if (DISALLOWED_REASONS.contains(inputStatusReason)) {
+      return false;
+    }
+
+    if (logs.isEmpty()) {
       return true;
     }
 
+    List<AuthenticationLogEntity> badCredentialsLogs = getNonExpiredBadCredentials(logs);
+    return badCredentialsLogs.size() < badCredentialsMaxAttempts;
+  }
 
-    List<AuthenticationLogEntity> filteredLogs = logs.stream()
+  private List<AuthenticationLogEntity> getNonExpiredBadCredentials(List<AuthenticationLogEntity> logs) {
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime expirationTime = now.minusMinutes(badCredentialsExpiryTime);
+
+    return logs.stream()
         .filter(log -> log.getStatusReason().equals(AuthenticationStatusReason.BAD_CREDENTIALS))
-        .filter(log -> log.getCreatedDate().isBefore(now) && log.getCreatedDate().isAfter(last30Minutes))
+        .filter(log -> log.getCreatedDate().isBefore(now) && log.getCreatedDate().isAfter(expirationTime))
         .toList();
-
-    boolean isResolved = filteredLogs.size() < 3;
-
-
-    if (!isResolved) {
-      LOGGER.warn("Client might be locked for the next 1h!");
-    }
-
-    return isResolved;
   }
 
   private AuthenticationStatusReason determineReason(Exception exception) {

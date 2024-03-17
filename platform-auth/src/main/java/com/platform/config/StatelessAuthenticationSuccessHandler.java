@@ -18,7 +18,6 @@ import java.io.IOException;
 public class StatelessAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
   private final JWTGenerator JWTGenerator;
-
   private final ObjectMapper objectMapper;
 
   public StatelessAuthenticationSuccessHandler(

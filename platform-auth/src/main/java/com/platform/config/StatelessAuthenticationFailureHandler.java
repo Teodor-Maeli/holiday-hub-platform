@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class StatelessAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
   private final ObjectMapper objectMapper;
+
   protected StatelessAuthenticationFailureHandler(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
   }

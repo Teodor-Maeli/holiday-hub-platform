@@ -17,21 +17,22 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 /**
  * Abstract service class that will provide basic operations. To be extended by subclasses.
  *
- * @param <E>                               Entity
- * @param <ID>                              ID of entity
- * @param <R>                               Repository
+ * @param <E>  Entity
+ * @param <ID> ID of entity
+ * @param <R>  Repository
  */
 public abstract class AbstractClientService
     <E extends ClientEntity, ID extends Number, R extends BaseClientRepository<E, ID>> {
 
-   final R repository;
-   final Encoder encoder;
+  final R repository;
+
+  final Encoder encoder;
 
   /**
    * Ensures dependencies are properly initialized.
    *
-   * @param repository                       Repository used to perform generic operations.
-   * @param encoder                          Used to encode sensitive information.
+   * @param repository Repository used to perform generic operations.
+   * @param encoder    Used to encode sensitive information.
    */
   protected AbstractClientService(
       R repository,
@@ -44,7 +45,7 @@ public abstract class AbstractClientService
   /**
    * Use to authenticate a user against the server.
    *
-   * @param specification                   The specification used to fetch client from datasource.
+   * @param specification The login specification used to fetch client from datasource.
    * @return {@link Optional of client}     The user details required in order to perform successful authentication.
    */
   public Optional<E> loadClientBySpecification(Specification<E> specification) {
@@ -52,12 +53,12 @@ public abstract class AbstractClientService
   }
 
   /**
-   * Performs aggregations against client object.
+   * Performs aggregations against client object, to be used for general purposes except for login.
    *
-   * @param username                        The username identifying the user whose data is required.
-   * @param decoratingOptions               Decorating options, like subscriptions and other.
+   * @param username          The username identifying the user whose data is required.
+   * @param decoratingOptions Decorating options, like subscriptions and other.
    * @return {@link ClientEntity}                 The user details required in order to perform successful authentication.
-   * @throws PlatformBackendException       If failed to load user with HTTP status 500 - Internal Server Error.
+   * @throws PlatformBackendException If failed to load user with HTTP status 500 - Internal Server Error.
    */
 
   public E loadUserByUsername(Set<DecoratingOptions> decoratingOptions, String username) {
@@ -77,9 +78,9 @@ public abstract class AbstractClientService
   /**
    * Use to update an already existing account or persist a new.
    *
-   * @param entity                          Customer information that is to be persisted/updated into the database.
+   * @param entity Customer information that is to be persisted/updated into the database.
    * @return {@link ClientEntity}                 The already persisted/updated customer from the database.
-   * @throws PlatformBackendException       If failed to persist/update into the database with HTTP status 500 - Internal Server Error.
+   * @throws PlatformBackendException If failed to persist/update into the database with HTTP status 500 - Internal Server Error.
    */
   public E save(E entity) {
     try {
@@ -113,7 +114,7 @@ public abstract class AbstractClientService
   /**
    * Deletes permanently customer account from the database.
    *
-   * @param username                        Identifier by which customer account has been deleted from database.
+   * @param username Identifier by which customer account has been deleted from database.
    */
   public void delete(String username) {
     if ((repository.deleteByUserName(username) <= 0)) {
@@ -127,9 +128,9 @@ public abstract class AbstractClientService
   /**
    * Updates customer account with encoded new password.
    *
-   * @param newPassword                     Replacement for the current password.
-   * @param username                        Username to query the database.
-   * @throws PlatformBackendException       If fail to change password or 500 INTERNAL SERVER ERROR if another error occurs.
+   * @param newPassword Replacement for the current password.
+   * @param username    Username to query the database.
+   * @throws PlatformBackendException If fail to change password or 500 INTERNAL SERVER ERROR if another error occurs.
    */
   public void changePassword(String newPassword, String username) {
 

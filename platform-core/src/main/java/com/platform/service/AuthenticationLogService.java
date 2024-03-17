@@ -16,7 +16,7 @@ public class AuthenticationLogService {
   }
 
   public List<AuthenticationLogEntity> getClientAuthenticationLogs(Long id) {
-   return repository.findByClientId(id);
+    return repository.findByClientId(id);
   }
 
   public AuthenticationLogEntity logAuthenticationResult(AuthenticationLogEntity entity) {

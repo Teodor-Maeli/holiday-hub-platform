@@ -11,15 +11,19 @@ public class AuthenticationSpecification {
   public static <E extends ClientEntity> Specification<E> getForLogin(String username) {
     return (root, query, criteriaBuilder) -> {
       Predicate client = criteriaBuilder.equal(root.get("username"), username);
-
       @SuppressWarnings("unchecked")
       Join<Object, Object> authenticationLogsJoin = (Join<Object, Object>) root.fetch("authenticationLogs", JoinType.LEFT);
-      Join<Object, Object> statusResolved = authenticationLogsJoin.on(criteriaBuilder.equal(authenticationLogsJoin.get("statusResolved"), false));
+      @SuppressWarnings("unchecked")
+      Join<Object, Object> consumerAuthoritiesJoin = (Join<Object, Object>) root.fetch("consumerAuthorities", JoinType.LEFT);
+      Join<Object, Object> statusResolvedJoin = authenticationLogsJoin.on(criteriaBuilder.equal(authenticationLogsJoin.get("statusResolved"), false));
+      Join<Object, Object> clientAuthoritiesJoin = consumerAuthoritiesJoin.on(criteriaBuilder.equal(root.get("username"), username));
 
-      Predicate joined = criteriaBuilder.and(statusResolved.getOn());
-      Predicate clientAndLogs = criteriaBuilder.and(client, joined);
 
-      return criteriaBuilder.or(clientAndLogs, client);
+      Predicate statusResolved = criteriaBuilder.and(statusResolvedJoin.getOn());
+      Predicate clientWithAuthorities = criteriaBuilder.and(client, clientAuthoritiesJoin.getOn());
+      Predicate clientWithAuthoritiesAndLogs = criteriaBuilder.and(clientWithAuthorities, statusResolved);
+
+      return criteriaBuilder.or(clientWithAuthoritiesAndLogs, clientWithAuthorities);
     };
   }
 

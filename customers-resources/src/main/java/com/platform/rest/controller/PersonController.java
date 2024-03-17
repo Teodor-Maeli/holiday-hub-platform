@@ -1,12 +1,12 @@
 package com.platform.rest.controller;
 
 import com.platform.aspect.annotation.IOLogger;
-import com.platform.service.decorator.DecoratingOptions;
-import com.platform.model.PersonRegistration;
-import com.platform.model.Person;
-import com.platform.persistence.entity.PersonEntity;
 import com.platform.mapper.PersonMapper;
+import com.platform.model.Person;
+import com.platform.model.PersonRegistration;
+import com.platform.persistence.entity.PersonEntity;
 import com.platform.service.PersonService;
+import com.platform.service.decorator.DecoratingOptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +33,7 @@ public class PersonController {
   public static final String CUSTOMERS_AUTH_V_1_PERSON = "/customers-auth/v1/person";
 
   private final PersonMapper mapper;
+
   private final PersonService service;
 
   public PersonController(PersonMapper mapper, PersonService service) {

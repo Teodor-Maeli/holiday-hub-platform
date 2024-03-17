@@ -1,7 +1,7 @@
 package com.platform.mapper;
 
-import com.platform.persistence.entity.SubscriptionEntity;
 import com.platform.model.Subscription;
+import com.platform.persistence.entity.SubscriptionEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

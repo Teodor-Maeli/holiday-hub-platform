@@ -1,9 +1,9 @@
 package com.platform.service;
 
-import com.platform.service.decorator.DecoratingOptions;
 import com.platform.persistence.entity.CompanyEntity;
 import com.platform.persistence.repository.CompanyRepository;
 import com.platform.service.decorator.CompanyDecorator;
+import com.platform.service.decorator.DecoratingOptions;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;

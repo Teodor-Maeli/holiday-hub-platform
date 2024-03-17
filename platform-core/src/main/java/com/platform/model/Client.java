@@ -28,7 +28,7 @@ public class Client {
 
   private List<Subscription> subscriptions;
 
-  private List<AuthenticationLogEntity> authenticationAuditLogs;
+  private List<AuthenticationLogEntity> authenticationLogs;
 
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime registeredDate;
@@ -91,11 +91,11 @@ public class Client {
     this.subscriptions = subscriptions;
   }
 
-  public List<AuthenticationLogEntity> getAuthenticationAuditLogs() {
-    return authenticationAuditLogs;
+  public List<AuthenticationLogEntity> getAuthenticationLogs() {
+    return authenticationLogs;
   }
 
-  public void setAuthenticationAuditLogs(List<AuthenticationLogEntity> authenticationAuditLogs) {
-    this.authenticationAuditLogs = authenticationAuditLogs;
+  public void setAuthenticationLogs(List<AuthenticationLogEntity> authenticationLogs) {
+    this.authenticationLogs = authenticationLogs;
   }
 }

@@ -1,8 +1,8 @@
 package com.platform.service;
 
-import com.platform.service.decorator.DecoratingOptions;
 import com.platform.persistence.entity.PersonEntity;
 import com.platform.persistence.repository.PersonRepository;
+import com.platform.service.decorator.DecoratingOptions;
 import com.platform.service.decorator.PersonDecorator;
 import org.springframework.stereotype.Service;
 

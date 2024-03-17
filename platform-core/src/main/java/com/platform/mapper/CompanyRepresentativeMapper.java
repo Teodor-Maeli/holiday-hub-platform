@@ -1,8 +1,8 @@
 package com.platform.mapper;
 
-import com.platform.persistence.entity.CompanyEntity;
-import com.platform.model.CompanyRegistration;
 import com.platform.model.Company;
+import com.platform.model.CompanyRegistration;
+import com.platform.persistence.entity.CompanyEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

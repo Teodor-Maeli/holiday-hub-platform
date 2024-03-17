@@ -12,8 +12,11 @@ import java.util.Map;
 public class PlatformExceptionHandler {
 
   private static final String MESSAGE = "message";
+
   private static final String STATUS = "status";
+
   private static final String DETAILS = "details";
+
   private static final Logger LOGGER = LoggerFactory.getLogger(PlatformExceptionHandler.class);
 
   @ExceptionHandler(PlatformBackendException.class)

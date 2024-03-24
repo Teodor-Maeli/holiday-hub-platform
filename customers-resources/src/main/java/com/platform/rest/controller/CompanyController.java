@@ -11,6 +11,7 @@ import com.platform.service.decorator.DecoratingOptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +32,7 @@ import java.util.Set;
 )
 public class CompanyController {
 
-  public static final String CUSTOMERS_AUTH_V_1_COMPANY = "/customers-auth/v1/company";
+  static final String CUSTOMERS_AUTH_V_1_COMPANY = "/customers/v1/company";
 
   private final CompanyRepresentativeMapper mapper;
 
@@ -53,7 +54,7 @@ public class CompanyController {
 
   @IOLogger
   @GetMapping(path = "/get/{clientUsername}")
-//  @PreAuthorize("#clientUsername == authentication.principal")
+  @PreAuthorize("#clientUsername == authentication.principal")
   public ResponseEntity<Company> getByUsername(@RequestParam("include") Set<DecoratingOptions> aggregations,
                                                @PathVariable("clientUsername") String clientUsername) {
     CompanyEntity entity = service.loadUserByUsernameDecorated(aggregations, clientUsername);
@@ -64,7 +65,7 @@ public class CompanyController {
 
   @IOLogger
   @PatchMapping(path = "/update/password")
-//  @PreAuthorize("#clientUsername == authentication.principal")
+  @PreAuthorize("#clientUsername == authentication.principal")
   public ResponseEntity<Void> updatePassword(@RequestHeader String password,
                                              @RequestHeader String clientUsername) {
     service.changePassword(password, clientUsername);

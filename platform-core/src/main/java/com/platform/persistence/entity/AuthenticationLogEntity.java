@@ -62,6 +62,9 @@ public class AuthenticationLogEntity {
   @Column(name = "UPDATED_BY")
   private String updatedBy;
 
+  @Column(name = "HASHED_UNLOCKING_CODE")
+  private String hashedUnlockingCode;
+
 
   public Long getId() {
     return id;
@@ -133,5 +136,13 @@ public class AuthenticationLogEntity {
 
   public void setUpdatedBy(String updatedBy) {
     this.updatedBy = updatedBy;
+  }
+
+  public String getHashedUnlockingCode() {
+    return hashedUnlockingCode;
+  }
+
+  public void setHashedUnlockingCode(String hashedUnlockingCode) {
+    this.hashedUnlockingCode = hashedUnlockingCode;
   }
 }

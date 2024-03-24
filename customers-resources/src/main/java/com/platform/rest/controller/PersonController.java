@@ -30,7 +30,7 @@ import java.util.Set;
     produces = MediaType.APPLICATION_JSON_VALUE)
 public class PersonController {
 
-  public static final String CUSTOMERS_AUTH_V_1_PERSON = "/customers-auth/v1/person";
+  static final String CUSTOMERS_AUTH_V_1_PERSON = "/customers/v1/person";
 
   private final PersonMapper mapper;
 

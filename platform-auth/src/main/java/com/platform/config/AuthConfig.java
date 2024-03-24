@@ -1,6 +1,6 @@
 package com.platform.config;
 
-import com.platform.service.ClientAuthService;
+import com.platform.service.AuthService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,8 +45,8 @@ public class AuthConfig {
   private String pathMapping;
 
   @Bean
-  @DependsOn({"clientAuthService", "passwordEncoder"})
-  public AuthenticationManager authenticationManager(HttpSecurity http, ClientAuthService authService, PasswordEncoder encoder) throws Exception {
+  @DependsOn({"authService", "passwordEncoder"})
+  public AuthenticationManager authenticationManager(HttpSecurity http, AuthService authService, PasswordEncoder encoder) throws Exception {
 
     return http
         .getSharedObject(AuthenticationManagerBuilder.class)

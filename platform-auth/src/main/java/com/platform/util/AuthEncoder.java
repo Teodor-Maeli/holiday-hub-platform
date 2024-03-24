@@ -16,4 +16,9 @@ public class AuthEncoder implements Encoder {
     return encoder.encode(raw);
   }
 
+  @Override
+  public boolean matches(String raw, String hashed) {
+    return encoder.matches(raw, hashed);
+  }
+
 }

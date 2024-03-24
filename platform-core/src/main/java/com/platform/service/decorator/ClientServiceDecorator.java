@@ -3,44 +3,42 @@ package com.platform.service.decorator;
 import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.entity.SubscriptionEntity;
-import com.platform.persistence.repository.BaseClientRepository;
-import com.platform.service.AbstractClientService;
 import com.platform.service.AuthenticationLogService;
-import com.platform.service.Encoder;
+import com.platform.service.ClientService;
 import com.platform.service.SubscriptionService;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * Base decorator class that utilize the decorator pattern.
  *
- * @param <E>  Entity
- * @param <ID> ID of entity
- * @param <R>  Repository
+ * @param <E> Entity
  */
-public abstract class ClientServiceDecorator<E extends ClientEntity, ID extends Number, R extends BaseClientRepository<E, ID>>
-    extends AbstractClientService<E, ID, R> {
+public abstract class ClientServiceDecorator<E extends ClientEntity, S extends ClientService<E>> implements ClientService<E> {
 
   private final SubscriptionService subscriptionService;
 
   private final AuthenticationLogService authenticationLogService;
 
+  private final S delegate;
+
+
   protected ClientServiceDecorator(
-      R repository,
-      Encoder encoder,
       SubscriptionService subscriptionService,
-      AuthenticationLogService authenticationLogService
-  ) {
-    super(repository, encoder);
+      AuthenticationLogService authenticationLogService,
+      S delegate) {
     this.subscriptionService = subscriptionService;
     this.authenticationLogService = authenticationLogService;
+    this.delegate = delegate;
   }
 
   @Override
-  public E loadUserByUsername(Set<DecoratingOptions> decoratingOptions, String username) {
-    E client = super.loadUserByUsername(decoratingOptions, username);
+  public E loadUserByUsernameDecorated(Set<DecoratingOptions> decoratingOptions, String username) {
+    E client = delegate.loadUserByUsernameDecorated(decoratingOptions, username);
 
     if (shouldDecorate(decoratingOptions, client)) {
       decoratingOptions = filterDecoratingOptions(decoratingOptions, client);
@@ -50,11 +48,32 @@ public abstract class ClientServiceDecorator<E extends ClientEntity, ID extends 
     return client;
   }
 
+  @Override
+  public E loadUserByUsername(String username) {
+    return delegate.loadUserByUsername(username);
+  }
+
+  @Override
+  public E save(E entity) {
+    return delegate.save(entity);
+  }
+
+  @Override
+  public void delete(String username) {
+    delegate.delete(username);
+  }
+
+  @Override
+  public void changePassword(String newPassword, String username) {
+    delegate.changePassword(newPassword, username);
+  }
+
   private void decorate(Set<DecoratingOptions> decoratingOptions, E clientEntity) {
     for (DecoratingOptions option : decoratingOptions) {
       switch (option) {
         case SUBSCRIPTIONS -> decorateWithSubscriptions(clientEntity);
         case AUTHENTICATION_LOGS -> decorateWithAuthenticationLogs(clientEntity);
+        case BLOCKING_AUTHENTICATION_LOGS -> decorateWithBlockingAuthenticationLogs(clientEntity);
         case COMPANY_REPRESENTATIVES, REPRESENTATIVE_COMPANY -> decorateWithClients(clientEntity);
       }
     }
@@ -71,6 +90,11 @@ public abstract class ClientServiceDecorator<E extends ClientEntity, ID extends 
   private void decorateWithSubscriptions(E clientEntity) {
     List<SubscriptionEntity> clientSubscriptions = subscriptionService.getClientSubscriptions(clientEntity.getId());
     clientEntity.setSubscriptions(clientSubscriptions);
+  }
+
+  private void decorateWithBlockingAuthenticationLogs(E clientEntity) {
+    List<AuthenticationLogEntity> clientAuthenticationLogs = authenticationLogService.getBlockingAuthenticationLogs(clientEntity.getUsername());
+    clientEntity.setAuthenticationLogs(clientAuthenticationLogs);
   }
 
   private Set<DecoratingOptions> filterDecoratingOptions(Set<DecoratingOptions> decoratingOptions, E client) {

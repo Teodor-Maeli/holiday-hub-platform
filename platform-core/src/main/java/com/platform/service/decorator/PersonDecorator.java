@@ -6,21 +6,22 @@ import com.platform.persistence.repository.CompanyRepository;
 import com.platform.persistence.repository.PersonRepository;
 import com.platform.service.AuthenticationLogService;
 import com.platform.service.Encoder;
+import com.platform.service.PersonService;
 import com.platform.service.SubscriptionService;
 import org.springframework.stereotype.Component;
 
-@Component
-public class PersonDecorator extends ClientServiceDecorator<PersonEntity, Long, PersonRepository> {
+@Component("personService")
+public class PersonDecorator extends ClientServiceDecorator<PersonEntity, PersonService> {
 
   private final CompanyRepository companyRepository;
 
   protected PersonDecorator(
-      PersonRepository repository,
-      Encoder encoder,
       SubscriptionService subscriptionService,
       AuthenticationLogService authenticationLogService,
-      CompanyRepository companyRepository) {
-    super(repository, encoder, subscriptionService, authenticationLogService);
+      CompanyRepository companyRepository,
+      PersonRepository personRepository,
+      Encoder encoder) {
+    super(subscriptionService, authenticationLogService, new PersonService(personRepository, encoder));
     this.companyRepository = companyRepository;
   }
 
@@ -29,5 +30,4 @@ public class PersonDecorator extends ClientServiceDecorator<PersonEntity, Long, 
     CompanyEntity company = companyRepository.findByRepresentativesUsername(clientEntity.getUsername());
     clientEntity.setCompany(company);
   }
-
 }

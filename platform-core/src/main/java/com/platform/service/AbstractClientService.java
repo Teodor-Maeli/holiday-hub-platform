@@ -4,7 +4,6 @@ import com.platform.exception.PlatformBackendException;
 import com.platform.model.ConsumerAuthority;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.repository.BaseClientRepository;
-import com.platform.service.decorator.DecoratingOptions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -22,7 +21,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
  * @param <R>  Repository
  */
 public abstract class AbstractClientService
-    <E extends ClientEntity, ID extends Number, R extends BaseClientRepository<E, ID>> {
+    <E extends ClientEntity, ID extends Number, R extends BaseClientRepository<E, ID>> implements ClientService<E> {
 
   final R repository;
 
@@ -43,25 +42,14 @@ public abstract class AbstractClientService
   }
 
   /**
-   * Use to authenticate a user against the server.
-   *
-   * @param specification The login specification used to fetch client from datasource.
-   * @return {@link Optional of client}     The user details required in order to perform successful authentication.
-   */
-  public Optional<E> loadClientBySpecification(Specification<E> specification) {
-    return repository.findOne(specification);
-  }
-
-  /**
    * Performs aggregations against client object, to be used for general purposes except for login.
    *
    * @param username          The username identifying the user whose data is required.
-   * @param decoratingOptions Decorating options, like subscriptions and other.
    * @return {@link ClientEntity}                 The user details required in order to perform successful authentication.
    * @throws PlatformBackendException If failed to load user with HTTP status 500 - Internal Server Error.
    */
-
-  public E loadUserByUsername(Set<DecoratingOptions> decoratingOptions, String username) {
+  @Override
+  public E loadUserByUsername(String username) {
     Optional<E> user = repository.findByUsername(username);
 
     if (user.isPresent()) {
@@ -82,10 +70,13 @@ public abstract class AbstractClientService
    * @return {@link ClientEntity}                 The already persisted/updated customer from the database.
    * @throws PlatformBackendException If failed to persist/update into the database with HTTP status 500 - Internal Server Error.
    */
+  @Override
   public E save(E entity) {
     try {
 
-      if (! repository.existsByUsername(entity.getUsername())) {
+      boolean isExisting = repository.existsByUsername(entity.getUsername());
+
+      if (! isExisting) {
         entity.setConsumerAuthorities(Set.of(ConsumerAuthority.BASE_CLIENT));
       }
 
@@ -116,8 +107,11 @@ public abstract class AbstractClientService
    *
    * @param username Identifier by which customer account has been deleted from database.
    */
+  @Override
   public void delete(String username) {
-    if ((repository.deleteByUserName(username) <= 0)) {
+    int updatedRows = repository.deleteByUserName(username);
+
+    if (updatedRows <= 0) {
       throw PlatformBackendException.builder()
           .message("Failed to DELETE, USERNAME: %s non-existent!".formatted(username))
           .httpStatus(BAD_REQUEST)
@@ -132,11 +126,14 @@ public abstract class AbstractClientService
    * @param username    Username to query the database.
    * @throws PlatformBackendException If fail to change password or 500 INTERNAL SERVER ERROR if another error occurs.
    */
+  @Override
   public void changePassword(String newPassword, String username) {
 
     try {
       String encoded = encoder.encode(newPassword);
-      if (repository.updatePasswordByUsername(username, encoded) > 0) {
+      int updatedRows = repository.updatePasswordByUsername(username, encoded);
+
+      if (updatedRows > 0) {
         return;
       }
 

@@ -33,7 +33,7 @@ public class AuthenticationLogEntity {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+  @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
   @JoinColumn(referencedColumnName = "username", name = "CLIENT_ID", nullable = false)
   @JsonBackReference
   private ClientEntity client;

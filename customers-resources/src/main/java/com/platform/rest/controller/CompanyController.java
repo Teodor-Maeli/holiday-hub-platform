@@ -5,6 +5,7 @@ import com.platform.mapper.CompanyRepresentativeMapper;
 import com.platform.model.Company;
 import com.platform.model.CompanyRegistration;
 import com.platform.persistence.entity.CompanyEntity;
+import com.platform.service.ClientService;
 import com.platform.service.CompanyService;
 import com.platform.service.decorator.DecoratingOptions;
 import org.springframework.http.HttpStatus;
@@ -34,9 +35,9 @@ public class CompanyController {
 
   private final CompanyRepresentativeMapper mapper;
 
-  private final CompanyService service;
+  private final ClientService<CompanyEntity> service;
 
-  public CompanyController(CompanyRepresentativeMapper mapper, CompanyService service) {
+  public CompanyController(CompanyRepresentativeMapper mapper, ClientService<CompanyEntity> service) {
     this.mapper = mapper;
     this.service = service;
   }
@@ -55,7 +56,7 @@ public class CompanyController {
 //  @PreAuthorize("#clientUsername == authentication.principal")
   public ResponseEntity<Company> getByUsername(@RequestParam("include") Set<DecoratingOptions> aggregations,
                                                @PathVariable("clientUsername") String clientUsername) {
-    CompanyEntity entity = service.loadUserByUsername(aggregations, clientUsername);
+    CompanyEntity entity = service.loadUserByUsernameDecorated(aggregations, clientUsername);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(mapper.toResponse(entity));

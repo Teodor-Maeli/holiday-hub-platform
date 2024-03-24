@@ -46,6 +46,9 @@ public class AuthenticationLogInterceptor {
 
   private static final String ACCOUNT_LOCKED_EXCEPTION = "AccountLockedException";
 
+  private static final String LOCKED_EXCEPTION = "LockedException";
+
+
   private static final List<AuthenticationStatusReason> DISALLOWED_REASONS;
 
   static {
@@ -175,7 +178,7 @@ public class AuthenticationLogInterceptor {
     return switch (exception.getClass().getSimpleName()) {
       case BAD_CREDENTIALS_EXCEPTION -> AuthenticationStatusReason.BAD_CREDENTIALS;
       case DISABLED_ACCOUNT_EXCEPTION -> AuthenticationStatusReason.ACCOUNT_DISABLED;
-      case ACCOUNT_LOCKED_EXCEPTION -> AuthenticationStatusReason.ACCOUNT_LOCKED;
+      case ACCOUNT_LOCKED_EXCEPTION, LOCKED_EXCEPTION -> AuthenticationStatusReason.ACCOUNT_LOCKED;
       default -> AuthenticationStatusReason.UNKNOWN;
     };
   }

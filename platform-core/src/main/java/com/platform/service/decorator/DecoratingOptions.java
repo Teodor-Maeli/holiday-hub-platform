@@ -14,6 +14,7 @@ public enum DecoratingOptions {
 
   SUBSCRIPTIONS(Set.of(PersonEntity.class, CompanyEntity.class)),
   AUTHENTICATION_LOGS(Set.of(PersonEntity.class, CompanyEntity.class)),
+  BLOCKING_AUTHENTICATION_LOGS(Set.of(PersonEntity.class, CompanyEntity.class)),
   COMPANY_REPRESENTATIVES(Set.of(CompanyEntity.class)),
   REPRESENTATIVE_COMPANY(Set.of(PersonEntity.class));
 

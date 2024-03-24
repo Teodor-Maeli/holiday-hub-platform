@@ -61,7 +61,7 @@ public abstract class ClientEntity {
   private List<SubscriptionEntity> subscriptions;
 
   @Column(name = "CONSUMER_AUTHORITIES")
-  @ElementCollection(targetClass = ConsumerAuthority.class, fetch = FetchType.LAZY)
+  @ElementCollection(targetClass = ConsumerAuthority.class, fetch = FetchType.EAGER)
   private Set<ConsumerAuthority> consumerAuthorities;
 
   @Column(name = "ACCOUNT_LOCKED")

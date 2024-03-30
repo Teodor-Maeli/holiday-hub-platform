@@ -15,12 +15,12 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class StatelessAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class PlatformAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
   private final JWTGenerator JWTGenerator;
   private final ObjectMapper objectMapper;
 
-  public StatelessAuthenticationSuccessHandler(
+  public PlatformAuthenticationSuccessHandler(
       JWTGenerator JWTGenerator,
       ObjectMapper objectMapper
   ) {

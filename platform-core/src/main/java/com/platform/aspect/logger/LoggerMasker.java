@@ -9,19 +9,15 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoggerMasker {
 
   private static final String MASK = "*******";
-
   private static final ObjectMapper MAPPER = new ObjectMapper()
       .enable(SerializationFeature.INDENT_OUTPUT)
       .findAndRegisterModules();
-
   private static final Logger LOGGER = LoggerFactory.getLogger(LoggerMasker.class);
-
   private static final List<Pattern> MASKING_PATTERNS;
 
   static {
@@ -46,14 +42,10 @@ public class LoggerMasker {
   }
 
   private static String maskInternal(String value) {
-    StringBuilder sb = new StringBuilder(value);
     for (Pattern pattern : MASKING_PATTERNS) {
-      Matcher matcher = pattern.matcher(sb);
-      if (matcher.find()) {
-        sb.replace(matcher.start(), matcher.end(), MASK);
-      }
+      value = pattern.matcher(value).replaceAll(MASK);
     }
-    return sb.toString();
+    return value;
   }
 
   private static Optional<String> toJson(Object o) {

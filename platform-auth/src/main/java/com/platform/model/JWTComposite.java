@@ -3,7 +3,6 @@ package com.platform.model;
 public class JWTComposite {
 
   private final String accessToken;
-
   private final String refreshToken;
 
   private JWTComposite(

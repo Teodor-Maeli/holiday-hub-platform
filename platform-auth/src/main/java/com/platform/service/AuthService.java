@@ -67,7 +67,7 @@ public class AuthService implements UserDetailsService {
       unlockAccount(client);
     } else {
       throw PlatformBackendException.builder()
-          .details("Either code doesn't match or client is not eligible for self unlocking."
+          .details("Either unlocking code doesn't match or client is not eligible for self unlocking."
               + "Please contact customer support for assistance.")
           .httpStatus(HttpStatus.METHOD_NOT_ALLOWED)
           .build();
@@ -91,7 +91,7 @@ public class AuthService implements UserDetailsService {
   private boolean shouldUnlock(ClientEntity client, String unlockingCode) {
     return ! Boolean.TRUE.equals(client.getAccountLocked())
         && client.getAuthenticationLogs().stream()
-        .allMatch(log -> encoder.matches(unlockingCode, log.getHashedUnlockingCode()));
+        .anyMatch(log -> encoder.matches(unlockingCode, log.getHashedUnlockingCode()));
   }
 
   private ClientEntity loadUserByUsernameInternal(String username) {

@@ -33,6 +33,7 @@ public class AuthController {
         .build();
   }
 
+  @IOLogger
   @PostMapping("unlock/complete/{username}")
   public ResponseEntity<Void> completeAuthenticationUnblocking(@PathVariable("username") String username,
                                                                @RequestParam("unlockingCode") String unlockingCode) {

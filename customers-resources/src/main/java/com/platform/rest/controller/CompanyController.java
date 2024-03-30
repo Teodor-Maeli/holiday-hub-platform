@@ -53,7 +53,7 @@ public class CompanyController {
   }
 
   @IOLogger
-  @GetMapping(path = "/get/{clientUsername}")
+  @GetMapping(path = "/get/decorated/{clientUsername}")
   @PreAuthorize("#clientUsername == authentication.principal")
   public ResponseEntity<Company> getByUsername(@RequestParam("include") Set<DecoratingOptions> aggregations,
                                                @PathVariable("clientUsername") String clientUsername) {

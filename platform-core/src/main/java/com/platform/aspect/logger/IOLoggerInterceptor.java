@@ -59,9 +59,9 @@ public class IOLoggerInterceptor {
 
   private Map<String, Object> getParameters(JoinPoint joinPoint) {
     CodeSignature signature = (CodeSignature) joinPoint.getSignature();
-    HashMap<String, Object> parameters = new HashMap<>();
     String[] parameterNames = signature.getParameterNames();
 
+    HashMap<String, Object> parameters = new HashMap<>();
     for (int i = 0; i < parameterNames.length; i++) {
       parameters.put(parameterNames[i], joinPoint.getArgs()[i]);
     }

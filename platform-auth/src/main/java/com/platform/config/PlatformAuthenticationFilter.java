@@ -8,20 +8,20 @@ import org.springframework.stereotype.Component;
 /**
  * Initiates a Client authentication.
  */
-@Component(value = "initAuthenticationFilter")
-public class InitAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+@Component(value = "platformAuthenticationFilter")
+public class PlatformAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
   private static final String PASSWORD = "password";
   private static final String USERNAME = "username";
 
-  public InitAuthenticationFilter(
+  public PlatformAuthenticationFilter(
       AuthenticationManager authenticationManager,
-      StatelessAuthenticationFailureHandler statelessAuthenticationFailureHandler,
-      StatelessAuthenticationSuccessHandler statelessAuthenticationSuccessHandler
+      PlatformAuthenticationFailureHandler platformAuthenticationFailureHandler,
+      PlatformAuthenticationSuccessHandler platformAuthenticationSuccessHandler
   ) {
     super(authenticationManager);
-    setAuthenticationFailureHandler(statelessAuthenticationFailureHandler);
-    setAuthenticationSuccessHandler(statelessAuthenticationSuccessHandler);
+    setAuthenticationFailureHandler(platformAuthenticationFailureHandler);
+    setAuthenticationSuccessHandler(platformAuthenticationSuccessHandler);
   }
 
   @Override

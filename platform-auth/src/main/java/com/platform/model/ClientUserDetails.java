@@ -3,6 +3,7 @@ package com.platform.model;
 import com.platform.exception.PlatformBackendException;
 import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
+import com.platform.util.ObjectsHelper;
 import com.platform.util.SecurityUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -54,7 +55,7 @@ public record ClientUserDetails(ClientEntity client) implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return client.getConsumerAuthorities() != null && ! client.getConsumerAuthorities().isEmpty();
+    return ObjectsHelper.isNotEmpty(client.getAuthenticationLogs());
   }
 
   private boolean isAutoLocked(AuthenticationLogEntity log) {

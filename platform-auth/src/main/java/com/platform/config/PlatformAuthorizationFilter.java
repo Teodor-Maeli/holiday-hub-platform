@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Performs a Client authentication.
+ * Performs a Client authorization.
  */
-@Component("processAuthenticationFilter")
-public class ProcessAuthenticationFilter extends OncePerRequestFilter {
+@Component("platformAuthorizationFilter")
+public class PlatformAuthorizationFilter extends OncePerRequestFilter {
 
   private static final String AUTHORIZATION_HEADER = "Authorization";
   private static final String ROLES = "roles";

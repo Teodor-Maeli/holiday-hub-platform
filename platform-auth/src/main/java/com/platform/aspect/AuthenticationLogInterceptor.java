@@ -2,14 +2,15 @@ package com.platform.aspect;
 
 import com.platform.AuthenticationLogFacts;
 import com.platform.aspect.annotation.LogAuthentication;
-import com.platform.config.StatelessAuthenticationFailureHandler;
-import com.platform.config.StatelessAuthenticationSuccessHandler;
+import com.platform.config.PlatformAuthenticationFailureHandler;
+import com.platform.config.PlatformAuthenticationSuccessHandler;
 import com.platform.model.AuthenticationStatus;
 import com.platform.model.AuthenticationStatusReason;
 import com.platform.model.ClientUserDetails;
 import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.service.AuthenticationLogService;
+import com.platform.util.ObjectsHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -30,7 +31,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Logs client authentication attempts.
+ * Logs client authentication attempts into the database.
+ * Applies auto-lock if exhaust maximum BadCredentials attempts.
  */
 @Aspect
 @Component
@@ -39,15 +41,10 @@ public class AuthenticationLogInterceptor {
   private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationLogInterceptor.class);
 
   private static final String USER_DETAILS_ATTR = "userDetails";
-
   private static final String BAD_CREDENTIALS_EXCEPTION = "BadCredentialsException";
-
   private static final String DISABLED_ACCOUNT_EXCEPTION = "DisabledAccountException";
-
   private static final String ACCOUNT_LOCKED_EXCEPTION = "AccountLockedException";
-
   private static final String LOCKED_EXCEPTION = "LockedException";
-
 
   private static final List<AuthenticationStatusReason> DISALLOWED_REASONS;
 
@@ -98,18 +95,27 @@ public class AuthenticationLogInterceptor {
 
   }
 
-  private void logAuthenticationResult(Class<?> caller, ClientUserDetails clientUserDetails, Object... args) {
+
+  private void logAuthenticationResult(Class<?> caller, ClientUserDetails clientUserDetails, Object[] args) {
     if (clientUserDetails == null) {
       return;
     }
 
-    if (StatelessAuthenticationFailureHandler.class.equals(caller)) {
+    if (isSuccess(caller)) {
       logAuthenticationFailure(clientUserDetails, args);
     }
 
-    if (StatelessAuthenticationSuccessHandler.class.equals(caller)) {
+    if (isFailure(caller)) {
       logAuthenticationSuccess(clientUserDetails);
     }
+  }
+
+  private boolean isFailure(Class<?> caller) {
+    return PlatformAuthenticationSuccessHandler.class.equals(caller);
+  }
+
+  private boolean isSuccess(Class<?> caller) {
+    return PlatformAuthenticationFailureHandler.class.equals(caller);
   }
 
   private void logAuthenticationSuccess(ClientUserDetails clientUserDetails) {
@@ -125,7 +131,7 @@ public class AuthenticationLogInterceptor {
   }
 
   private void logAuthenticationFailure(ClientUserDetails clientUserDetails, Object[] args) {
-    if (args == null || args.length == 0) {
+    if (ObjectsHelper.isEmpty(args)) {
       return;
     }
 
@@ -156,22 +162,22 @@ public class AuthenticationLogInterceptor {
       return false;
     }
 
-    if (logs.isEmpty()) {
-      return true;
-    }
-
     List<AuthenticationLogEntity> badCredentialsLogs = getNonExpiredBadCredentials(logs);
     return badCredentialsLogs.size() < badCredentialsMaxAttempts;
   }
 
   private List<AuthenticationLogEntity> getNonExpiredBadCredentials(List<AuthenticationLogEntity> logs) {
+    return logs.stream()
+        .filter(this::isNonExpiredBadCredentialLog)
+        .toList();
+  }
+
+  private boolean isNonExpiredBadCredentialLog(AuthenticationLogEntity log) {
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime expirationTime = now.minusMinutes(badCredentialsExpiryTime);
 
-    return logs.stream()
-        .filter(log -> log.getStatusReason().equals(AuthenticationStatusReason.BAD_CREDENTIALS))
-        .filter(log -> log.getCreatedDate().isBefore(now) && log.getCreatedDate().isAfter(expirationTime))
-        .toList();
+    return log.getStatusReason().equals(AuthenticationStatusReason.BAD_CREDENTIALS)
+        && log.getCreatedDate().isBefore(now) && log.getCreatedDate().isAfter(expirationTime);
   }
 
   private AuthenticationStatusReason determineReason(Exception exception) {

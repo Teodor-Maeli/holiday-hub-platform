@@ -3,9 +3,7 @@ package com.platform.model;
 public class AuthenticationFailure {
 
   private String timestamp;
-
   private String message;
-
   private String details;
 
   private AuthenticationFailure() {

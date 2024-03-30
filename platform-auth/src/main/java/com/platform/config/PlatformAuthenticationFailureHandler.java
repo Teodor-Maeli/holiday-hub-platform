@@ -14,11 +14,11 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Component
-public class StatelessAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+public class PlatformAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
   private final ObjectMapper objectMapper;
 
-  protected StatelessAuthenticationFailureHandler(ObjectMapper objectMapper) {
+  protected PlatformAuthenticationFailureHandler(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
   }
 

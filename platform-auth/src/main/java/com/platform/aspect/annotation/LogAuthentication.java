@@ -11,7 +11,7 @@ public @interface LogAuthentication {
 
 
   /**
-   * This field is used to instruct to interceptor to log into the database synchronously or asynchronously.
+   * Use if you want to achieve async logging, default false.
    */
   boolean async();
 }

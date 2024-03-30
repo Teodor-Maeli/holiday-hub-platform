@@ -6,6 +6,7 @@ import com.platform.persistence.entity.SubscriptionEntity;
 import com.platform.service.AuthenticationLogService;
 import com.platform.service.ClientService;
 import com.platform.service.SubscriptionService;
+import com.platform.util.ObjectsHelper;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -104,7 +105,7 @@ public abstract class ClientServiceDecorator<E extends ClientEntity, S extends C
   }
 
   private boolean shouldDecorate(Set<DecoratingOptions> options, E client) {
-    return client != null && (options != null && ! options.isEmpty());
+    return client != null && (ObjectsHelper.isNotEmpty(options));
   }
 
 }

@@ -55,11 +55,11 @@ public class AuthConfig {
   }
 
   @Bean
-  @DependsOn({"initAuthenticationFilter", "processAuthenticationFilter"})
+  @DependsOn({"platformAuthenticationFilter", "platformAuthorizationFilter"})
   public SecurityFilterChain configuration(
       HttpSecurity http,
-      InitAuthenticationFilter initAuthenticationFilter,
-      ProcessAuthenticationFilter processAuthenticationFilter
+      PlatformAuthenticationFilter platformAuthenticationFilter,
+      PlatformAuthorizationFilter platformAuthorizationFilter
   ) throws Exception {
 
     http.csrf().disable();
@@ -67,8 +67,8 @@ public class AuthConfig {
     http.authorizeHttpRequests().requestMatchers(registerMatcher).permitAll();
     http.authorizeHttpRequests().anyRequest().authenticated();
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    http.addFilter(initAuthenticationFilter);
-    http.addFilterBefore(processAuthenticationFilter, InitAuthenticationFilter.class);
+    http.addFilter(platformAuthenticationFilter);
+    http.addFilterBefore(platformAuthorizationFilter, PlatformAuthenticationFilter.class);
 
     return http.build();
   }

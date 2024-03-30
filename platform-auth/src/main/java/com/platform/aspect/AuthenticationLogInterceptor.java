@@ -56,7 +56,6 @@ public class AuthenticationLogInterceptor {
   }
 
   private final AuthenticationLogService service;
-
   private final HttpServletRequest request;
 
   @Value("${platform.security.accounts.auto-locking.bad-credentials.max-consecutive}")

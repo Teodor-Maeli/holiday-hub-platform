@@ -3,7 +3,8 @@
 
 ## Changelog:
 
-* 1.6.0 Auto locking mechanism implemented, auto unlocking(without admin interference) is in progress.
+* 1.7.0 Auto unlocking mechanism implemented.
+* 1.6.0 Auto locking mechanism implemented.
 * 1.5.0 Switched from Stateful to Stateless, using JWT for authentication and authorization now(breaking changes).
 * 1.4.0 Some rafactoring on authentication configs.
 * 1.3.0 AuthService is now standalone in the module.

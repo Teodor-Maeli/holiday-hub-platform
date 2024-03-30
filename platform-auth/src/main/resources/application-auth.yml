@@ -1,6 +1,8 @@
 platform:
   security:
     accounts:
+      auto-unlocking:
+        address: "http://localhost:3000/accounts/unlock?code=%s"
       auto-locking:
         bad-credentials:
           max-consecutive: 3
@@ -13,4 +15,4 @@ platform:
     login:
       successUrl: "http://localhost:3000"
       failureUrl: "http://localhost:3000"
-    jwt-issuer: "platform-backend"
+    jwt-issuer: "platform"

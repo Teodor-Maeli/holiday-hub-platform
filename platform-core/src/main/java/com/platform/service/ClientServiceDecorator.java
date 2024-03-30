@@ -1,16 +1,11 @@
-package com.platform.service.decorator;
+package com.platform.service;
 
 import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.entity.SubscriptionEntity;
-import com.platform.service.AuthenticationLogService;
-import com.platform.service.ClientService;
-import com.platform.service.SubscriptionService;
 import com.platform.util.ObjectsHelper;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,19 +14,19 @@ import java.util.stream.Collectors;
  *
  * @param <E> Entity
  */
-public abstract class ClientServiceDecorator<E extends ClientEntity, S extends ClientService<E>> implements ClientService<E> {
+public abstract class ClientServiceDecorator<E extends ClientEntity> implements ClientService<E> {
 
   private final SubscriptionService subscriptionService;
 
   private final AuthenticationLogService authenticationLogService;
 
-  private final S delegate;
+  private final ClientService<E> delegate;
 
 
   protected ClientServiceDecorator(
       SubscriptionService subscriptionService,
       AuthenticationLogService authenticationLogService,
-      S delegate) {
+      ClientService<E> delegate) {
     this.subscriptionService = subscriptionService;
     this.authenticationLogService = authenticationLogService;
     this.delegate = delegate;
@@ -39,7 +34,7 @@ public abstract class ClientServiceDecorator<E extends ClientEntity, S extends C
 
   @Override
   public E loadUserByUsernameDecorated(Set<DecoratingOptions> decoratingOptions, String username) {
-    E client = delegate.loadUserByUsernameDecorated(decoratingOptions, username);
+    E client = delegate.loadUserByUsername(username);
 
     if (shouldDecorate(decoratingOptions, client)) {
       decoratingOptions = filterDecoratingOptions(decoratingOptions, client);

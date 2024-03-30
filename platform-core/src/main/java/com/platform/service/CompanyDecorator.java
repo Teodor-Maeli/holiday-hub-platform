@@ -1,19 +1,15 @@
-package com.platform.service.decorator;
+package com.platform.service;
 
 import com.platform.persistence.entity.CompanyEntity;
 import com.platform.persistence.entity.PersonEntity;
 import com.platform.persistence.repository.CompanyRepository;
 import com.platform.persistence.repository.PersonRepository;
-import com.platform.service.AuthenticationLogService;
-import com.platform.service.CompanyService;
-import com.platform.service.Encoder;
-import com.platform.service.SubscriptionService;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
 @Service("companyService")
-public class CompanyDecorator extends ClientServiceDecorator<CompanyEntity, CompanyService> {
+public class CompanyDecorator extends ClientServiceDecorator<CompanyEntity> {
 
   private final PersonRepository personRepository;
 

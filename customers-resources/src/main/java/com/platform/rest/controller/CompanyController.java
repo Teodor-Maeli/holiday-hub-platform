@@ -6,8 +6,7 @@ import com.platform.model.Company;
 import com.platform.model.CompanyRegistration;
 import com.platform.persistence.entity.CompanyEntity;
 import com.platform.service.ClientService;
-import com.platform.service.CompanyService;
-import com.platform.service.decorator.DecoratingOptions;
+import com.platform.service.DecoratingOptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +34,6 @@ public class CompanyController {
   static final String CUSTOMERS_AUTH_V_1_COMPANY = "/customers/v1/company";
 
   private final CompanyRepresentativeMapper mapper;
-
   private final ClientService<CompanyEntity> service;
 
   public CompanyController(CompanyRepresentativeMapper mapper, ClientService<CompanyEntity> service) {
@@ -53,11 +51,11 @@ public class CompanyController {
   }
 
   @IOLogger
-  @GetMapping(path = "/get/decorated/{clientUsername}")
+  @GetMapping(path = "/get/{clientUsername}")
   @PreAuthorize("#clientUsername == authentication.principal")
-  public ResponseEntity<Company> getByUsername(@RequestParam("include") Set<DecoratingOptions> aggregations,
+  public ResponseEntity<Company> getByUsername(@RequestParam("include") Set<DecoratingOptions> options,
                                                @PathVariable("clientUsername") String clientUsername) {
-    CompanyEntity entity = service.loadUserByUsernameDecorated(aggregations, clientUsername);
+    CompanyEntity entity = service.loadUserByUsernameDecorated(options, clientUsername);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(mapper.toResponse(entity));

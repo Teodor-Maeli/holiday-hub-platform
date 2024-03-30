@@ -1,13 +1,14 @@
 package com.platform.service;
 
 import com.platform.persistence.entity.ClientEntity;
-import com.platform.service.decorator.DecoratingOptions;
 
 import java.util.Set;
 
 public interface ClientService<E extends ClientEntity> {
 
-  E loadUserByUsernameDecorated(Set<DecoratingOptions> decoratingOptions, String username);
+  default E loadUserByUsernameDecorated(Set<DecoratingOptions> decoratingOptions, String username) {
+    throw new UnsupportedOperationException("Method not yet implemented!");
+  }
 
   E loadUserByUsername(String username);
 

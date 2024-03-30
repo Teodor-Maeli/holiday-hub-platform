@@ -1,4 +1,4 @@
-package com.platform.service.decorator;
+package com.platform.service;
 
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.entity.CompanyEntity;

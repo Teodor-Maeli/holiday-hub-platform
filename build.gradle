@@ -8,6 +8,7 @@ def projectVersion = project.property('version')
 def mapstructVersion = project.property('mapstruct.core-version')
 def projectVersionPrefix = '-SNAPSHOT'
 def auth0JavaJwtVersion = project.property('auth0.java-jwt-version')
+def springStarterMailVersion = project.property('spring-starter-mail-version')
 
 group = 'com.platform'
 version = projectVersion + projectVersionPrefix
@@ -41,6 +42,12 @@ allprojects {
     }
 }
 
+project("platform-core") {
+    dependencies {
+        implementation "org.springframework.boot:spring-boot-starter-mail:${springStarterMailVersion}"
+    }
+}
+
 project("platform-auth") {
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -56,6 +63,7 @@ project("customers-resources") {
         implementation 'org.springframework.security:spring-security-core'
     }
 }
+
 
 dependencies {
     implementation project(':platform-auth')

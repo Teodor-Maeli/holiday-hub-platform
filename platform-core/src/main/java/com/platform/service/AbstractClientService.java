@@ -5,7 +5,6 @@ import com.platform.model.ConsumerAuthority;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.repository.BaseClientRepository;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Optional;
 import java.util.Set;
@@ -20,7 +19,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
  * @param <ID> ID of entity
  * @param <R>  Repository
  */
-public abstract class AbstractClientService
+abstract class AbstractClientService
     <E extends ClientEntity, ID extends Number, R extends BaseClientRepository<E, ID>> implements ClientService<E> {
 
   final R repository;

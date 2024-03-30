@@ -6,7 +6,7 @@ import com.platform.model.Person;
 import com.platform.model.PersonRegistration;
 import com.platform.persistence.entity.PersonEntity;
 import com.platform.service.ClientService;
-import com.platform.service.decorator.DecoratingOptions;
+import com.platform.service.DecoratingOptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,6 @@ public class PersonController {
   static final String CUSTOMERS_AUTH_V_1_PERSON = "/customers/v1/person";
 
   private final PersonMapper mapper;
-
   private final ClientService<PersonEntity> service;
 
   public PersonController(PersonMapper mapper, ClientService<PersonEntity> service) {
@@ -53,9 +52,9 @@ public class PersonController {
   @IOLogger
   @GetMapping(path = "/get/{clientUsername}")
   @PreAuthorize("#clientUsername == authentication.principal")
-  public ResponseEntity<Person> getByUsername(@RequestParam("include") Set<DecoratingOptions> aggregations,
+  public ResponseEntity<Person> getByUsername(@RequestParam("include") Set<DecoratingOptions> options,
                                               @PathVariable("clientUsername") String clientUsername) {
-    PersonEntity entity = service.loadUserByUsernameDecorated(aggregations, clientUsername);
+    PersonEntity entity = service.loadUserByUsernameDecorated(options, clientUsername);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(mapper.toResponse(entity));

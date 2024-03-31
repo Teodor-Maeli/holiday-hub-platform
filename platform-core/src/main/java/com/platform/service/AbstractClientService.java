@@ -43,7 +43,7 @@ abstract class AbstractClientService
   /**
    * Performs aggregations against client object, to be used for general purposes except for login.
    *
-   * @param username          The username identifying the user whose data is required.
+   * @param username The username identifying the user whose data is required.
    * @return {@link ClientEntity}                 The user details required in order to perform successful authentication.
    * @throws PlatformBackendException If failed to load user with HTTP status 500 - Internal Server Error.
    */
@@ -75,7 +75,7 @@ abstract class AbstractClientService
 
       boolean isExisting = repository.existsByUsername(entity.getUsername());
 
-      if (! isExisting) {
+      if (!isExisting) {
         entity.setConsumerAuthorities(Set.of(ConsumerAuthority.BASE_CLIENT));
       }
 

@@ -33,7 +33,7 @@ public class AuthenticationLogEntity {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(referencedColumnName = "username", name = "CLIENT_ID", nullable = false)
   @JsonBackReference
   private ClientEntity client;
@@ -62,8 +62,8 @@ public class AuthenticationLogEntity {
   @Column(name = "UPDATED_BY")
   private String updatedBy;
 
-  @Column(name = "HASHED_UNLOCKING_CODE")
-  private String hashedUnlockingCode;
+  @Column(name = "ENCODED_UNLOCKING_CODE")
+  private String encodedUnlockingCode;
 
 
   public Long getId() {
@@ -138,11 +138,11 @@ public class AuthenticationLogEntity {
     this.updatedBy = updatedBy;
   }
 
-  public String getHashedUnlockingCode() {
-    return hashedUnlockingCode;
+  public String getEncodedUnlockingCode() {
+    return encodedUnlockingCode;
   }
 
-  public void setHashedUnlockingCode(String hashedUnlockingCode) {
-    this.hashedUnlockingCode = hashedUnlockingCode;
+  public void setEncodedUnlockingCode(String hashedUnlockingCode) {
+    this.encodedUnlockingCode = hashedUnlockingCode;
   }
 }

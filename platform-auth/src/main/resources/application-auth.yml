@@ -1,15 +1,20 @@
 platform:
   security:
+    allowed-paths: >
+      /customers/v1/person/register,
+      /auth/v1/unlock-account/**
     accounts:
       auto-unlocking:
-        address: "http://localhost:3000/accounts/unlock?code=%s"
+        addresses:
+          complete: "http://localhost:3000/accounts/unlock?code=%s"
+          reply: "admin@platform.com"
       auto-locking:
         bad-credentials:
           max-consecutive: 3
-          expiry-time: 30
+          expiry-time: 300
     cors-config:
       allowedHeaders: "*"
-      allowedOrigins: "http://localhost:3000"
+      allowedOrigins: "*"
       allowedMethods: "*"
       path-mappings: "/**"
     login:

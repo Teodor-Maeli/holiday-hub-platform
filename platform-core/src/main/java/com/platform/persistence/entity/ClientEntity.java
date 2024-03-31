@@ -2,6 +2,7 @@ package com.platform.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.platform.model.ConsumerAuthority;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -52,11 +53,11 @@ public abstract class ClientEntity {
   @CreatedDate
   private LocalDateTime registeredDate;
 
-  @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonManagedReference
   private List<AuthenticationLogEntity> authenticationLogs;
 
-  @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonManagedReference
   private List<SubscriptionEntity> subscriptions;
 

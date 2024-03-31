@@ -1,4 +1,5 @@
 ## Platform core module.
+
 ### Contains core functionally which can be used application wide.
 
 ## Changelog:

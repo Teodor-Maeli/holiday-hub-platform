@@ -11,10 +11,9 @@ import java.util.List;
 @Service
 public class AuthenticationLogService {
 
+  private final AuthenticationLogRepository repository;
   @Value("${platform.security.accounts.auto-locking.bad-credentials.expiry-time}")
   private Integer badCredentialsExpiryTime;
-
-  private final AuthenticationLogRepository repository;
 
   public AuthenticationLogService(AuthenticationLogRepository repository) {
     this.repository = repository;

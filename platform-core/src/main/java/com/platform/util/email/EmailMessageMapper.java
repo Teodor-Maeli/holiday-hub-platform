@@ -1,6 +1,6 @@
 package com.platform.util.email;
 
-import com.platform.model.EmailMessageDto;
+import com.platform.model.EmailMessageDetails;
 import org.mapstruct.Mapper;
 import org.springframework.mail.SimpleMailMessage;
 
@@ -9,5 +9,5 @@ import org.springframework.mail.SimpleMailMessage;
 )
 interface EmailMessageMapper {
 
-  SimpleMailMessage toSimpleEmailMessage(EmailMessageDto dto);
+  SimpleMailMessage toSimpleEmailMessage(EmailMessageDetails dto);
 }

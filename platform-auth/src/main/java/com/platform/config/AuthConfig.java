@@ -17,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -29,8 +28,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableMethodSecurity(securedEnabled = true)
 public class AuthConfig {
 
-  private static final RequestMatcher registerMatcher =
-      request -> request.getRequestURI().contains("/register");
+  @Value("${platform.security.allowed-paths}")
+  private String[] allowedPaths;
 
   @Value("${platform.security.cors-config.allowedHeaders}")
   private String allowedHeaders;
@@ -55,20 +54,27 @@ public class AuthConfig {
   }
 
   @Bean
-  @DependsOn({"platformAuthenticationFilter", "platformAuthorizationFilter"})
+  @DependsOn({
+      "authenticationManager",
+      "platformAuthenticationFailureHandler",
+      "platformAuthenticationSuccessHandler"
+  })
   public SecurityFilterChain configuration(
       HttpSecurity http,
-      PlatformAuthenticationFilter platformAuthenticationFilter,
-      PlatformAuthorizationFilter platformAuthorizationFilter
+      AuthenticationManager authenticationManager,
+      PlatformAuthenticationFailureHandler failureHandler,
+      PlatformAuthenticationSuccessHandler successHandler
   ) throws Exception {
 
     http.csrf().disable();
     http.cors();
-    http.authorizeHttpRequests().requestMatchers(registerMatcher).permitAll();
-    http.authorizeHttpRequests().anyRequest().authenticated();
+    http.authorizeHttpRequests(matchers -> matchers
+        .requestMatchers(allowedPaths).permitAll()
+        .anyRequest().authenticated());
+
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    http.addFilter(platformAuthenticationFilter);
-    http.addFilterBefore(platformAuthorizationFilter, PlatformAuthenticationFilter.class);
+    http.addFilter(new PlatformAuthenticationFilter(authenticationManager, failureHandler, successHandler));
+    http.addFilterBefore(new PlatformAuthorizationFilter(), PlatformAuthenticationFilter.class);
 
     return http.build();
   }

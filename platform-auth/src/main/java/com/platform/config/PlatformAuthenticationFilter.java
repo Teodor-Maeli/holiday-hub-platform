@@ -3,12 +3,10 @@ package com.platform.config;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 /**
  * Initiates a Client authentication.
  */
-@Component(value = "platformAuthenticationFilter")
 public class PlatformAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
   private static final String PASSWORD = "password";

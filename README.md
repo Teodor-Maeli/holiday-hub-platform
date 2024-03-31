@@ -16,7 +16,8 @@
 
 * Java Spring as backbone of the backend server
 * PostgresSQL as initial solution for database.
-* Authentication and authorization - semi stateless based authentication with auto locking mechanism upon meeting specific criteria during the authentication process.
+* Authentication and authorization - semi stateless based authentication with auto locking mechanism upon meeting
+  specific criteria during the authentication process.
 * AOP.
 * Docker.
 * MapStruct.

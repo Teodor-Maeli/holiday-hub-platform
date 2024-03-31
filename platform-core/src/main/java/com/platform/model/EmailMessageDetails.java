@@ -2,7 +2,7 @@ package com.platform.model;
 
 import java.util.Date;
 
-public class EmailMessageDto {
+public class EmailMessageDetails {
 
   private String from;
   private String replyTo;
@@ -13,64 +13,64 @@ public class EmailMessageDto {
   private String subject;
   private String text;
 
-  private EmailMessageDto() {
+  private EmailMessageDetails() {
   }
 
-  public static EmailMessageDto create() {
-    return new EmailMessageDto();
+  public static EmailMessageDetails create() {
+    return new EmailMessageDetails();
   }
 
-  public EmailMessageDto withFrom(String from) {
+  public EmailMessageDetails withFrom(String from) {
     this.from = from;
     return this;
   }
 
-  public EmailMessageDto withReplyTo(String replyTo) {
+  public EmailMessageDetails withReplyTo(String replyTo) {
     this.replyTo = replyTo;
     return this;
   }
 
-  public EmailMessageDto withTo(String to) {
+  public EmailMessageDetails withTo(String to) {
     this.to = new String[]{to};
     return this;
   }
 
-  public EmailMessageDto withTo(String... to) {
+  public EmailMessageDetails withTo(String... to) {
     this.to = to;
     return this;
   }
 
-  public EmailMessageDto withCc(String cc) {
+  public EmailMessageDetails withCc(String cc) {
     this.cc = new String[]{cc};
     return this;
   }
 
-  public EmailMessageDto withCc(String... cc) {
+  public EmailMessageDetails withCc(String... cc) {
     this.cc = cc;
     return this;
   }
 
-  public EmailMessageDto withBcc(String bcc) {
+  public EmailMessageDetails withBcc(String bcc) {
     this.bcc = new String[]{bcc};
     return this;
   }
 
-  public EmailMessageDto withBcc(String... bcc) {
+  public EmailMessageDetails withBcc(String... bcc) {
     this.bcc = bcc;
     return this;
   }
 
-  public EmailMessageDto withSentDate(Date sentDate) {
+  public EmailMessageDetails withSentDate(Date sentDate) {
     this.sentDate = sentDate;
     return this;
   }
 
-  public EmailMessageDto withSubject(String subject) {
+  public EmailMessageDetails withSubject(String subject) {
     this.subject = subject;
     return this;
   }
 
-  public EmailMessageDto withText(String text) {
+  public EmailMessageDetails withText(String text) {
     this.text = text;
     return this;
   }

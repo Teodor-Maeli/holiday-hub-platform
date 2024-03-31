@@ -45,7 +45,7 @@ public record ClientUserDetails(ClientEntity client) implements UserDetails {
   @Override
   public boolean isAccountNonLocked() {
     return client.getAuthenticationLogs().stream().noneMatch(this::isAutoLocked)
-        && ! Boolean.TRUE.equals(client.getAccountLocked());
+        && !Boolean.TRUE.equals(client.getAccountLocked());
   }
 
   @Override
@@ -55,7 +55,7 @@ public record ClientUserDetails(ClientEntity client) implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return ObjectsHelper.isNotEmpty(client.getAuthenticationLogs());
+    return ObjectsHelper.isNotEmpty(client.getConsumerAuthorities());
   }
 
   private boolean isAutoLocked(AuthenticationLogEntity log) {

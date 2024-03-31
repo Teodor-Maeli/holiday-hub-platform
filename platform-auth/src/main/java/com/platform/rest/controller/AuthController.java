@@ -10,11 +10,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping({AuthController.ADMIN_AUTH_V_1, AuthController.ADMIN_AUTH_V_1})
+@RequestMapping(AuthController.AUTH_V_1)
 public class AuthController {
 
   static final String AUTH_V_1 = "/auth/v1";
-  static final String ADMIN_AUTH_V_1 = "/admin" + AUTH_V_1;
 
   private final AuthService authService;
 
@@ -24,7 +23,7 @@ public class AuthController {
 
   @IOLogger
   @PostMapping("/unlock-account/initiate/{username}")
-  public ResponseEntity<Void> initiateAccountUnlocking(@RequestParam("username") String username) {
+  public ResponseEntity<Void> initiateAccountUnlocking(@PathVariable("username") String username) {
     authService.startAccountUnlocking(username);
 
     return ResponseEntity
@@ -33,9 +32,9 @@ public class AuthController {
   }
 
   @IOLogger
-  @PostMapping("unlock-account/complete/{username}")
+  @PostMapping("/unlock-account/complete/{username}")
   public ResponseEntity<Void> completeAccountUnblocking(@PathVariable("username") String username,
-                                                        @RequestParam("unlockingCode") String unlockingCode) {
+                                                        @RequestParam(value = "unlockingCode") String unlockingCode) {
     authService.completeAccountUnlocking(username, unlockingCode);
 
     return ResponseEntity

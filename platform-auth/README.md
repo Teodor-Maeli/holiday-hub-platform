@@ -1,4 +1,5 @@
 ## Platform authentication module.
+
 ### Authenticates and authorizes persons and company entities against the server.
 
 ## Changelog:

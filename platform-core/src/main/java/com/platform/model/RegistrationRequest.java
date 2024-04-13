@@ -15,6 +15,10 @@ public class RegistrationRequest {
 
   private String phoneNumber;
 
+  private String redirectUrl;
+
+  private String returnUrl;
+
   public String getUsername() {
     return username;
   }
@@ -45,5 +49,23 @@ public class RegistrationRequest {
 
   public void setPhoneNumber(String phoneNumber) {
     this.phoneNumber = phoneNumber;
+  }
+
+  public String getRedirectUrl() {
+    return redirectUrl;
+  }
+
+  public RegistrationRequest setRedirectUrl(String redirectUrl) {
+    this.redirectUrl = redirectUrl;
+    return this;
+  }
+
+  public String getReturnUrl() {
+    return returnUrl;
+  }
+
+  public RegistrationRequest setReturnUrl(String returnUrl) {
+    this.returnUrl = returnUrl;
+    return this;
   }
 }

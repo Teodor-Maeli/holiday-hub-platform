@@ -1,6 +1,7 @@
 package com.platform.config;
 
 import com.platform.service.AuthService;
+import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -69,8 +70,9 @@ public class AuthConfig {
     http.csrf().disable();
     http.cors();
     http.authorizeHttpRequests(matchers -> matchers
+        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
         .requestMatchers(allowedPaths).permitAll()
-        .anyRequest().authenticated());
+        .anyRequest().denyAll());
 
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     http.addFilter(new PlatformAuthenticationFilter(authenticationManager, failureHandler, successHandler));

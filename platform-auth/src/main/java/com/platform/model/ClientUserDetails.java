@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+import static com.platform.model.ConsumerAuthority.ADMIN;
+
 public record ClientUserDetails(ClientEntity client) implements UserDetails {
 
   public ClientUserDetails {
@@ -56,6 +58,10 @@ public record ClientUserDetails(ClientEntity client) implements UserDetails {
   @Override
   public boolean isEnabled() {
     return ObjectsHelper.isNotEmpty(client.getConsumerAuthorities());
+  }
+
+  public boolean isAdmin() {
+    return client.getConsumerAuthorities().contains(ADMIN);
   }
 
   private boolean isAutoLocked(AuthenticationLogEntity log) {

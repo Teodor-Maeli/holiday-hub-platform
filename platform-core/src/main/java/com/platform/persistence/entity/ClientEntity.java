@@ -68,6 +68,12 @@ public abstract class ClientEntity {
   @Column(name = "ACCOUNT_LOCKED")
   private Boolean accountLocked;
 
+  @Column(name = "REDIRECT_URL")
+  private String redirectUrl;
+
+  @Column(name = "RETURN_URL")
+  private String returnUrl;
+
 
   public String getPassword() {
     return this.password;
@@ -160,5 +166,23 @@ public abstract class ClientEntity {
 
   public void setAccountLocked(Boolean accountLocked) {
     this.accountLocked = accountLocked;
+  }
+
+  public String getRedirectUrl() {
+    return redirectUrl;
+  }
+
+  public ClientEntity setRedirectUrl(String redirectUrl) {
+    this.redirectUrl = redirectUrl;
+    return this;
+  }
+
+  public String getReturnUrl() {
+    return returnUrl;
+  }
+
+  public ClientEntity setReturnUrl(String returnUrl) {
+    this.returnUrl = returnUrl;
+    return this;
   }
 }

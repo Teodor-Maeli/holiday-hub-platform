@@ -162,7 +162,7 @@ public class AuthenticationLogInterceptor {
     }
 
     List<AuthenticationLogEntity> badCredentialsLogs = getNonExpiredBadCredentials(logs);
-    return badCredentialsLogs.size() < badCredentialsMaxAttempts;
+    return badCredentialsLogs.size() <= badCredentialsMaxAttempts;
   }
 
   private List<AuthenticationLogEntity> getNonExpiredBadCredentials(List<AuthenticationLogEntity> logs) {

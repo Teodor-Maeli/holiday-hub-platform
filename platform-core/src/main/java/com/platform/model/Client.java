@@ -35,6 +35,7 @@ public class Client {
 
   private Set<ConsumerAuthority> authorities;
 
+
   public Long getId() {
     return id;
   }

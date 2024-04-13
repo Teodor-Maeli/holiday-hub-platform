@@ -1,6 +1,7 @@
 package com.platform.service;
 
 import com.platform.exception.PlatformBackendException;
+import com.platform.model.AccountUnlock;
 import com.platform.model.AuthenticationStatusReason;
 import com.platform.model.ClientUserDetails;
 import com.platform.model.EmailMessageDetails;
@@ -8,18 +9,24 @@ import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.entity.CompanyEntity;
 import com.platform.persistence.entity.PersonEntity;
+import com.platform.util.SecurityUtils;
 import com.platform.util.email.EmailSender;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -30,9 +37,11 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @Service
 public class AuthService implements UserDetailsService {
 
+  private static final Set<DecoratingOptions> BLOCKING_AUTH_LOGS = Collections.singleton(DecoratingOptions.BLOCKING_AUTHENTICATION_LOGS);
   private static final String EMAIL_SUBJECT = "Account unlocking for:%s";
   private static final String USER_DETAILS = "userDetails";
-  private static final Set<DecoratingOptions> BLOCKING_AUTH_LOGS = Collections.singleton(DecoratingOptions.BLOCKING_AUTHENTICATION_LOGS);
+  private static final String USERNAME_PARAM = "username";
+  private static final String UNLOCKING_CODE_PARAM = "unlockingCode";
 
   @Value("${platform.security.accounts.auto-unlocking.addresses.complete}")
   private String completionAddress;
@@ -46,13 +55,13 @@ public class AuthService implements UserDetailsService {
   private final BiFunction<String, ClientService<?>, Optional<ClientEntity>> loadWithBlockingLogsFunc =
       (username, service) -> Optional.of(service.loadUserByUsernameDecorated(BLOCKING_AUTH_LOGS, username));
 
+
   public AuthService(
       ClientService<PersonEntity> personService,
       ClientService<CompanyEntity> companyService,
       HttpServletRequest request,
       EmailSender emailSender,
-      Encoder encoder
-  ) {
+      Encoder encoder) {
     this.personService = personService;
     this.companyService = companyService;
     this.request = request;
@@ -65,7 +74,7 @@ public class AuthService implements UserDetailsService {
 
     ClientEntity client = loadUserByUsernameInternal(username);
 
-    return cacheAndGetAsUserDetails(client);
+    return cacheIntoRequestAsClientUserDetails(client);
   }
 
   /**
@@ -76,35 +85,54 @@ public class AuthService implements UserDetailsService {
    *
    * @param username client to be loaded.
    */
-  public void startAccountUnlocking(String username) {
+  @Transactional(rollbackOn = Exception.class)
+  public AccountUnlock startAccountUnlocking(String username) {
     ClientEntity client = loadUserByUsernameInternal(username);
 
-    if (isAccountLocked(client)) {
-      issueAccountUnlockingCode(client);
-    } else {
+    if (!isAccountLocked(client)) {
       throw PlatformBackendException.builder()
           .details("Account does not need to be unlocked!")
           .httpStatus(BAD_REQUEST)
           .build();
     }
+
+    return issueAccountUnlockingCode(client);
   }
 
-  private void issueAccountUnlockingCode(ClientEntity client) {
+  private AccountUnlock issueAccountUnlockingCode(ClientEntity client) {
     String rawUnlockingCode = UUID.randomUUID().toString();
+
+    String partnerUnlockingUrl = UriComponentsBuilder.fromHttpUrl(client.getRedirectUrl())
+        .queryParam(USERNAME_PARAM, client.getUsername())
+        .queryParam(UNLOCKING_CODE_PARAM, rawUnlockingCode)
+        .toUriString();
 
     EmailMessageDetails emailMessageDetails =
         EmailMessageDetails.create()
-            .withText(buildEmailTextBody(rawUnlockingCode, client.getUsername()))
+            .withSubject(EMAIL_SUBJECT.formatted(client.getUsername()))
             .withTo(client.getEmailAddress())
-            .withSentDate(new Date())
             .withFrom(replyAddress)
-            .withSubject(EMAIL_SUBJECT.formatted(client.getUsername()));
+            .withReplyTo(replyAddress)
+            .withText(buildEmailTextBody(partnerUnlockingUrl, client.getUsername()))
+            .withSentDate(new Date());
 
-    emailSender.sent(emailMessageDetails);
+    emailSender.send(emailMessageDetails);
 
-    String hashedUnlockingCode = encoder.encode(rawUnlockingCode);
-    client.getAuthenticationLogs().forEach(log -> log.setEncodedUnlockingCode(hashedUnlockingCode));
+    updateAuthLogsWithCode(client, encoder.encode(rawUnlockingCode));
     saveClient(client);
+
+    return new AccountUnlock(
+        AccountUnlock.State.INITIATED,
+        client.getRedirectUrl(),
+        client.getReturnUrl(),
+        replyAddress
+    );
+  }
+
+  private void updateAuthLogsWithCode(ClientEntity client, String hashedUnlockingCode) {
+    for (AuthenticationLogEntity log : client.getAuthenticationLogs()) {
+      log.setEncodedUnlockingCode(hashedUnlockingCode);
+    }
   }
 
   /**
@@ -116,29 +144,45 @@ public class AuthService implements UserDetailsService {
    * @param username      client to be loaded.
    * @param unlockingCode unlocking code that should match against any of the authentication logs.
    */
-  public void completeAccountUnlocking(String username, String unlockingCode) {
+  @Transactional(rollbackOn = Exception.class)
+  public AccountUnlock completeAccountUnlocking(String username, String unlockingCode) {
     ClientEntity client = loadUserByUsernameInternal(username);
 
-    if (shouldUnlock(client, unlockingCode)) {
-      unlockAccount(client, null);
-    } else {
+    if (!shouldUnlock(client, unlockingCode)) {
       throw PlatformBackendException.builder()
-          .details("Either unlocking code doesn't match or client is not eligible for self unlocking."
+          .details("Either unlocking code doesn't match or client is not eligible for unlocking."
               + "Please contact customer support for assistance.")
           .httpStatus(HttpStatus.METHOD_NOT_ALLOWED)
           .build();
     }
+
+    return unlockAccount(client);
   }
 
-  private void unlockAccount(ClientEntity client, String updatedBy) {
-    for (AuthenticationLogEntity log : client.getAuthenticationLogs()) {
+  private AccountUnlock unlockAccount(ClientEntity client) {
+    String updatedBy =
+        SecurityUtils.getPrincipal()
+            .map(ClientUserDetails::getUsername)
+            .orElse(client.getUsername());
 
-      log.setStatusResolved(Boolean.TRUE);
-      log.setUpdatedBy(Objects.isNull(updatedBy)
-                       ? client.getUsername()
-                       : updatedBy);
-    }
+    resolveLogsForClient(client, updatedBy);
+
+    client.setAccountLocked(Boolean.FALSE);
     saveClient(client);
+
+    return new AccountUnlock(
+        AccountUnlock.State.COMPLETED,
+        client.getRedirectUrl(),
+        client.getReturnUrl(),
+        replyAddress
+    );
+  }
+
+  private void resolveLogsForClient(ClientEntity client, String updatedBy) {
+    for (AuthenticationLogEntity log : client.getAuthenticationLogs()) {
+      log.setStatusResolved(Boolean.TRUE);
+      log.setUpdatedBy(updatedBy);
+    }
   }
 
   private void saveClient(ClientEntity client) {
@@ -148,13 +192,21 @@ public class AuthService implements UserDetailsService {
       companyService.save(company);
     } else {
       throw PlatformBackendException.builder()
-          .details("Saving could not be completed, please contact customer support for assistance!")
+          .details("Saving could not be completed, please contact technical support for assistance!")
           .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
           .build();
     }
   }
 
   private boolean shouldUnlock(ClientEntity client, String unlockingCode) {
+    return canUnlockByAdmin() || canUnlockByClient(client, unlockingCode);
+  }
+
+  private boolean canUnlockByAdmin() {
+    return SecurityUtils.getPrincipal().map(ClientUserDetails::isAdmin).orElse(false);
+  }
+
+  private boolean canUnlockByClient(ClientEntity client, String unlockingCode) {
     return isAccountLocked(client)
         && client.getAuthenticationLogs().stream()
         .anyMatch(log -> encoder.matches(unlockingCode, log.getEncodedUnlockingCode()));
@@ -176,17 +228,26 @@ public class AuthService implements UserDetailsService {
                 .build()));
   }
 
-  private ClientUserDetails cacheAndGetAsUserDetails(ClientEntity client) {
+  private ClientUserDetails cacheIntoRequestAsClientUserDetails(ClientEntity client) {
     ClientUserDetails userDetails = new ClientUserDetails(client);
     request.setAttribute(USER_DETAILS, userDetails);
 
     return userDetails;
   }
 
-  private String buildEmailTextBody(String unlockingCode, String userName) {
-    return "Dear %s, ".formatted(userName) +
-        "Please find below your account unlocking link." +
-        "\n" +
-        "Click to unlock :%s%s".formatted(completionAddress, unlockingCode);
+  private String buildEmailTextBody(String followUrl, String userName) {
+    URL resource = AuthService.class.getClassLoader().getResource("service/unlock-initiated.html");
+    String text;
+
+    try (InputStream is = resource.openStream()) {
+      text = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+      text = text.replace("{{username}}", userName);
+      text = text.replace("{{followUrl}}", followUrl);
+      text = text.replace("{{replyAddress}}", replyAddress);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    return text;
   }
 }

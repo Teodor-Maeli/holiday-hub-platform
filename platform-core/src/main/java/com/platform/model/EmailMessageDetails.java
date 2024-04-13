@@ -84,15 +84,21 @@ public class EmailMessageDetails {
   }
 
   public String[] getTo() {
-    return to;
+    return to == null
+           ? new String[]{}
+           : to;
   }
 
   public String[] getCc() {
-    return cc;
+    return cc == null
+           ? new String[]{}
+           : cc;
   }
 
   public String[] getBcc() {
-    return bcc;
+    return bcc == null
+           ? new String[]{}
+           : bcc;
   }
 
   public Date getSentDate() {

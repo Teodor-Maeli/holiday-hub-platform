@@ -1,8 +1,11 @@
 package com.platform.rest.controller;
 
 import com.platform.aspect.annotation.IOLogger;
+import com.platform.model.AccountUnlock;
 import com.platform.service.AuthService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,23 +26,27 @@ public class AuthController {
 
   @IOLogger
   @PostMapping("/unlock-account/initiate/{username}")
-  public ResponseEntity<Void> initiateAccountUnlocking(@PathVariable("username") String username) {
-    authService.startAccountUnlocking(username);
+  public ResponseEntity<AccountUnlock> initiateAccountUnlocking(
+      @PathVariable("username") String username
+  ) {
+    AccountUnlock response = authService.startAccountUnlocking(username);
 
     return ResponseEntity
-        .noContent()
-        .build();
+        .status(HttpStatus.OK)
+        .body(response);
   }
 
   @IOLogger
-  @PostMapping("/unlock-account/complete/{username}")
-  public ResponseEntity<Void> completeAccountUnblocking(@PathVariable("username") String username,
-                                                        @RequestParam(value = "unlockingCode") String unlockingCode) {
-    authService.completeAccountUnlocking(username, unlockingCode);
+  @PatchMapping("/unlock-account/complete")
+  public ResponseEntity<AccountUnlock> completeAccountUnlocking(
+      @RequestParam("username") String username,
+      @RequestParam(value = "unlockingCode", required = false) String unlockingCode
+  ) {
+    AccountUnlock response = authService.completeAccountUnlocking(username, unlockingCode);
 
     return ResponseEntity
-        .noContent()
-        .build();
+        .status(HttpStatus.OK)
+        .body(response);
   }
 
 }

@@ -34,4 +34,13 @@ public class ObjectsHelper {
     return args != null && args.length > 0;
   }
 
+  public static boolean noneNull(Object...args) {
+    for (Object arg : args) {
+      if (arg == null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
 }

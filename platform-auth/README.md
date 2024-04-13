@@ -4,6 +4,7 @@
 
 ## Changelog:
 
+* 1.8.0 Added unlocking email template, enhanced unlocking mechanism.
 * 1.7.0 Auto unlocking mechanism implemented.
 * 1.6.0 Auto locking mechanism implemented.
 * 1.5.0 Switched from Stateful to Stateless, using JWT for authentication and authorization now(breaking changes).

@@ -32,7 +32,6 @@ public class LoggerMasker {
     MASKING_PATTERNS.add(Pattern.compile("(?<=givenName\" : \")(.*?)(?=\")"));
     MASKING_PATTERNS.add(Pattern.compile("(?<=middleName\" : \")(.*?)(?=\")"));
     MASKING_PATTERNS.add(Pattern.compile("(?<=unlockingCode\" : \")(.*?)(?=\")"));
-
   }
 
   public static String mask(Object o) {
@@ -42,9 +41,11 @@ public class LoggerMasker {
   }
 
   private static String maskInternal(String value) {
+
     for (Pattern pattern : MASKING_PATTERNS) {
       value = pattern.matcher(value).replaceAll(MASK);
     }
+
     return value;
   }
 

@@ -4,6 +4,7 @@ import com.platform.exception.PlatformBackendException;
 import com.platform.model.ConsumerAuthority;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.repository.BaseClientRepository;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.Optional;
@@ -19,26 +20,13 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
  * @param <ID> ID of entity
  * @param <R>  Repository
  */
+@RequiredArgsConstructor
 abstract class AbstractClientService
     <E extends ClientEntity, ID extends Number, R extends BaseClientRepository<E, ID>> implements ClientService<E> {
 
   final R repository;
 
   final Encoder encoder;
-
-  /**
-   * Ensures dependencies are properly initialized.
-   *
-   * @param repository Repository used to perform generic operations.
-   * @param encoder    Used to encode sensitive information.
-   */
-  protected AbstractClientService(
-      R repository,
-      Encoder encoder
-  ) {
-    this.repository = repository;
-    this.encoder = encoder;
-  }
 
   /**
    * Performs aggregations against client object, to be used for general purposes except for login.
@@ -55,10 +43,9 @@ abstract class AbstractClientService
       return user.get();
     }
 
-    throw PlatformBackendException.builder()
-        .message("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username))
-        .httpStatus(BAD_REQUEST)
-        .build();
+    throw new PlatformBackendException()
+        .setMessage("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username))
+        .setHttpStatus(BAD_REQUEST);
 
   }
 
@@ -82,21 +69,19 @@ abstract class AbstractClientService
       return repository.save(entity);
     } catch (ConstraintViolationException e) {
 
-      throw PlatformBackendException.builder()
-          .message("Failed to SAVE entity with username: %s, user existent".formatted(entity.getUsername()))
-          .details(e.getMessage())
-          .httpStatus(BAD_REQUEST)
-          .cause(e)
-          .build();
+      throw new PlatformBackendException()
+          .setMessage("Failed to SAVE entity with username: %s, user existent".formatted(entity.getUsername()))
+          .setDetails(e.getMessage())
+          .setHttpStatus(BAD_REQUEST)
+          .setCause(e);
 
     } catch (RuntimeException e) {
 
-      throw PlatformBackendException.builder()
-          .message("Failed to SAVE entity with username: %s".formatted(entity.getUsername()))
-          .details(e.getMessage())
-          .httpStatus(INTERNAL_SERVER_ERROR)
-          .cause(e)
-          .build();
+      throw new PlatformBackendException()
+          .setMessage("Failed to SAVE entity with username: %s".formatted(entity.getUsername()))
+          .setDetails(e.getMessage())
+          .setHttpStatus(INTERNAL_SERVER_ERROR)
+          .setCause(e);
     }
 
   }
@@ -111,10 +96,9 @@ abstract class AbstractClientService
     int updatedRows = repository.deleteByUserName(username);
 
     if (updatedRows <= 0) {
-      throw PlatformBackendException.builder()
-          .message("Failed to DELETE, USERNAME: %s non-existent!".formatted(username))
-          .httpStatus(BAD_REQUEST)
-          .build();
+      throw new PlatformBackendException()
+          .setMessage("Failed to DELETE, USERNAME: %s non-existent!".formatted(username))
+          .setHttpStatus(BAD_REQUEST);
     }
   }
 
@@ -136,19 +120,15 @@ abstract class AbstractClientService
         return;
       }
 
-      throw PlatformBackendException.builder()
-          .message("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username))
-          .httpStatus(BAD_REQUEST)
-          .build();
+      throw new PlatformBackendException().setMessage("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username)).setHttpStatus(BAD_REQUEST);
 
     } catch (RuntimeException e) {
 
-      throw PlatformBackendException.builder()
-          .message("Failed to UPDATE password for USERNAME: %s".formatted(username))
-          .details(e.getMessage())
-          .httpStatus(INTERNAL_SERVER_ERROR)
-          .cause(e)
-          .build();
+      throw new PlatformBackendException()
+          .setMessage("Failed to UPDATE password for USERNAME: %s".formatted(username))
+          .setDetails(e.getMessage())
+          .setHttpStatus(INTERNAL_SERVER_ERROR)
+          .setCause(e);
     }
 
   }

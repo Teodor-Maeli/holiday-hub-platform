@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-@Accessors(fluent = true)
+@Accessors(chain = true)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EmailMessageDetails {
 

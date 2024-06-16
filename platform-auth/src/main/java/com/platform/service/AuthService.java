@@ -80,10 +80,7 @@ public class AuthService implements UserDetailsService {
     ClientEntity client = loadUserByUsernameInternal(username);
 
     if (!isAccountLocked(client)) {
-      throw PlatformBackendException.builder()
-          .details("Account does not need to be unlocked!")
-          .httpStatus(BAD_REQUEST)
-          .build();
+      throw new PlatformBackendException().setDetails("Account does not need to be unlocked!").setHttpStatus(BAD_REQUEST);
     }
 
     return issueAccountUnlockingCode(client, null);
@@ -99,12 +96,12 @@ public class AuthService implements UserDetailsService {
 
     EmailMessageDetails emailMessageDetails =
         EmailMessageDetails.create()
-            .subject(EMAIL_SUBJECT.formatted(client.getUsername()))
-            .to(new String[]{client.getEmailAddress()})
-            .from(replyAddress)
-            .replyTo(replyAddress)
-            .text(buildEmailTextBody(partnerUnlockingUrl, client.getUsername()))
-            .sentDate(new Date());
+            .setSubject(EMAIL_SUBJECT.formatted(client.getUsername()))
+            .setTo(new String[]{client.getEmailAddress()})
+            .setFrom(replyAddress)
+            .setReplyTo(replyAddress)
+            .setText(buildEmailTextBody(partnerUnlockingUrl, client.getUsername()))
+            .setSentDate(new Date());
 
     emailSender.send(emailMessageDetails);
 
@@ -139,11 +136,11 @@ public class AuthService implements UserDetailsService {
     ClientEntity client = loadUserByUsernameInternal(username);
 
     if (!shouldUnlock(client, unlockingCode)) {
-      throw PlatformBackendException.builder()
-          .details("Either unlocking code doesn't match or client is not eligible for unlocking."
-              + "Please contact customer support for assistance.")
-          .httpStatus(HttpStatus.METHOD_NOT_ALLOWED)
-          .build();
+      throw new PlatformBackendException()
+          .setDetails("""
+              Either unlocking code doesn't match or client is not eligible for unlocking.
+              Please contact customer support for assistance.""")
+          .setHttpStatus(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     return unlockAccount(client, null);
@@ -181,10 +178,8 @@ public class AuthService implements UserDetailsService {
     } else if (client instanceof CompanyEntity company) {
       companyService.save(company);
     } else {
-      throw PlatformBackendException.builder()
-          .details("Saving could not be completed, please contact technical support for assistance!")
-          .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-          .build();
+      throw new PlatformBackendException().setDetails("Saving could not be completed, please contact technical support for assistance!")
+          .setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -212,10 +207,9 @@ public class AuthService implements UserDetailsService {
   private ClientEntity loadUserByUsernameInternal(String username) {
     return loadWithBlockingLogsFunc.apply(username, personService)
         .orElseGet(() -> loadWithBlockingLogsFunc.apply(username, companyService)
-            .orElseThrow(() -> PlatformBackendException.builder()
-                .message("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username))
-                .httpStatus(BAD_REQUEST)
-                .build()));
+            .orElseThrow(() -> new PlatformBackendException()
+                .setMessage("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username))
+                .setHttpStatus(BAD_REQUEST)));
   }
 
   private ClientUserDetails cacheIntoRequestAsClientUserDetails(ClientEntity client) {

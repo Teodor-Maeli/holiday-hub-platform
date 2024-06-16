@@ -3,11 +3,12 @@ package com.platform.util.email;
 import com.platform.exception.PlatformBackendException;
 import com.platform.model.EmailMessageDetails;
 import jakarta.mail.MessagingException;
-import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Component
 public class EmailSender {
@@ -26,16 +27,12 @@ public class EmailSender {
 
       emailSender.send(mimeMessageHelper.getMimeMessage());
     } catch (MailException | MessagingException e) {
-      throw PlatformBackendException.builder()
-          .message("General error while sending message")
-          .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-          .cause(e)
-          .build();
-
+      throw new PlatformBackendException().setMessage("General error while sending message").setHttpStatus(INTERNAL_SERVER_ERROR).setCause(e);
     }
   }
 
   private void enrichMessage(EmailMessageDetails details, MimeMessageHelper mimeMessageHelper) throws MessagingException {
+
     mimeMessageHelper.setSubject(details.getSubject());
     mimeMessageHelper.setFrom(details.getFrom());
     mimeMessageHelper.setReplyTo(details.getReplyTo());

@@ -9,8 +9,6 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,6 +60,7 @@ public class IOLoggerInterceptor {
     String[] parameterNames = signature.getParameterNames();
 
     HashMap<String, Object> parameters = new HashMap<>();
+
     for (int i = 0; i < parameterNames.length; i++) {
       parameters.put(parameterNames[i], joinPoint.getArgs()[i]);
     }
@@ -70,15 +69,9 @@ public class IOLoggerInterceptor {
   }
 
   private RequestMapping getRequestMapping(Method method) {
-    return AnnotatedElementUtils
-        .findAllMergedAnnotations(method, RequestMapping.class)
-        .stream()
+    return AnnotatedElementUtils.findAllMergedAnnotations(method, RequestMapping.class).stream()
         .findFirst()
-        .orElseThrow(
-            PlatformBackendException.builder()
-                .message("Invalid or missing annotation!")
-                .httpStatus(INTERNAL_SERVER_ERROR)::build
-        );
+        .orElseThrow(() -> new PlatformBackendException().setMessage("Invalid or missing annotation!").setHttpStatus(INTERNAL_SERVER_ERROR));
 
   }
 }

@@ -3,6 +3,7 @@ package com.platform.mapper;
 import com.platform.model.Company;
 import com.platform.model.registration.CompanyRegistration;
 import com.platform.persistence.entity.CompanyEntity;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -11,7 +12,8 @@ import org.mapstruct.Mapping;
     uses = {
         SubscriptionMapper.class,
         PasswordEncoderMapper.class
-    }
+    },
+    injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface CompanyRepresentativeMapper {
 

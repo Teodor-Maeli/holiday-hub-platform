@@ -37,13 +37,22 @@ public class EmailSender {
 
   private void enrichMessage(EmailMessageDetails details, MimeMessageHelper mimeMessageHelper) throws MessagingException {
     mimeMessageHelper.setSubject(details.getSubject());
-    mimeMessageHelper.setTo(details.getTo());
     mimeMessageHelper.setFrom(details.getFrom());
     mimeMessageHelper.setReplyTo(details.getReplyTo());
-    mimeMessageHelper.setCc(details.getCc());
-    mimeMessageHelper.setBcc(details.getBcc());
     mimeMessageHelper.setText(details.getText(), true);
     mimeMessageHelper.setSentDate(details.getSentDate());
+
+    mimeMessageHelper.setTo(details.getTo() == null
+                            ? new String[]{}
+                            : details.getCc());
+
+    mimeMessageHelper.setCc(details.getCc() == null
+                            ? new String[]{}
+                            : details.getCc());
+
+    mimeMessageHelper.setBcc(details.getBcc() == null
+                             ? new String[]{}
+                             : details.getBcc());
   }
 
 }

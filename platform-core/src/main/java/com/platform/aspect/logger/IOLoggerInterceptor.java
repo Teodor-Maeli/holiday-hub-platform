@@ -1,6 +1,7 @@
 package com.platform.aspect.logger;
 
 import com.platform.exception.PlatformBackendException;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -25,11 +26,10 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
  * Since 1.0.
  */
 
+@Slf4j
 @Aspect
 @Component
 public class IOLoggerInterceptor {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(IOLoggerInterceptor.class);
 
   @Pointcut("@annotation(com.platform.aspect.annotation.IOLogger) && execution(* *(..))")
   public void pointCut() {
@@ -54,7 +54,7 @@ public class IOLoggerInterceptor {
   }
 
   private void log(String format, RequestMapping mapping, String value) {
-    LOGGER.info(format, mapping.path(), mapping.method(), value);
+    log.info(format, mapping.path(), mapping.method(), value);
   }
 
   private Map<String, Object> getParameters(JoinPoint joinPoint) {

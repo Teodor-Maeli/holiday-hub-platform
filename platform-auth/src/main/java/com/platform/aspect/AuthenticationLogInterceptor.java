@@ -10,15 +10,15 @@ import com.platform.model.ClientUserDetails;
 import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.service.AuthenticationLogService;
-import com.platform.util.ObjectsHelper;
+import com.platform.util.ObjectUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -34,11 +34,11 @@ import java.util.concurrent.CompletableFuture;
  * Logs client authentication attempts into the database.
  * Applies auto-lock if exhaust maximum BadCredentials attempts.
  */
+@Slf4j
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class AuthenticationLogInterceptor {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationLogInterceptor.class);
 
   private static final String USER_DETAILS_ATTR = "userDetails";
   private static final String BAD_CREDENTIALS_EXCEPTION = "BadCredentialsException";
@@ -55,19 +55,15 @@ public class AuthenticationLogInterceptor {
     DISALLOWED_REASONS.add(AuthenticationStatusReason.ACCOUNT_LOCKED);
   }
 
-  private final AuthenticationLogService service;
-  private final HttpServletRequest request;
-
   @Value("${platform.security.accounts.auto-locking.bad-credentials.max-consecutive}")
   private Integer badCredentialsMaxAttempts;
 
   @Value("${platform.security.accounts.auto-locking.bad-credentials.expiry-time}")
   private Integer badCredentialsExpiryTime;
 
-  public AuthenticationLogInterceptor(AuthenticationLogService service, HttpServletRequest request) {
-    this.service = service;
-    this.request = request;
-  }
+  private final AuthenticationLogService service;
+  private final HttpServletRequest request;
+
 
   @Pointcut("@annotation(com.platform.aspect.annotation.LogAuthentication) && execution(* *(..))")
   public void pointCut() {
@@ -89,7 +85,7 @@ public class AuthenticationLogInterceptor {
       }
 
     } catch (Exception e) {
-      LOGGER.error("Authentication log failed with error!", e);
+      log.error("Authentication log failed with error!", e);
     }
 
   }
@@ -120,17 +116,17 @@ public class AuthenticationLogInterceptor {
   private void logAuthenticationSuccess(ClientUserDetails clientUserDetails) {
 
     AuthenticationLogEntity entry = AuthenticationLogFacts.initialize()
-        .withStatus(AuthenticationStatus.AUTHORIZED)
-        .withReason(AuthenticationStatusReason.SUCCESSFUL_AUTHENTICATION)
-        .withClientDetails(clientUserDetails)
-        .withStatusResolved(Boolean.TRUE)
+        .status(AuthenticationStatus.AUTHORIZED)
+        .reason(AuthenticationStatusReason.SUCCESSFUL_AUTHENTICATION)
+        .clientDetails(clientUserDetails)
+        .resolved(Boolean.TRUE)
         .toEntity();
 
     service.logAuthenticationResult(entry);
   }
 
   private void logAuthenticationFailure(ClientUserDetails clientUserDetails, Object[] args) {
-    if (ObjectsHelper.isEmpty(args)) {
+    if (ObjectUtil.isEmpty(args)) {
       return;
     }
 
@@ -145,10 +141,10 @@ public class AuthenticationLogInterceptor {
     Boolean statusResolved = determineStatusResolved(clientUserDetails, authenticationStatusReason);
 
     return AuthenticationLogFacts.initialize()
-        .withStatus(AuthenticationStatus.FAILURE)
-        .withReason(authenticationStatusReason)
-        .withClientDetails(clientUserDetails)
-        .withStatusResolved(statusResolved)
+        .status(AuthenticationStatus.FAILURE)
+        .reason(authenticationStatusReason)
+        .clientDetails(clientUserDetails)
+        .resolved(statusResolved)
         .toEntity();
   }
 

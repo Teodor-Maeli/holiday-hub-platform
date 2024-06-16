@@ -4,9 +4,18 @@ import com.platform.model.AuthenticationStatus;
 import com.platform.model.AuthenticationStatusReason;
 import com.platform.model.ClientUserDetails;
 import com.platform.persistence.entity.AuthenticationLogEntity;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.Objects;
 
+@Getter
+@Setter
+@Accessors(fluent = true)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthenticationLogFacts {
 
   private ClientUserDetails clientDetails;
@@ -16,10 +25,6 @@ public class AuthenticationLogFacts {
   private AuthenticationStatusReason reason;
 
   private Boolean resolved;
-
-  private AuthenticationLogFacts() {
-
-  }
 
   public static AuthenticationLogFacts initialize() {
     return new AuthenticationLogFacts();
@@ -42,41 +47,5 @@ public class AuthenticationLogFacts {
     authenticationLog.setClient(clientDetails.client());
 
     return authenticationLog;
-  }
-
-  public AuthenticationStatusReason getReason() {
-    return reason;
-  }
-
-  public AuthenticationLogFacts withReason(AuthenticationStatusReason reason) {
-    this.reason = reason;
-    return this;
-  }
-
-  public AuthenticationStatus getStatus() {
-    return status;
-  }
-
-  public AuthenticationLogFacts withStatus(AuthenticationStatus status) {
-    this.status = status;
-    return this;
-  }
-
-  public Boolean getResolved() {
-    return resolved;
-  }
-
-  public AuthenticationLogFacts withStatusResolved(Boolean resolved) {
-    this.resolved = resolved;
-    return this;
-  }
-
-  public ClientUserDetails getClientDetails() {
-    return clientDetails;
-  }
-
-  public AuthenticationLogFacts withClientDetails(ClientUserDetails clientDetails) {
-    this.clientDetails = clientDetails;
-    return this;
   }
 }

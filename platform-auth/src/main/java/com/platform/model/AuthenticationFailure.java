@@ -1,42 +1,22 @@
 package com.platform.model;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+@Getter
+@Setter
+@Accessors(fluent = true)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthenticationFailure {
 
   private String timestamp;
   private String message;
   private String details;
 
-  private AuthenticationFailure() {
-  }
-
   public static AuthenticationFailure create() {
     return new AuthenticationFailure();
-  }
-
-  public AuthenticationFailure withDetails(String details) {
-    this.details = details;
-    return this;
-  }
-
-  public AuthenticationFailure withTimestamp(String timestamp) {
-    this.timestamp = timestamp;
-    return this;
-  }
-
-  public AuthenticationFailure withMessage(String message) {
-    this.message = message;
-    return this;
-  }
-
-  public String getTimestamp() {
-    return timestamp;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public String getDetails() {
-    return details;
   }
 }

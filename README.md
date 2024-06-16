@@ -23,7 +23,7 @@ Module based monolithic architecture.
 
 ```
 * Java Spring as backbone of the backend server
-* PostgresSQL as initial solution for database.
+* PostgresSQL as datasource.
 * Authentication and authorization - semi stateless based authentication with auto locking mechanism upon meeting
   specific criteria during the authentication process.
 * AOP.

@@ -6,11 +6,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import org.hibernate.Hibernate;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Collections;
 import java.util.Set;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "COMPANY")
 public class CompanyEntity extends ClientEntity {
@@ -24,33 +26,4 @@ public class CompanyEntity extends ClientEntity {
   @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
   @JsonManagedReference
   private Set<PersonEntity> representatives;
-
-  public String getCompanyName() {
-    return companyName;
-  }
-
-  public void setCompanyName(String companyName) {
-    this.companyName = companyName;
-  }
-
-  public String getCompanyNumber() {
-    return companyNumber;
-  }
-
-  public void setCompanyNumber(String companyNumber) {
-    this.companyNumber = companyNumber;
-  }
-
-  public Set<PersonEntity> getRepresentatives() {
-    if (Hibernate.isInitialized(representatives)) {
-      return representatives;
-    }
-
-    return Collections.emptySet();
-  }
-
-  public void setRepresentatives(Set<PersonEntity> representatives) {
-    this.representatives = representatives;
-  }
-
 }

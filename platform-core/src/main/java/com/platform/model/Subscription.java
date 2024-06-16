@@ -1,7 +1,11 @@
 package com.platform.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Subscription {
 
@@ -14,44 +18,4 @@ public class Subscription {
   private Boolean activeSubscription;
 
   private SubscriptionType subscriptionType;
-
-  public Long getClientId() {
-    return clientId;
-  }
-
-  public void setClientId(Long clientId) {
-    this.clientId = clientId;
-  }
-
-  public String getStartDate() {
-    return startDate;
-  }
-
-  public void setStartDate(String startDate) {
-    this.startDate = startDate;
-  }
-
-  public String getEndDate() {
-    return endDate;
-  }
-
-  public void setEndDate(String endDate) {
-    this.endDate = endDate;
-  }
-
-  public Boolean getActiveSubscription() {
-    return activeSubscription;
-  }
-
-  public void setActiveSubscription(Boolean activeSubscription) {
-    this.activeSubscription = activeSubscription;
-  }
-
-  public SubscriptionType getSubscriptionType() {
-    return subscriptionType;
-  }
-
-  public void setSubscriptionType(SubscriptionType subscriptionType) {
-    this.subscriptionType = subscriptionType;
-  }
 }

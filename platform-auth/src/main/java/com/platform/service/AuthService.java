@@ -8,11 +8,13 @@ import com.platform.model.EmailMessageDetails;
 import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.entity.CompanyEntity;
+import com.platform.persistence.entity.ConfigurationEntity;
 import com.platform.persistence.entity.PersonEntity;
 import com.platform.util.SecurityUtils;
 import com.platform.util.email.EmailSender;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +37,7 @@ import java.util.function.BiFunction;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
 
   private static final Set<DecoratingOptions> BLOCKING_AUTH_LOGS = Collections.singleton(DecoratingOptions.BLOCKING_AUTHENTICATION_LOGS);
@@ -47,27 +50,14 @@ public class AuthService implements UserDetailsService {
   private String completionAddress;
   @Value("${platform.security.accounts.auto-unlocking.addresses.reply}")
   private String replyAddress;
+
   private final ClientService<PersonEntity> personService;
   private final ClientService<CompanyEntity> companyService;
   private final HttpServletRequest request;
   private final EmailSender emailSender;
   private final Encoder encoder;
-  private final BiFunction<String, ClientService<?>, Optional<ClientEntity>> loadWithBlockingLogsFunc =
+  private BiFunction<String, ClientService<?>, Optional<ClientEntity>> loadWithBlockingLogsFunc =
       (username, service) -> Optional.of(service.loadUserByUsernameDecorated(BLOCKING_AUTH_LOGS, username));
-
-
-  public AuthService(
-      ClientService<PersonEntity> personService,
-      ClientService<CompanyEntity> companyService,
-      HttpServletRequest request,
-      EmailSender emailSender,
-      Encoder encoder) {
-    this.personService = personService;
-    this.companyService = companyService;
-    this.request = request;
-    this.emailSender = emailSender;
-    this.encoder = encoder;
-  }
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -96,25 +86,25 @@ public class AuthService implements UserDetailsService {
           .build();
     }
 
-    return issueAccountUnlockingCode(client);
+    return issueAccountUnlockingCode(client, null);
   }
 
-  private AccountUnlock issueAccountUnlockingCode(ClientEntity client) {
+  private AccountUnlock issueAccountUnlockingCode(ClientEntity client, ConfigurationEntity configuration) {
     String rawUnlockingCode = UUID.randomUUID().toString();
 
-    String partnerUnlockingUrl = UriComponentsBuilder.fromHttpUrl(client.getRedirectUrl())
+    String partnerUnlockingUrl = UriComponentsBuilder.fromHttpUrl(configuration.getRedirectUrl())
         .queryParam(USERNAME_PARAM, client.getUsername())
         .queryParam(UNLOCKING_CODE_PARAM, rawUnlockingCode)
         .toUriString();
 
     EmailMessageDetails emailMessageDetails =
         EmailMessageDetails.create()
-            .withSubject(EMAIL_SUBJECT.formatted(client.getUsername()))
-            .withTo(client.getEmailAddress())
-            .withFrom(replyAddress)
-            .withReplyTo(replyAddress)
-            .withText(buildEmailTextBody(partnerUnlockingUrl, client.getUsername()))
-            .withSentDate(new Date());
+            .subject(EMAIL_SUBJECT.formatted(client.getUsername()))
+            .to(new String[]{client.getEmailAddress()})
+            .from(replyAddress)
+            .replyTo(replyAddress)
+            .text(buildEmailTextBody(partnerUnlockingUrl, client.getUsername()))
+            .sentDate(new Date());
 
     emailSender.send(emailMessageDetails);
 
@@ -123,8 +113,8 @@ public class AuthService implements UserDetailsService {
 
     return new AccountUnlock(
         AccountUnlock.State.INITIATED,
-        client.getRedirectUrl(),
-        client.getReturnUrl(),
+        configuration.getRedirectUrl(),
+        configuration.getReturnUrl(),
         replyAddress
     );
   }
@@ -156,10 +146,10 @@ public class AuthService implements UserDetailsService {
           .build();
     }
 
-    return unlockAccount(client);
+    return unlockAccount(client, null);
   }
 
-  private AccountUnlock unlockAccount(ClientEntity client) {
+  private AccountUnlock unlockAccount(ClientEntity client, ConfigurationEntity configuration) {
     String updatedBy =
         SecurityUtils.getPrincipal()
             .map(ClientUserDetails::getUsername)
@@ -172,8 +162,8 @@ public class AuthService implements UserDetailsService {
 
     return new AccountUnlock(
         AccountUnlock.State.COMPLETED,
-        client.getRedirectUrl(),
-        client.getReturnUrl(),
+        configuration.getRedirectUrl(),
+        configuration.getReturnUrl(),
         replyAddress
     );
   }

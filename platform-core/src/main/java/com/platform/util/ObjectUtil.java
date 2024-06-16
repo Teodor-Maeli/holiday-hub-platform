@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Helper class for collections and arrays.
  */
-public class ObjectsHelper {
+public class ObjectUtil {
 
   public static boolean isEmpty(Object[] args) {
     return args == null || args.length == 0;

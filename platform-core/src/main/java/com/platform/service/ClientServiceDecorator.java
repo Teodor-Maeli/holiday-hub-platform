@@ -3,7 +3,7 @@ package com.platform.service;
 import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
 import com.platform.persistence.entity.SubscriptionEntity;
-import com.platform.util.ObjectsHelper;
+import com.platform.util.ObjectUtil;
 
 import java.util.List;
 import java.util.Set;
@@ -100,7 +100,7 @@ public abstract class ClientServiceDecorator<E extends ClientEntity> implements 
   }
 
   private boolean shouldDecorate(Set<DecoratingOptions> options, E client) {
-    return client != null && (ObjectsHelper.isNotEmpty(options));
+    return client != null && (ObjectUtil.isNotEmpty(options));
   }
 
 }

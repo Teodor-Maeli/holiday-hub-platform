@@ -3,7 +3,7 @@ package com.platform.model;
 import com.platform.exception.PlatformBackendException;
 import com.platform.persistence.entity.AuthenticationLogEntity;
 import com.platform.persistence.entity.ClientEntity;
-import com.platform.util.ObjectsHelper;
+import com.platform.util.ObjectUtil;
 import com.platform.util.SecurityUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,7 +57,7 @@ public record ClientUserDetails(ClientEntity client) implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return ObjectsHelper.isNotEmpty(client.getConsumerAuthorities());
+    return ObjectUtil.isNotEmpty(client.getConsumerAuthorities());
   }
 
   public boolean isAdmin() {

@@ -3,6 +3,7 @@ package com.platform.rest.controller;
 import com.platform.aspect.annotation.IOLogger;
 import com.platform.model.AccountUnlock;
 import com.platform.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,15 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(AuthController.AUTH_V_1)
+@RequiredArgsConstructor
 public class AuthController {
 
   static final String AUTH_V_1 = "/auth/v1";
 
   private final AuthService authService;
-
-  public AuthController(AuthService authService) {
-    this.authService = authService;
-  }
 
   @IOLogger
   @PostMapping("/unlock-account/initiate/{username}")

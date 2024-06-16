@@ -5,6 +5,8 @@ import com.platform.aspect.annotation.LogAuthentication;
 import com.platform.model.AuthenticationFailure;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -14,13 +16,10 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Component
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PlatformAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
   private final ObjectMapper objectMapper;
-
-  protected PlatformAuthenticationFailureHandler(ObjectMapper objectMapper) {
-    this.objectMapper = objectMapper;
-  }
 
   @Override
   @LogAuthentication(async = true)
@@ -31,9 +30,9 @@ public class PlatformAuthenticationFailureHandler extends SimpleUrlAuthenticatio
   ) throws IOException {
 
     AuthenticationFailure failure = AuthenticationFailure.create()
-        .withMessage(exception.getMessage())
-        .withDetails(exception.getClass().getSimpleName())
-        .withTimestamp(LocalDateTime.now().toString());
+        .message(exception.getMessage())
+        .details(exception.getClass().getSimpleName())
+        .timestamp(LocalDateTime.now().toString());
 
     response.getOutputStream().println(objectMapper.writeValueAsString(failure));
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);

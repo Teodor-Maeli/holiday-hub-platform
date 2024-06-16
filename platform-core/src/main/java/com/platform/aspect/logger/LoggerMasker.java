@@ -3,6 +3,8 @@ package com.platform.aspect.logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoggerMasker {
 
   private static final String MASK = "*******";
@@ -30,9 +33,6 @@ public class LoggerMasker {
     MASKING_PATTERNS.add(Pattern.compile("(?<=middleName\" : \")(.*?)(?=\")"));
     MASKING_PATTERNS.add(Pattern.compile("(?<=unlockingCode\" : \")(.*?)(?=\")"));
 
-  }
-
-  private LoggerMasker() {
   }
 
   public static String mask(Object o) {

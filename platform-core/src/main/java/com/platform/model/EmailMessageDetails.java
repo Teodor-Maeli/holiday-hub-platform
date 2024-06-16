@@ -1,7 +1,17 @@
 package com.platform.model;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.util.Date;
 
+@Getter
+@Setter
+@Accessors(fluent = true)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EmailMessageDetails {
 
   private String from;
@@ -13,103 +23,7 @@ public class EmailMessageDetails {
   private String subject;
   private String text;
 
-  private EmailMessageDetails() {
-  }
-
   public static EmailMessageDetails create() {
     return new EmailMessageDetails();
-  }
-
-  public EmailMessageDetails withFrom(String from) {
-    this.from = from;
-    return this;
-  }
-
-  public EmailMessageDetails withReplyTo(String replyTo) {
-    this.replyTo = replyTo;
-    return this;
-  }
-
-  public EmailMessageDetails withTo(String to) {
-    this.to = new String[]{to};
-    return this;
-  }
-
-  public EmailMessageDetails withTo(String... to) {
-    this.to = to;
-    return this;
-  }
-
-  public EmailMessageDetails withCc(String cc) {
-    this.cc = new String[]{cc};
-    return this;
-  }
-
-  public EmailMessageDetails withCc(String... cc) {
-    this.cc = cc;
-    return this;
-  }
-
-  public EmailMessageDetails withBcc(String bcc) {
-    this.bcc = new String[]{bcc};
-    return this;
-  }
-
-  public EmailMessageDetails withBcc(String... bcc) {
-    this.bcc = bcc;
-    return this;
-  }
-
-  public EmailMessageDetails withSentDate(Date sentDate) {
-    this.sentDate = sentDate;
-    return this;
-  }
-
-  public EmailMessageDetails withSubject(String subject) {
-    this.subject = subject;
-    return this;
-  }
-
-  public EmailMessageDetails withText(String text) {
-    this.text = text;
-    return this;
-  }
-
-  public String getFrom() {
-    return from;
-  }
-
-  public String getReplyTo() {
-    return replyTo;
-  }
-
-  public String[] getTo() {
-    return to == null
-           ? new String[]{}
-           : to;
-  }
-
-  public String[] getCc() {
-    return cc == null
-           ? new String[]{}
-           : cc;
-  }
-
-  public String[] getBcc() {
-    return bcc == null
-           ? new String[]{}
-           : bcc;
-  }
-
-  public Date getSentDate() {
-    return sentDate;
-  }
-
-  public String getSubject() {
-    return subject;
-  }
-
-  public String getText() {
-    return text;
   }
 }

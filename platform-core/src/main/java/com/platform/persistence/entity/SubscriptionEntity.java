@@ -11,9 +11,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "SUBSCRIPTION")
 public class SubscriptionEntity {
@@ -39,52 +43,4 @@ public class SubscriptionEntity {
 
   @Column(name = "SUBSCRIPTION_TYPE")
   private SubscriptionType subscriptionType;
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public ClientEntity getClient() {
-    return client;
-  }
-
-  public void setClient(ClientEntity client) {
-    this.client = client;
-  }
-
-  public LocalDateTime getStartDate() {
-    return startDate;
-  }
-
-  public void setStartDate(LocalDateTime startDate) {
-    this.startDate = startDate;
-  }
-
-  public LocalDateTime getEndDate() {
-    return endDate;
-  }
-
-  public void setEndDate(LocalDateTime endDate) {
-    this.endDate = endDate;
-  }
-
-  public Boolean getActive() {
-    return active;
-  }
-
-  public void setActive(Boolean active) {
-    this.active = active;
-  }
-
-  public SubscriptionType getSubscriptionType() {
-    return subscriptionType;
-  }
-
-  public void setSubscriptionType(SubscriptionType subscriptionType) {
-    this.subscriptionType = subscriptionType;
-  }
 }

@@ -9,6 +9,7 @@ def mapstructVersion = project.property('mapstruct.core-version')
 def projectVersionPrefix = '-SNAPSHOT'
 def auth0JavaJwtVersion = project.property('auth0.java-jwt-version')
 def springStarterMailVersion = project.property('spring-starter-mail-version')
+def lombokVersion = project.property('lombok-version')
 
 group = 'com.platform'
 version = projectVersion + projectVersionPrefix
@@ -30,6 +31,10 @@ allprojects {
     apply plugin: 'io.spring.dependency-management'
 
     dependencies {
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
         implementation "org.mapstruct:mapstruct:${mapstructVersion}"
@@ -37,6 +42,8 @@ allprojects {
 
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+        testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+        testAnnotationProcessor"org.projectlombok:lombok:${lombokVersion}"
 
         runtimeOnly 'org.postgresql:postgresql'
     }

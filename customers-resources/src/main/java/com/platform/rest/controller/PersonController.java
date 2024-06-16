@@ -3,10 +3,11 @@ package com.platform.rest.controller;
 import com.platform.aspect.annotation.IOLogger;
 import com.platform.mapper.PersonMapper;
 import com.platform.model.Person;
-import com.platform.model.PersonRegistration;
+import com.platform.model.registration.PersonRegistration;
 import com.platform.persistence.entity.PersonEntity;
 import com.platform.service.ClientService;
 import com.platform.service.DecoratingOptions;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,17 +29,13 @@ import java.util.Set;
     path = PersonController.CUSTOMERS_AUTH_V_1_PERSON,
     consumes = MediaType.APPLICATION_JSON_VALUE,
     produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class PersonController {
 
   static final String CUSTOMERS_AUTH_V_1_PERSON = "/customers/v1/person";
 
   private final PersonMapper mapper;
   private final ClientService<PersonEntity> service;
-
-  public PersonController(PersonMapper mapper, ClientService<PersonEntity> service) {
-    this.mapper = mapper;
-    this.service = service;
-  }
 
   @IOLogger
   @PostMapping(path = "/register")

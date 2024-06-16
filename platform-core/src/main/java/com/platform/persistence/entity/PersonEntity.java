@@ -8,9 +8,13 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "PERSON")
 public class PersonEntity extends ClientEntity {
@@ -32,43 +36,7 @@ public class PersonEntity extends ClientEntity {
   @JsonBackReference
   private CompanyEntity company;
 
-  public String getGivenName() {
-    return givenName;
-  }
+  @Column(name = "COMPANY_CONFIGURATION_ID")
+  private Long companyConfigurationId;
 
-  public void setGivenName(String givenName) {
-    this.givenName = givenName;
-  }
-
-  public String getFamilyName() {
-    return familyName;
-  }
-
-  public void setFamilyName(String familyName) {
-    this.familyName = familyName;
-  }
-
-  public String getMiddleName() {
-    return middleName;
-  }
-
-  public void setMiddleName(String middleName) {
-    this.middleName = middleName;
-  }
-
-  public LocalDate getBirthDate() {
-    return birthDate;
-  }
-
-  public void setBirthDate(LocalDate birthDate) {
-    this.birthDate = birthDate;
-  }
-
-  public CompanyEntity getCompany() {
-    return company;
-  }
-
-  public void setCompany(CompanyEntity company) {
-    this.company = company;
-  }
 }

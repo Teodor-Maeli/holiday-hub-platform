@@ -3,10 +3,11 @@ package com.platform.rest.controller;
 import com.platform.aspect.annotation.IOLogger;
 import com.platform.mapper.CompanyRepresentativeMapper;
 import com.platform.model.Company;
-import com.platform.model.CompanyRegistration;
+import com.platform.model.registration.CompanyRegistration;
 import com.platform.persistence.entity.CompanyEntity;
 import com.platform.service.ClientService;
 import com.platform.service.DecoratingOptions;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +30,13 @@ import java.util.Set;
     consumes = MediaType.APPLICATION_JSON_VALUE,
     produces = MediaType.APPLICATION_JSON_VALUE
 )
+@RequiredArgsConstructor
 public class CompanyController {
 
   static final String CUSTOMERS_AUTH_V_1_COMPANY = "/customers/v1/company";
 
   private final CompanyRepresentativeMapper mapper;
   private final ClientService<CompanyEntity> service;
-
-  public CompanyController(CompanyRepresentativeMapper mapper, ClientService<CompanyEntity> service) {
-    this.mapper = mapper;
-    this.service = service;
-  }
 
   @IOLogger
   @PostMapping(path = "/register")

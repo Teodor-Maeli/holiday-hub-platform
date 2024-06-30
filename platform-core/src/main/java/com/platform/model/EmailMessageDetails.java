@@ -23,7 +23,7 @@ public class EmailMessageDetails {
   private String subject;
   private String text;
 
-  public static EmailMessageDetails create() {
+  public static EmailMessageDetails of() {
     return new EmailMessageDetails();
   }
 }

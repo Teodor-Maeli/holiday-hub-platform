@@ -2,7 +2,7 @@ package com.platform.config;
 
 import com.platform.service.AuthService;
 import jakarta.servlet.DispatcherType;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -27,29 +27,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
+@RequiredArgsConstructor
 public class AuthConfig {
 
-  @Value("${platform.security.allowed-paths}")
-  private String[] allowedPaths;
-
-  @Value("${platform.security.cors-config.allowedHeaders}")
-  private String allowedHeaders;
-
-  @Value("${platform.security.cors-config.allowedOrigins}")
-  private String allowedOrigins;
-
-  @Value("${platform.security.cors-config.allowedMethods}")
-  private String allowedMethods;
-
-  @Value("${platform.security.cors-config.path-mappings}")
-  private String pathMapping;
+  private final PlatformSecurityProperties properties;
 
   @Bean
   @DependsOn({"authService", "passwordEncoder"})
   public AuthenticationManager authenticationManager(HttpSecurity http, AuthService authService, PasswordEncoder encoder) throws Exception {
-
-    return http
-        .getSharedObject(AuthenticationManagerBuilder.class)
+    return http.getSharedObject(AuthenticationManagerBuilder.class)
         .authenticationProvider(initDAOAuthProvider(authService, encoder))
         .build();
   }
@@ -60,18 +46,16 @@ public class AuthConfig {
       "platformAuthenticationFailureHandler",
       "platformAuthenticationSuccessHandler"
   })
-  public SecurityFilterChain configuration(
-      HttpSecurity http,
-      AuthenticationManager authenticationManager,
-      PlatformAuthenticationFailureHandler failureHandler,
-      PlatformAuthenticationSuccessHandler successHandler
-  ) throws Exception {
+  public SecurityFilterChain configuration(HttpSecurity http,
+                                           AuthenticationManager authenticationManager,
+                                           PlatformAuthenticationFailureHandler failureHandler,
+                                           PlatformAuthenticationSuccessHandler successHandler) throws Exception {
 
     http.csrf().disable();
     http.cors();
     http.authorizeHttpRequests(matchers -> matchers
         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
-        .requestMatchers(allowedPaths).permitAll()
+        .requestMatchers(properties.getAllowedPaths()).permitAll()
         .anyRequest().denyAll());
 
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -87,10 +71,10 @@ public class AuthConfig {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry
-            .addMapping(pathMapping)
-            .allowedOrigins(allowedOrigins)
-            .allowedHeaders(allowedHeaders)
-            .allowedMethods(allowedMethods);
+            .addMapping(properties.getCorsPathMappings())
+            .allowedOrigins(properties.getCorsAllowedOrigins())
+            .allowedHeaders(properties.getCorsAllowedHeaders())
+            .allowedMethods(properties.getCorsAllowedMethods());
       }
     };
   }

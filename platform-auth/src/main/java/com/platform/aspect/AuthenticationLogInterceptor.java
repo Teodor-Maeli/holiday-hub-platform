@@ -4,6 +4,7 @@ import com.platform.AuthenticationLogFacts;
 import com.platform.aspect.annotation.LogAuthentication;
 import com.platform.config.PlatformAuthenticationFailureHandler;
 import com.platform.config.PlatformAuthenticationSuccessHandler;
+import com.platform.config.PlatformSecurityProperties;
 import com.platform.model.AuthenticationStatus;
 import com.platform.model.AuthenticationStatusReason;
 import com.platform.model.ClientUserDetails;
@@ -19,16 +20,18 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import static com.platform.model.AuthenticationStatusReason.ACCOUNT_DISABLED;
+import static com.platform.model.AuthenticationStatusReason.ACCOUNT_HACKED;
+import static com.platform.model.AuthenticationStatusReason.ACCOUNT_LOCKED;
 
 /**
  * Logs client authentication attempts into the database.
@@ -46,21 +49,10 @@ public class AuthenticationLogInterceptor {
   private static final String ACCOUNT_LOCKED_EXCEPTION = "AccountLockedException";
   private static final String LOCKED_EXCEPTION = "LockedException";
 
-  private static final List<AuthenticationStatusReason> DISALLOWED_REASONS;
+  private static final List<AuthenticationStatusReason> DISALLOWED_REASONS = List.of(
+      ACCOUNT_DISABLED, ACCOUNT_HACKED, ACCOUNT_LOCKED);
 
-  static {
-    DISALLOWED_REASONS = new ArrayList<>();
-    DISALLOWED_REASONS.add(AuthenticationStatusReason.ACCOUNT_DISABLED);
-    DISALLOWED_REASONS.add(AuthenticationStatusReason.ACCOUNT_HACKED);
-    DISALLOWED_REASONS.add(AuthenticationStatusReason.ACCOUNT_LOCKED);
-  }
-
-  @Value("${platform.security.accounts.auto-locking.bad-credentials.max-consecutive}")
-  private Integer badCredentialsMaxAttempts;
-
-  @Value("${platform.security.accounts.auto-locking.bad-credentials.expiry-time}")
-  private Integer badCredentialsExpiryTime;
-
+  private final PlatformSecurityProperties properties;
   private final AuthenticationLogService service;
   private final HttpServletRequest request;
 
@@ -158,7 +150,7 @@ public class AuthenticationLogInterceptor {
     }
 
     List<AuthenticationLogEntity> badCredentialsLogs = getNonExpiredBadCredentials(logs);
-    return badCredentialsLogs.size() <= badCredentialsMaxAttempts;
+    return badCredentialsLogs.size() <= properties.getBadCredentialsExpiryTime();
   }
 
   private List<AuthenticationLogEntity> getNonExpiredBadCredentials(List<AuthenticationLogEntity> logs) {
@@ -169,7 +161,7 @@ public class AuthenticationLogInterceptor {
 
   private boolean isNonExpiredBadCredentialLog(AuthenticationLogEntity log) {
     LocalDateTime now = LocalDateTime.now();
-    LocalDateTime expirationTime = now.minusMinutes(badCredentialsExpiryTime);
+    LocalDateTime expirationTime = now.minusMinutes(properties.getBadCredentialsExpiryTime());
 
     return log.getStatusReason().equals(AuthenticationStatusReason.BAD_CREDENTIALS)
         && log.getCreatedDate().isBefore(now) && log.getCreatedDate().isAfter(expirationTime);
@@ -178,8 +170,8 @@ public class AuthenticationLogInterceptor {
   private AuthenticationStatusReason determineReason(Exception exception) {
     return switch (exception.getClass().getSimpleName()) {
       case BAD_CREDENTIALS_EXCEPTION -> AuthenticationStatusReason.BAD_CREDENTIALS;
-      case DISABLED_ACCOUNT_EXCEPTION -> AuthenticationStatusReason.ACCOUNT_DISABLED;
-      case ACCOUNT_LOCKED_EXCEPTION, LOCKED_EXCEPTION -> AuthenticationStatusReason.ACCOUNT_LOCKED;
+      case DISABLED_ACCOUNT_EXCEPTION -> ACCOUNT_DISABLED;
+      case ACCOUNT_LOCKED_EXCEPTION, LOCKED_EXCEPTION -> ACCOUNT_LOCKED;
       default -> AuthenticationStatusReason.UNKNOWN;
     };
   }

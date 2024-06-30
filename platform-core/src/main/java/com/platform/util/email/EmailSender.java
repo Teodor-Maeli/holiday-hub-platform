@@ -23,15 +23,17 @@ public class EmailSender {
 
     try {
       MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(emailSender.createMimeMessage());
-      enrichMessage(details, mimeMessageHelper);
+      populateMessage(details, mimeMessageHelper);
 
       emailSender.send(mimeMessageHelper.getMimeMessage());
     } catch (MailException | MessagingException e) {
-      throw new PlatformBackendException().setMessage("General error while sending message").setHttpStatus(INTERNAL_SERVER_ERROR).setCause(e);
+      throw new PlatformBackendException()
+          .setMessage("General error while sending message")
+          .setHttpStatus(INTERNAL_SERVER_ERROR).setCause(e);
     }
   }
 
-  private void enrichMessage(EmailMessageDetails details, MimeMessageHelper mimeMessageHelper) throws MessagingException {
+  private void populateMessage(EmailMessageDetails details, MimeMessageHelper mimeMessageHelper) throws MessagingException {
 
     mimeMessageHelper.setSubject(details.getSubject());
     mimeMessageHelper.setFrom(details.getFrom());

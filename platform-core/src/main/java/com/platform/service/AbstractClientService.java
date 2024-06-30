@@ -120,7 +120,9 @@ abstract class AbstractClientService
         return;
       }
 
-      throw new PlatformBackendException().setMessage("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username)).setHttpStatus(BAD_REQUEST);
+      throw new PlatformBackendException()
+          .setMessage("Failed to UPDATE password, USERNAME: %s non-existent!".formatted(username))
+          .setHttpStatus(BAD_REQUEST);
 
     } catch (RuntimeException e) {
 

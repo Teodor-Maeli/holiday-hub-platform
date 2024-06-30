@@ -1,4 +1,4 @@
-package com.platform.aspect.logger;
+package com.platform.aspect.audit;
 
 import com.platform.exception.PlatformBackendException;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +27,9 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @Slf4j
 @Aspect
 @Component
-public class IOLoggerInterceptor {
+public class AuditedAspect {
 
-  @Pointcut("@annotation(com.platform.aspect.annotation.IOLogger) && execution(* *(..))")
+  @Pointcut("@annotation(com.platform.aspect.audit.Audited) && execution(* *(..))")
   public void pointCut() {
   }
 

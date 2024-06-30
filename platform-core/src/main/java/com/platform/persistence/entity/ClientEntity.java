@@ -14,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,6 +29,8 @@ import java.util.Set;
  * Base entity class.
  * Since 1.0
  */
+@Getter
+@Setter
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
@@ -68,65 +72,12 @@ public abstract class ClientEntity {
   @Column(name = "ACCOUNT_LOCKED")
   private Boolean accountLocked;
 
-  public String getPassword() {
-    return this.password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-
-  public String getUsername() {
-    return this.username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public LocalDateTime getRegisteredDate() {
-    return registeredDate;
-  }
-
-  public void setRegisteredDate(LocalDateTime registeredDate) {
-    this.registeredDate = registeredDate;
-  }
-
   public Set<ConsumerAuthority> getConsumerAuthorities() {
     if (Hibernate.isInitialized(consumerAuthorities)) {
       return consumerAuthorities;
     }
 
     return Collections.emptySet();
-  }
-
-  public void setConsumerAuthorities(Set<ConsumerAuthority> consumerAuthorities) {
-    this.consumerAuthorities = consumerAuthorities;
-  }
-
-  public String getEmailAddress() {
-    return emailAddress;
-  }
-
-  public void setEmailAddress(String emailAddress) {
-    this.emailAddress = emailAddress;
-  }
-
-  public String getPhoneNumber() {
-    return phoneNumber;
-  }
-
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
   }
 
   public List<AuthenticationLogEntity> getAuthenticationLogs() {
@@ -136,29 +87,12 @@ public abstract class ClientEntity {
 
     return Collections.emptyList();
   }
-
-  public void setAuthenticationLogs(List<AuthenticationLogEntity> authenticationLogs) {
-    this.authenticationLogs = authenticationLogs;
-  }
-
   public List<SubscriptionEntity> getSubscriptions() {
     if (Hibernate.isInitialized(subscriptions)) {
       return subscriptions;
     }
 
     return Collections.emptyList();
-  }
-
-  public void setSubscriptions(List<SubscriptionEntity> subscriptions) {
-    this.subscriptions = subscriptions;
-  }
-
-  public Boolean getAccountLocked() {
-    return accountLocked;
-  }
-
-  public void setAccountLocked(Boolean accountLocked) {
-    this.accountLocked = accountLocked;
   }
 
 }

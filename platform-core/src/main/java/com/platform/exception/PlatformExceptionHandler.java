@@ -18,7 +18,6 @@ public class PlatformExceptionHandler {
   private static final String STATUS = "status";
   private static final String DETAILS = "details";
 
-
   @ExceptionHandler(PlatformBackendException.class)
   private ResponseEntity<Map<String, Object>> handleException(PlatformBackendException be) {
     Map<String, Object> erroneousResponse = new HashMap<>();

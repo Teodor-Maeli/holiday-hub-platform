@@ -1,4 +1,4 @@
-package com.platform.aspect.annotation;
+package com.platform.aspect.audit;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
  * Since 1.0.
  */
 
-@Target({ElementType.METHOD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IOLogger {
+public @interface Audited {
 
 }

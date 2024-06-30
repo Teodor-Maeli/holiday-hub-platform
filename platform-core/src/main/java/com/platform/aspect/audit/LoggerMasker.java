@@ -1,4 +1,4 @@
-package com.platform.aspect.logger;
+package com.platform.aspect.audit;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

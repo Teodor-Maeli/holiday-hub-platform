@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 
 @Getter
 @Setter
-@Accessors(fluent = true)
+@Accessors(chain = true)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthenticationFailure {
 

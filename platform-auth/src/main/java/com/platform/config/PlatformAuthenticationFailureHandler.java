@@ -30,12 +30,12 @@ public class PlatformAuthenticationFailureHandler extends SimpleUrlAuthenticatio
   ) throws IOException {
 
     AuthenticationFailure failure = AuthenticationFailure.create()
-        .message(exception.getMessage())
-        .details(exception.getClass().getSimpleName())
-        .timestamp(LocalDateTime.now().toString());
+        .setMessage(exception.getMessage())
+        .setDetails(exception.getClass().getSimpleName())
+        .setTimestamp(LocalDateTime.now().toString());
 
-    response.getOutputStream().println(objectMapper.writeValueAsString(failure));
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.getOutputStream().println(objectMapper.writeValueAsString(failure));
   }
 
 }

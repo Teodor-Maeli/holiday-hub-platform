@@ -9,11 +9,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
+//TODO create configuration.
 public class ConfigurationEntity {
 
   @OneToOne(fetch = FetchType.LAZY)
   @MapsId
   private CompanyEntity company;
+
   @Column(name = "REDIRECT_URL")
   private String redirectUrl;
 

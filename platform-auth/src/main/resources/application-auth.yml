@@ -1,23 +1,15 @@
-platform:
-  security:
-    allowed-paths: >
-      /customers/v1/person/register,
-      /auth/v1/unlock-account/**
-    accounts:
-      auto-unlocking:
-        addresses:
-          complete: "http://localhost:3000/accounts/unlock?code=%s"
-          reply: "admin@platform.com"
-      auto-locking:
-        bad-credentials:
-          max-consecutive: 3
-          expiry-time: 300
-    cors-config:
-      allowedHeaders: "*"
-      allowedOrigins: "*"
-      allowedMethods: "*"
-      path-mappings: "/**"
-    login:
-      successUrl: "http://localhost:3000"
-      failureUrl: "http://localhost:3000"
-    jwt-issuer: "platform"
+platform-security:
+  allowed-paths: >
+    /customers/v1/person/register,
+    /auth/v1/unlock-account/**
+  unlock-complete-url: "http://localhost:3000/accounts/unlock?code=%s"
+  unlock-reply-email: "admin@platform.com"
+  max-consecutive-bad-credentials: 3
+  bad-credentials-expiry-time: 300
+  cors-allowed-headers: "*"
+  cors-allowed-origins: "*"
+  cors-allowed-methods: "*"
+  cors-path-mappings: "/**"
+  login-success-url: "http://localhost:3000"
+  login-failure-url: "http://localhost:3000"
+  jwt-issuer: "platform"

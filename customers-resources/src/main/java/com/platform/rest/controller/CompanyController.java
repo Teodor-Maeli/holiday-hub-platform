@@ -1,6 +1,6 @@
 package com.platform.rest.controller;
 
-import com.platform.aspect.annotation.IOLogger;
+import com.platform.aspect.audit.Audited;
 import com.platform.mapper.CompanyRepresentativeMapper;
 import com.platform.model.Company;
 import com.platform.model.registration.CompanyRegistration;
@@ -10,7 +10,6 @@ import com.platform.service.DecoratingOptions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,52 +19,42 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Set;
 
+@Audited
 @RestController
-@RequestMapping(
-    path = CompanyController.CUSTOMERS_AUTH_V_1_COMPANY,
-    consumes = MediaType.APPLICATION_JSON_VALUE,
-    produces = MediaType.APPLICATION_JSON_VALUE
-)
+@RequestMapping(path = CompanyController.PATH_CUSTOMERS_V1_COMPANY,
+    consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class CompanyController {
 
-  static final String CUSTOMERS_AUTH_V_1_COMPANY = "/customers/v1/company";
+  static final String PATH_CUSTOMERS_V1_COMPANY = "/customers/v1/company";
 
   private final CompanyRepresentativeMapper mapper;
   private final ClientService<CompanyEntity> service;
 
-  @IOLogger
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(path = "/register")
-  public ResponseEntity<Company> register(@RequestBody CompanyRegistration request) {
-    CompanyEntity entity = service.save(mapper.toEntity(request));
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(mapper.toResponse(entity));
+  public Company register(@RequestBody CompanyRegistration request) {
+    return mapper.toResponse(service.save(mapper.toEntity(request)));
   }
 
-  @IOLogger
-  @GetMapping(path = "/get/{clientUsername}")
+  @ResponseStatus(HttpStatus.OK)
+  @GetMapping(path = "/{clientUsername}")
   @PreAuthorize("#clientUsername == authentication.principal")
-  public ResponseEntity<Company> getByUsername(@RequestParam("include") Set<DecoratingOptions> options,
-                                               @PathVariable("clientUsername") String clientUsername) {
-    CompanyEntity entity = service.loadUserByUsernameDecorated(options, clientUsername);
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(mapper.toResponse(entity));
+  public Company getByUsername(@RequestParam("include") Set<DecoratingOptions> options,
+                               @PathVariable("clientUsername") String clientUsername) {
+    return mapper.toResponse(service.loadUserByUsernameDecorated(options, clientUsername));
   }
 
-  @IOLogger
-  @PatchMapping(path = "/update/password")
+  @ResponseStatus(HttpStatus.OK)
+  @PatchMapping(path = "/credentials")
   @PreAuthorize("#clientUsername == authentication.principal")
-  public ResponseEntity<Void> updatePassword(@RequestHeader String password,
-                                             @RequestHeader String clientUsername) {
+  public void updatePassword(@RequestHeader String password,
+                             @RequestHeader String clientUsername) {
     service.changePassword(password, clientUsername);
-    return ResponseEntity
-        .noContent()
-        .build();
   }
 }

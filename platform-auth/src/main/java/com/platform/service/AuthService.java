@@ -1,5 +1,6 @@
 package com.platform.service;
 
+import com.platform.config.PlatformSecurityProperties;
 import com.platform.exception.PlatformBackendException;
 import com.platform.model.AccountUnlock;
 import com.platform.model.AuthenticationStatusReason;
@@ -15,7 +16,6 @@ import com.platform.util.email.EmailSender;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -46,17 +46,14 @@ public class AuthService implements UserDetailsService {
   private static final String USERNAME_PARAM = "username";
   private static final String UNLOCKING_CODE_PARAM = "unlockingCode";
 
-  @Value("${platform.security.accounts.auto-unlocking.addresses.complete}")
-  private String completionAddress;
-  @Value("${platform.security.accounts.auto-unlocking.addresses.reply}")
-  private String replyAddress;
 
+  private final PlatformSecurityProperties properties;
   private final ClientService<PersonEntity> personService;
   private final ClientService<CompanyEntity> companyService;
   private final HttpServletRequest request;
   private final EmailSender emailSender;
   private final Encoder encoder;
-  private BiFunction<String, ClientService<?>, Optional<ClientEntity>> loadWithBlockingLogsFunc =
+  private final BiFunction<String, ClientService<?>, Optional<ClientEntity>> loadUserWithBlockingAuthFailures =
       (username, service) -> Optional.of(service.loadUserByUsernameDecorated(BLOCKING_AUTH_LOGS, username));
 
   @Override
@@ -95,11 +92,11 @@ public class AuthService implements UserDetailsService {
         .toUriString();
 
     EmailMessageDetails emailMessageDetails =
-        EmailMessageDetails.create()
+        EmailMessageDetails.of()
             .setSubject(EMAIL_SUBJECT.formatted(client.getUsername()))
             .setTo(new String[]{client.getEmailAddress()})
-            .setFrom(replyAddress)
-            .setReplyTo(replyAddress)
+            .setFrom(properties.getUnlockReplyEmail())
+            .setReplyTo(properties.getUnlockReplyEmail())
             .setText(buildEmailTextBody(partnerUnlockingUrl, client.getUsername()))
             .setSentDate(new Date());
 
@@ -112,7 +109,7 @@ public class AuthService implements UserDetailsService {
         AccountUnlock.State.INITIATED,
         configuration.getRedirectUrl(),
         configuration.getReturnUrl(),
-        replyAddress
+        properties.getUnlockReplyEmail()
     );
   }
 
@@ -161,7 +158,7 @@ public class AuthService implements UserDetailsService {
         AccountUnlock.State.COMPLETED,
         configuration.getRedirectUrl(),
         configuration.getReturnUrl(),
-        replyAddress
+        properties.getUnlockReplyEmail()
     );
   }
 
@@ -205,8 +202,8 @@ public class AuthService implements UserDetailsService {
   }
 
   private ClientEntity loadUserByUsernameInternal(String username) {
-    return loadWithBlockingLogsFunc.apply(username, personService)
-        .orElseGet(() -> loadWithBlockingLogsFunc.apply(username, companyService)
+    return loadUserWithBlockingAuthFailures.apply(username, personService)
+        .orElseGet(() -> loadUserWithBlockingAuthFailures.apply(username, companyService)
             .orElseThrow(() -> new PlatformBackendException()
                 .setMessage("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username))
                 .setHttpStatus(BAD_REQUEST)));
@@ -227,7 +224,7 @@ public class AuthService implements UserDetailsService {
       text = new String(is.readAllBytes(), StandardCharsets.UTF_8);
       text = text.replace("{{username}}", userName);
       text = text.replace("{{followUrl}}", followUrl);
-      text = text.replace("{{replyAddress}}", replyAddress);
+      text = text.replace("{{replyAddress}}", properties.getUnlockReplyEmail());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

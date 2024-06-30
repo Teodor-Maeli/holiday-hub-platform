@@ -19,11 +19,8 @@ import java.util.Objects;
 public class AuthenticationLogFacts {
 
   private ClientUserDetails clientDetails;
-
   private AuthenticationStatus status;
-
   private AuthenticationStatusReason reason;
-
   private Boolean resolved;
 
   public static AuthenticationLogFacts initialize() {

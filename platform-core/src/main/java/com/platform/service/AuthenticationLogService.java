@@ -14,8 +14,8 @@ import java.util.List;
 public class AuthenticationLogService {
 
   private final AuthenticationLogRepository repository;
-  @Value("${platform.security.accounts.auto-locking.bad-credentials.expiry-time}")
-  private Integer badCredentialsExpiryTime;
+  @Value("${platform-security.bad-credentials-expiry-time}")
+  private Long badCredentialsExpiryTime;
 
   public List<AuthenticationLogEntity> getClientAuthenticationLogs(Long id) {
     return repository.findByClientId(id);

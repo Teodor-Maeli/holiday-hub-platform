@@ -1,7 +1,7 @@
 package com.platform.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.platform.aspect.annotation.LogAuthentication;
+import com.platform.aspect.LogAuthentication;
 import com.platform.model.ClientUserDetails;
 import com.platform.model.JWTComposite;
 import com.platform.util.JWTGenerator;

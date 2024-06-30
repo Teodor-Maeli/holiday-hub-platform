@@ -1,7 +1,6 @@
 package com.platform.aspect;
 
 import com.platform.AuthenticationLogFacts;
-import com.platform.aspect.annotation.LogAuthentication;
 import com.platform.config.PlatformAuthenticationFailureHandler;
 import com.platform.config.PlatformAuthenticationSuccessHandler;
 import com.platform.config.PlatformSecurityProperties;
@@ -57,7 +56,7 @@ public class AuthenticationLogInterceptor {
   private final HttpServletRequest request;
 
 
-  @Pointcut("@annotation(com.platform.aspect.annotation.LogAuthentication) && execution(* *(..))")
+  @Pointcut("@annotation(com.platform.aspect.LogAuthentication) && execution(* *(..))")
   public void pointCut() {
   }
 

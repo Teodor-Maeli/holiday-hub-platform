@@ -29,7 +29,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @Component
 public class AuditedAspect {
 
-  @Pointcut("@annotation(com.platform.aspect.audit.Audited) && execution(* *(..))")
+  @Pointcut("@within(com.platform.aspect.audit.Audited)")
   public void pointCut() {
   }
 

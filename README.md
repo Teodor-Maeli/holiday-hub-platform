@@ -40,9 +40,7 @@ terminal in the same directory.
 
 ## Changelog:
 
-````agsl
-Whats next ? Yet 1.9.0 to come, and we finally have to do some testing and validation :)
-````
+* 1.9.0 - major refactorings
 
 * 1.8.0 - Improvements in core and auth modules, mainly focused on unlocking templates.
 

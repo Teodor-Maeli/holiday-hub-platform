@@ -10,15 +10,12 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 
-import static com.platform.model.ConsumerAuthority.ADMIN;
-
 public record ClientUserDetails(CustomerEntity client) implements UserDetails {
 
   public ClientUserDetails {
     if (client == null) {
       throw new PlatformBackendException().setMessage("Authentication was aborted!").setDetails("Client object cannot be null!");
     }
-
   }
 
   @Override
@@ -58,15 +55,13 @@ public record ClientUserDetails(CustomerEntity client) implements UserDetails {
   }
 
   public boolean isAdmin() {
-    return client.getConsumerAuthorities().contains(ADMIN);
+    return client.getConsumerAuthorities().contains(ConsumerAuthority.ADMIN);
   }
 
   private boolean isAutoLocked(AuthenticationLogEntity log) {
-    return (
-        log.getAuthenticationStatus() == AuthenticationStatus.LOCKED
+    return (log.getAuthenticationStatus() == AuthenticationStatus.LOCKED
             || log.getAuthenticationStatus() == AuthenticationStatus.BLACKLISTED
-            || log.getStatusReason().equals(AuthenticationStatusReason.BAD_CREDENTIALS)
-    ) && Boolean.FALSE.equals(log.getStatusResolved());
+            || log.getStatusReason().equals(AuthenticationStatusReason.BAD_CREDENTIALS)) && Boolean.FALSE.equals(log.getStatusResolved());
   }
 
 }

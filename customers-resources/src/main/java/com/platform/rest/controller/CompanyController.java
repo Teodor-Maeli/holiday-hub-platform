@@ -27,10 +27,8 @@ import java.util.Set;
 @Audited
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = CompanyController.PATH_CUSTOMERS_V1_COMPANY, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/customers/v1/company", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class CompanyController {
-
-  static final String PATH_CUSTOMERS_V1_COMPANY = "/customers/v1/company";
 
   private final CompanyRepresentativeMapper mapper;
   private final ClientService<CompanyEntity> service;

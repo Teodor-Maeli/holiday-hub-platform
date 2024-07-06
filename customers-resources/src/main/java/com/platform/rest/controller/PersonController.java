@@ -27,10 +27,8 @@ import java.util.Set;
 @Audited
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = PersonController.PATH_CUSTOMERS_V1_PERSONS, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/customers/v1/person", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class PersonController {
-
-  static final String PATH_CUSTOMERS_V1_PERSONS = "/customers/v1/person";
 
   private final PersonMapper mapper;
   private final ClientService<PersonEntity> service;

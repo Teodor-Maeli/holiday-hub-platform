@@ -195,6 +195,7 @@ public class AuthService implements UserDetailsService {
 
   private boolean isAccountLocked(CustomerEntity client) {
     ClientUserDetails clientUserDetails = new ClientUserDetails(client);
+
     return Boolean.TRUE.equals(client.getAccountLocked())
         || !clientUserDetails.isAccountNonLocked()
         || !clientUserDetails.isEnabled();
@@ -210,6 +211,7 @@ public class AuthService implements UserDetailsService {
 
   private ClientUserDetails cacheIntoRequestAsClientUserDetails(CustomerEntity client) {
     ClientUserDetails userDetails = new ClientUserDetails(client);
+
     request.setAttribute(USER_DETAILS, userDetails);
 
     return userDetails;

@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Audited
 @RestController
-@RequestMapping(AuthController.PATH_AUTH_V1)
+@RequestMapping("auth/v1")
 @RequiredArgsConstructor
 public class AuthController {
-
-  static final String PATH_AUTH_V1 = "/auth/v1";
 
   private final AuthService authService;
 

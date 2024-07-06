@@ -2,17 +2,17 @@ package com.platform.model;
 
 import com.platform.exception.PlatformBackendException;
 import com.platform.persistence.entity.AuthenticationLogEntity;
-import com.platform.persistence.entity.ClientEntity;
-import com.platform.util.ObjectUtil;
+import com.platform.persistence.entity.CustomerEntity;
 import com.platform.util.SecurityUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 
 import static com.platform.model.ConsumerAuthority.ADMIN;
 
-public record ClientUserDetails(ClientEntity client) implements UserDetails {
+public record ClientUserDetails(CustomerEntity client) implements UserDetails {
 
   public ClientUserDetails {
     if (client == null) {
@@ -54,7 +54,7 @@ public record ClientUserDetails(ClientEntity client) implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return ObjectUtil.isNotEmpty(client.getConsumerAuthorities());
+    return !CollectionUtils.isEmpty(client.getAuthenticationLogs());
   }
 
   public boolean isAdmin() {

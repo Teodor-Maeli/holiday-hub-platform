@@ -1,6 +1,6 @@
 package com.platform.persistence.repository;
 
-import com.platform.persistence.entity.ClientEntity;
+import com.platform.persistence.entity.CustomerEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -18,7 +18,7 @@ import java.util.Optional;
  * @param <ID> ID
  */
 @NoRepositoryBean
-public interface BaseClientRepository<E extends ClientEntity, ID extends Number> extends JpaRepository<E, ID>, JpaSpecificationExecutor<E> {
+public interface BaseClientRepository<E extends CustomerEntity, ID extends Number> extends JpaRepository<E, ID>, JpaSpecificationExecutor<E> {
 
   @Query("""
       SELECT e FROM #{#entityName} e
@@ -26,7 +26,6 @@ public interface BaseClientRepository<E extends ClientEntity, ID extends Number>
       WHERE e.username = :username
       """)
   Optional<E> findByUsername(@Param("username") String username);
-
 
   boolean existsByUsername(String username);
 

@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "COMPANY")
-public class CompanyEntity extends ClientEntity {
+public class CompanyEntity extends CustomerEntity {
 
   @Column(name = "COMPANY_NAME", nullable = false)
   private String companyName;

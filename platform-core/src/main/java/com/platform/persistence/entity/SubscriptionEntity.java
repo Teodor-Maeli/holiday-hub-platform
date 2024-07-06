@@ -30,7 +30,7 @@ public class SubscriptionEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "CLIENT_ID", nullable = false)
   @JsonBackReference
-  private ClientEntity client;
+  private CustomerEntity client;
 
   @Column(name = "START_DATE")
   private LocalDateTime startDate;

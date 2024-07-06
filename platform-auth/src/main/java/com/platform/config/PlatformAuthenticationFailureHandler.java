@@ -23,12 +23,7 @@ public class PlatformAuthenticationFailureHandler extends SimpleUrlAuthenticatio
 
   @Override
   @LogAuthentication(async = true)
-  public void onAuthenticationFailure(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      AuthenticationException exception
-  ) throws IOException {
-
+  public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
     AuthenticationFailure failure = AuthenticationFailure.create()
         .setMessage(exception.getMessage())
         .setDetails(exception.getClass().getSimpleName())

@@ -1,4 +1,4 @@
-package com.platform.util;
+package com.platform.component;
 
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.config.PlatformSecurityProperties;
 import com.platform.model.ClientUserDetails;
 import com.platform.model.JWTComposite;
+import com.platform.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -28,18 +29,10 @@ public class JWTGenerator {
   private final PlatformSecurityProperties properties;
 
   public JWTComposite generate(ClientUserDetails client) {
-    String accessToken = generateAccessToken(client);
-    String refreshToken = generateRefreshToken(client);
+    String accessToken = generateJWT(ACCESS_TOKEN_EXPIRATION, client);
+    String refreshToken = generateJWT(REFRESH_TOKEN_EXPIRATION, client);
 
     return JWTComposite.of(accessToken, refreshToken);
-  }
-
-  private String generateRefreshToken(ClientUserDetails details) {
-    return generateJWT(REFRESH_TOKEN_EXPIRATION, details);
-  }
-
-  private String generateAccessToken(ClientUserDetails details) {
-    return generateJWT(ACCESS_TOKEN_EXPIRATION, details);
   }
 
   private String generateJWT(Long expirationTime, ClientUserDetails details) {

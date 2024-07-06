@@ -8,9 +8,8 @@ import com.platform.model.AuthenticationStatus;
 import com.platform.model.AuthenticationStatusReason;
 import com.platform.model.ClientUserDetails;
 import com.platform.persistence.entity.AuthenticationLogEntity;
-import com.platform.persistence.entity.ClientEntity;
+import com.platform.persistence.entity.CustomerEntity;
 import com.platform.service.AuthenticationLogService;
-import com.platform.util.ObjectUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +19,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
@@ -31,6 +31,8 @@ import java.util.concurrent.CompletableFuture;
 import static com.platform.model.AuthenticationStatusReason.ACCOUNT_DISABLED;
 import static com.platform.model.AuthenticationStatusReason.ACCOUNT_HACKED;
 import static com.platform.model.AuthenticationStatusReason.ACCOUNT_LOCKED;
+import static com.platform.model.AuthenticationStatusReason.BAD_CREDENTIALS;
+import static com.platform.model.AuthenticationStatusReason.UNKNOWN;
 
 /**
  * Logs client authentication attempts into the database.
@@ -117,19 +119,16 @@ public class AuthenticationLogInterceptor {
   }
 
   private void logAuthenticationFailure(ClientUserDetails clientUserDetails, Object[] args) {
-    if (ObjectUtil.isEmpty(args)) {
-      return;
+    if (!ObjectUtils.isEmpty(args)) {
+      Exception exception = extractException(args);
+      AuthenticationLogEntity entry = prepareAuthenticationLogEntry(exception, clientUserDetails);
+      service.logAuthenticationResult(entry);
     }
-
-    Exception exception = extractException(args);
-
-    AuthenticationLogEntity entry = prepareAuthenticationLogEntry(exception, clientUserDetails);
-    service.logAuthenticationResult(entry);
   }
 
   private AuthenticationLogEntity prepareAuthenticationLogEntry(Exception exception, ClientUserDetails clientUserDetails) {
     AuthenticationStatusReason authenticationStatusReason = determineReason(exception);
-    Boolean statusResolved = determineStatusResolved(clientUserDetails, authenticationStatusReason);
+    Boolean statusResolved = isStatusResolved(clientUserDetails, authenticationStatusReason);
 
     return AuthenticationLogFacts.initialize()
         .status(AuthenticationStatus.FAILURE)
@@ -139,9 +138,9 @@ public class AuthenticationLogInterceptor {
         .toEntity();
   }
 
-  private Boolean determineStatusResolved(ClientUserDetails clientUserDetails, AuthenticationStatusReason inputStatusReason) {
+  private Boolean isStatusResolved(ClientUserDetails clientUserDetails, AuthenticationStatusReason inputStatusReason) {
     List<AuthenticationLogEntity> logs = Optional.ofNullable(clientUserDetails.client())
-        .map(ClientEntity::getAuthenticationLogs)
+        .map(CustomerEntity::getAuthenticationLogs)
         .orElse(Collections.emptyList());
 
     if (DISALLOWED_REASONS.contains(inputStatusReason)) {
@@ -162,16 +161,16 @@ public class AuthenticationLogInterceptor {
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime expirationTime = now.minusMinutes(properties.getBadCredentialsExpiryTime());
 
-    return log.getStatusReason().equals(AuthenticationStatusReason.BAD_CREDENTIALS)
+    return log.getStatusReason().equals(BAD_CREDENTIALS)
         && log.getCreatedDate().isBefore(now) && log.getCreatedDate().isAfter(expirationTime);
   }
 
   private AuthenticationStatusReason determineReason(Exception exception) {
     return switch (exception.getClass().getSimpleName()) {
-      case BAD_CREDENTIALS_EXCEPTION -> AuthenticationStatusReason.BAD_CREDENTIALS;
+      case BAD_CREDENTIALS_EXCEPTION -> BAD_CREDENTIALS;
       case DISABLED_ACCOUNT_EXCEPTION -> ACCOUNT_DISABLED;
       case ACCOUNT_LOCKED_EXCEPTION, LOCKED_EXCEPTION -> ACCOUNT_LOCKED;
-      default -> AuthenticationStatusReason.UNKNOWN;
+      default -> UNKNOWN;
     };
   }
 

@@ -12,11 +12,8 @@ public class PlatformAuthenticationFilter extends UsernamePasswordAuthentication
   private static final String PASSWORD = "password";
   private static final String USERNAME = "username";
 
-  public PlatformAuthenticationFilter(
-      AuthenticationManager authenticationManager,
-      PlatformAuthenticationFailureHandler platformAuthenticationFailureHandler,
-      PlatformAuthenticationSuccessHandler platformAuthenticationSuccessHandler
-  ) {
+  public PlatformAuthenticationFilter(AuthenticationManager authenticationManager, PlatformAuthenticationFailureHandler platformAuthenticationFailureHandler,
+      PlatformAuthenticationSuccessHandler platformAuthenticationSuccessHandler) {
     super(authenticationManager);
     setAuthenticationFailureHandler(platformAuthenticationFailureHandler);
     setAuthenticationSuccessHandler(platformAuthenticationSuccessHandler);

@@ -1,21 +1,20 @@
 package com.platform.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 public class Subscription {
 
   private Long clientId;
-
-  private String startDate;
-
-  private String endDate;
-
+  private LocalDate startDate;
+  private LocalDate endDate;
   private Boolean activeSubscription;
-
   private SubscriptionType subscriptionType;
 }

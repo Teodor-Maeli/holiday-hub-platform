@@ -1,6 +1,5 @@
 package com.platform.exception;
 
-import com.platform.util.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,12 +27,11 @@ public class PlatformExceptionHandler {
     erroneousResponse =
         erroneousResponse.entrySet()
             .stream()
-            .filter(entry -> ObjectUtil.noneNull(entry.getKey(), entry.getValue()))
+            .filter(entry -> entry.getKey() != null || entry.getValue() != null)
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue
             ));
-
 
     log.error("Exception has occurred: ", be);
     return ResponseEntity

@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoggerMasker {
 
@@ -20,7 +20,6 @@ public class LoggerMasker {
   private static final ObjectMapper MAPPER = new ObjectMapper()
       .enable(SerializationFeature.INDENT_OUTPUT)
       .findAndRegisterModules();
-  private static final Logger LOGGER = LoggerFactory.getLogger(LoggerMasker.class);
   private static final List<Pattern> MASKING_PATTERNS;
 
   static {
@@ -53,7 +52,7 @@ public class LoggerMasker {
     try {
       return Optional.ofNullable(MAPPER.writeValueAsString(o));
     } catch (JsonProcessingException e) {
-      LOGGER.error("JsonMaskUtil failed to write as string!", e);
+      log.error("JsonMaskUtil failed to write as string!", e);
       return Optional.empty();
     }
   }

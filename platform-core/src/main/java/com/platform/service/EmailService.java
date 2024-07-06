@@ -1,23 +1,22 @@
-package com.platform.util.email;
+package com.platform.service;
 
 import com.platform.exception.PlatformBackendException;
 import com.platform.model.EmailMessageDetails;
 import jakarta.mail.MessagingException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
-@Component
-public class EmailSender {
+@Service
+@RequiredArgsConstructor
+public class EmailService {
 
   private final JavaMailSender emailSender;
-
-  public EmailSender(JavaMailSender emailSender) {
-    this.emailSender = emailSender;
-  }
 
   public void send(EmailMessageDetails details) {
 
@@ -43,7 +42,7 @@ public class EmailSender {
 
     mimeMessageHelper.setTo(details.getTo() == null
                             ? new String[]{}
-                            : details.getCc());
+                            : details.getTo());
 
     mimeMessageHelper.setCc(details.getCc() == null
                             ? new String[]{}

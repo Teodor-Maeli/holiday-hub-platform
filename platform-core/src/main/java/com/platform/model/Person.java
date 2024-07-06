@@ -13,12 +13,8 @@ import java.time.LocalDate;
 public class Person extends Client {
 
   private String familyName;
-
   private String givenName;
-
   private String middleName;
-
   private LocalDate birthDate;
-
   private Company company;
 }

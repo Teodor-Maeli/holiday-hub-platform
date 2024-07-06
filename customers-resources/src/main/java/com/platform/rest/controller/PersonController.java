@@ -26,9 +26,8 @@ import java.util.Set;
 
 @Audited
 @RestController
-@RequestMapping(path = PersonController.PATH_CUSTOMERS_V1_PERSONS,
-    consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
+@RequestMapping(path = PersonController.PATH_CUSTOMERS_V1_PERSONS, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class PersonController {
 
   static final String PATH_CUSTOMERS_V1_PERSONS = "/customers/v1/person";
@@ -45,9 +44,9 @@ public class PersonController {
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(path = "/{clientUsername}")
   @PreAuthorize("#clientUsername == authentication.principal")
-  public Person getByUsername(@RequestParam("include") Set<DecoratingOptions> options,
+  public Person getByUsername(@RequestParam("include") Set<DecoratingOptions> include,
                               @PathVariable("clientUsername") String clientUsername) {
-    return mapper.toResponse(service.loadUserByUsernameDecorated(options, clientUsername));
+    return mapper.toResponse(service.loadUserByUsernameDecorated(include, clientUsername));
   }
 
   @ResponseStatus(HttpStatus.OK)

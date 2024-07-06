@@ -22,7 +22,7 @@ public class PersonDecorator extends ClientServiceDecorator<PersonEntity> {
   }
 
   @Override
-  void decorateWithClients(PersonEntity clientEntity) {
+  void decorateWithCustomers(PersonEntity clientEntity) {
     CompanyEntity company = companyRepository.findByRepresentativesUsername(clientEntity.getUsername());
     clientEntity.setCompany(company);
   }

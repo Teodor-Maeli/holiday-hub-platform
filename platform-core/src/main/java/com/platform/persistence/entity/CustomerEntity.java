@@ -34,7 +34,7 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
-public abstract class ClientEntity {
+public abstract class CustomerEntity {
 
   @Id
   @Column(name = "ID", updatable = false, unique = true, nullable = false)

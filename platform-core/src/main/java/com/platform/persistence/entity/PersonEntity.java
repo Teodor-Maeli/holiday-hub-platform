@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "PERSON")
-public class PersonEntity extends ClientEntity {
+public class PersonEntity extends CustomerEntity {
 
   @Column(name = "GIVEN_NAME", nullable = false)
   private String givenName;

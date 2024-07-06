@@ -39,7 +39,7 @@ public class AuthenticationLogEntity {
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(referencedColumnName = "username", name = "CLIENT_ID", nullable = false)
   @JsonBackReference
-  private ClientEntity client;
+  private CustomerEntity client;
 
   @CreatedDate
   @Column(name = "CREATED_DATE", nullable = false)

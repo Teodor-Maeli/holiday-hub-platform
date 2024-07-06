@@ -21,6 +21,7 @@ public class YamlPropertySourceFactory implements PropertySourceFactory {
 
     Assert.notNull(properties, "Not found properties!");
     Assert.notNull(fileName, "Nullable fileName!");
+
     return new PropertiesPropertySource(fileName, properties);
   }
 }

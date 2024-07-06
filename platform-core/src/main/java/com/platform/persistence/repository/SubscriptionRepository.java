@@ -10,5 +10,4 @@ import java.util.List;
 public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity, Long> {
 
   List<SubscriptionEntity> findByClientId(Long id);
-
 }

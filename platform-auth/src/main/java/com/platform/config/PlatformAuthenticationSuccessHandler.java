@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.aspect.LogAuthentication;
 import com.platform.model.ClientUserDetails;
 import com.platform.model.JWTComposite;
-import com.platform.util.JWTGenerator;
+import com.platform.component.JWTGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +24,8 @@ public class PlatformAuthenticationSuccessHandler implements AuthenticationSucce
 
   @Override
   @LogAuthentication(async = true)
-  public void onAuthenticationSuccess(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      Authentication authentication
-  ) throws IOException {
+  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+      Authentication authentication) throws IOException {
     ClientUserDetails details = (ClientUserDetails) authentication.getPrincipal();
     JWTComposite authTokensComposite = JWTGenerator.generate(details);
 

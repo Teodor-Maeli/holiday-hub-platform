@@ -9,9 +9,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LogAuthentication {
 
-
   /**
-   * Use if you want to achieve async logging, default false.
+   * True of logging to be async, false otherwise.
    */
   boolean async();
 }

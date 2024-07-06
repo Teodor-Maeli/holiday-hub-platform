@@ -26,9 +26,8 @@ import java.util.Set;
 
 @Audited
 @RestController
-@RequestMapping(path = CompanyController.PATH_CUSTOMERS_V1_COMPANY,
-    consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
+@RequestMapping(path = CompanyController.PATH_CUSTOMERS_V1_COMPANY, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class CompanyController {
 
   static final String PATH_CUSTOMERS_V1_COMPANY = "/customers/v1/company";
@@ -45,9 +44,9 @@ public class CompanyController {
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(path = "/{clientUsername}")
   @PreAuthorize("#clientUsername == authentication.principal")
-  public Company getByUsername(@RequestParam("include") Set<DecoratingOptions> options,
+  public Company getByUsername(@RequestParam("include") Set<DecoratingOptions> include,
                                @PathVariable("clientUsername") String clientUsername) {
-    return mapper.toResponse(service.loadUserByUsernameDecorated(options, clientUsername));
+    return mapper.toResponse(service.loadUserByUsernameDecorated(include, clientUsername));
   }
 
   @ResponseStatus(HttpStatus.OK)

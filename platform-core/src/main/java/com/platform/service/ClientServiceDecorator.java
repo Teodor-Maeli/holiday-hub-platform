@@ -1,9 +1,10 @@
 package com.platform.service;
 
 import com.platform.persistence.entity.AuthenticationLogEntity;
-import com.platform.persistence.entity.ClientEntity;
+import com.platform.persistence.entity.CustomerEntity;
 import com.platform.persistence.entity.SubscriptionEntity;
-import com.platform.util.ObjectUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -14,23 +15,14 @@ import java.util.stream.Collectors;
  *
  * @param <E> Entity
  */
-public abstract class ClientServiceDecorator<E extends ClientEntity> implements ClientService<E> {
+@RequiredArgsConstructor
+public abstract class ClientServiceDecorator<E extends CustomerEntity> implements ClientService<E> {
 
   private final SubscriptionService subscriptionService;
-
   private final AuthenticationLogService authenticationLogService;
-
   private final ClientService<E> delegate;
 
-
-  protected ClientServiceDecorator(
-      SubscriptionService subscriptionService,
-      AuthenticationLogService authenticationLogService,
-      ClientService<E> delegate) {
-    this.subscriptionService = subscriptionService;
-    this.authenticationLogService = authenticationLogService;
-    this.delegate = delegate;
-  }
+  abstract void decorateWithCustomers(E clientEntity);
 
   @Override
   public E loadUserByUsernameDecorated(Set<DecoratingOptions> decoratingOptions, String username) {
@@ -70,13 +62,11 @@ public abstract class ClientServiceDecorator<E extends ClientEntity> implements 
         case SUBSCRIPTIONS -> decorateWithSubscriptions(clientEntity);
         case AUTHENTICATION_LOGS -> decorateWithAuthenticationLogs(clientEntity);
         case BLOCKING_AUTHENTICATION_LOGS -> decorateWithBlockingAuthenticationLogs(clientEntity);
-        case COMPANY_REPRESENTATIVES, REPRESENTATIVE_COMPANY -> decorateWithClients(clientEntity);
+        case COMPANY_REPRESENTATIVES, REPRESENTATIVE_COMPANY -> decorateWithCustomers(clientEntity);
       }
     }
 
   }
-
-  abstract void decorateWithClients(E clientEntity);
 
   private void decorateWithAuthenticationLogs(E clientEntity) {
     List<AuthenticationLogEntity> clientAuthenticationLogs = authenticationLogService.getClientAuthenticationLogs(clientEntity.getId());
@@ -95,12 +85,12 @@ public abstract class ClientServiceDecorator<E extends ClientEntity> implements 
 
   private Set<DecoratingOptions> filterDecoratingOptions(Set<DecoratingOptions> decoratingOptions, E client) {
     return decoratingOptions.stream()
-        .filter(option -> option.allowedForClient(client))
+        .filter(option -> option.getEligibleForDecorating().contains(client.getClass()))
         .collect(Collectors.toSet());
   }
 
   private boolean shouldDecorate(Set<DecoratingOptions> options, E client) {
-    return client != null && (ObjectUtil.isNotEmpty(options));
+    return client != null && !CollectionUtils.isEmpty(options);
   }
 
 }

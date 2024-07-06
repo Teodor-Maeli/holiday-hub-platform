@@ -14,11 +14,6 @@ public class PlatformBackendException extends RuntimeException {
   private String message;
   private String details;
   private Throwable cause;
-
-  public PlatformBackendException() {
-    super();
-  }
-
 }
 
 

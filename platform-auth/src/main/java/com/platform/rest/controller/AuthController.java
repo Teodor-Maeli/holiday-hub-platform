@@ -30,9 +30,9 @@ public class AuthController {
   }
 
   @ResponseStatus(HttpStatus.OK)
-  @PatchMapping("/unlock-account/complete")
+  @PatchMapping("/unlock-account/complete/{username}")
   public AccountUnlock completeAccountUnlocking(
-      @RequestParam("username") String username,
+      @PathVariable("username") String username,
       @RequestParam(value = "unlockingCode", required = false) String unlockingCode) {
     return authService.completeAccountUnlocking(username, unlockingCode);
   }

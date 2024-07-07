@@ -2,10 +2,10 @@ package com.platform.rest.controller;
 
 import com.platform.aspect.audit.Audited;
 import com.platform.mapper.PersonMapper;
-import com.platform.model.Person;
-import com.platform.model.registration.PersonRegistration;
-import com.platform.persistence.entity.PersonEntity;
-import com.platform.service.ClientService;
+import com.platform.model.PersonResponse;
+import com.platform.model.registration.PersonRegistrationRequest;
+import com.platform.persistence.entity.Person;
+import com.platform.service.CustomerService;
 import com.platform.service.DecoratingOptions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,27 +31,27 @@ import java.util.Set;
 public class PersonController {
 
   private final PersonMapper mapper;
-  private final ClientService<PersonEntity> service;
+  private final CustomerService<Person> service;
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(path = "/register")
-  public Person register(@RequestBody PersonRegistration request) {
+  public PersonResponse register(@RequestBody PersonRegistrationRequest request) {
     return mapper.toResponse(service.save(mapper.toEntity(request)));
   }
 
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping(path = "/{clientUsername}")
-  @PreAuthorize("#clientUsername == authentication.principal")
-  public Person getByUsername(@RequestParam("include") Set<DecoratingOptions> include,
-                              @PathVariable("clientUsername") String clientUsername) {
-    return mapper.toResponse(service.loadUserByUsernameDecorated(include, clientUsername));
+  @GetMapping(path = "/{username}")
+  @PreAuthorize("#username == authentication.principal")
+  public PersonResponse getByUsername(@RequestParam("include") Set<DecoratingOptions> include,
+                                      @PathVariable("username") String username) {
+    return mapper.toResponse(service.loadUserByUsernameDecorated(include, username));
   }
 
   @ResponseStatus(HttpStatus.OK)
-  @PatchMapping(path = "/credentials")
-  @PreAuthorize("#clientUsername == authentication.principal")
+  @PatchMapping(path = "/credentials/{username}")
+  @PreAuthorize("#username == authentication.principal")
   public void updatePassword(@RequestHeader String password,
-                             @RequestHeader String username) {
+                             @PathVariable("username") String username) {
     service.changePassword(password, username);
   }
 }

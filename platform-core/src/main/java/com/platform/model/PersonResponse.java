@@ -10,11 +10,11 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @JsonInclude(Include.NON_NULL)
-public class Person extends Client {
+public class PersonResponse extends CustomerResponse {
 
   private String familyName;
   private String givenName;
   private String middleName;
   private LocalDate birthDate;
-  private Company company;
+  private CompanyResponse company;
 }

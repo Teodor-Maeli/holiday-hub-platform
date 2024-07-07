@@ -1,7 +1,7 @@
 package com.platform.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.platform.aspect.LogAuthentication;
+import com.platform.aspect.TrackAuthentication;
 import com.platform.model.AuthenticationFailure;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,7 +22,7 @@ public class PlatformAuthenticationFailureHandler extends SimpleUrlAuthenticatio
   private final ObjectMapper objectMapper;
 
   @Override
-  @LogAuthentication(async = true)
+  @TrackAuthentication(async = true)
   public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
     AuthenticationFailure failure = AuthenticationFailure.create()
         .setMessage(exception.getMessage())

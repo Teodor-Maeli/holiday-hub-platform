@@ -1,11 +1,11 @@
 package com.platform.rest.controller;
 
 import com.platform.aspect.audit.Audited;
-import com.platform.mapper.CompanyRepresentativeMapper;
-import com.platform.model.Company;
-import com.platform.model.registration.CompanyRegistration;
-import com.platform.persistence.entity.CompanyEntity;
-import com.platform.service.ClientService;
+import com.platform.mapper.CompanyMapper;
+import com.platform.model.CompanyResponse;
+import com.platform.model.registration.CompanyRegisterRequest;
+import com.platform.persistence.entity.Company;
+import com.platform.service.CustomerService;
 import com.platform.service.DecoratingOptions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,28 +30,28 @@ import java.util.Set;
 @RequestMapping(path = "/customers/v1/company", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class CompanyController {
 
-  private final CompanyRepresentativeMapper mapper;
-  private final ClientService<CompanyEntity> service;
+  private final CompanyMapper mapper;
+  private final CustomerService<Company> service;
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(path = "/register")
-  public Company register(@RequestBody CompanyRegistration request) {
+  public CompanyResponse register(@RequestBody CompanyRegisterRequest request) {
     return mapper.toResponse(service.save(mapper.toEntity(request)));
   }
 
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping(path = "/{clientUsername}")
-  @PreAuthorize("#clientUsername == authentication.principal")
-  public Company getByUsername(@RequestParam("include") Set<DecoratingOptions> include,
-                               @PathVariable("clientUsername") String clientUsername) {
-    return mapper.toResponse(service.loadUserByUsernameDecorated(include, clientUsername));
+  @GetMapping(path = "/{username}")
+  @PreAuthorize("#username == authentication.principal")
+  public CompanyResponse getByUsername(@RequestParam("include") Set<DecoratingOptions> include,
+                                       @PathVariable("username") String username) {
+    return mapper.toResponse(service.loadUserByUsernameDecorated(include, username));
   }
 
   @ResponseStatus(HttpStatus.OK)
-  @PatchMapping(path = "/credentials")
-  @PreAuthorize("#clientUsername == authentication.principal")
+  @PatchMapping(path = "/credentials/{username}")
+  @PreAuthorize("#username == authentication.principal")
   public void updatePassword(@RequestHeader String password,
-                             @RequestHeader String clientUsername) {
-    service.changePassword(password, clientUsername);
+                             @PathVariable("username") String username) {
+    service.changePassword(password, username);
   }
 }

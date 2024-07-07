@@ -26,10 +26,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "AUTHENTICATION_LOG")
+@Table(name = "AUTHENTICATION_ATTEMPT")
 @EntityListeners(AuditingEntityListener.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AuthenticationLogEntity {
+public class AuthenticationAttempt {
 
   @Id
   @Column(name = "ID", updatable = false, unique = true, nullable = false)
@@ -37,9 +37,9 @@ public class AuthenticationLogEntity {
   private Long id;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(referencedColumnName = "username", name = "CLIENT_ID", nullable = false)
+  @JoinColumn(referencedColumnName = "username", name = "CUSTOMER_ID", nullable = false)
   @JsonBackReference
-  private CustomerEntity client;
+  private Customer customer;
 
   @CreatedDate
   @Column(name = "CREATED_DATE", nullable = false)

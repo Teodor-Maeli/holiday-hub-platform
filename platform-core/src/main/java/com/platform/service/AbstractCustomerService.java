@@ -2,7 +2,7 @@ package com.platform.service;
 
 import com.platform.exception.PlatformBackendException;
 import com.platform.model.ConsumerAuthority;
-import com.platform.persistence.entity.CustomerEntity;
+import com.platform.persistence.entity.Customer;
 import com.platform.persistence.repository.BaseClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
@@ -21,8 +21,8 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
  * @param <R>  Repository
  */
 @RequiredArgsConstructor
-abstract class AbstractClientService
-    <E extends CustomerEntity, ID extends Number, R extends BaseClientRepository<E, ID>> implements ClientService<E> {
+abstract class AbstractCustomerService
+    <E extends Customer, ID extends Number, R extends BaseClientRepository<E, ID>> implements CustomerService<E> {
 
   final R repository;
 
@@ -32,7 +32,7 @@ abstract class AbstractClientService
    * Performs aggregations against client object, to be used for general purposes except for login.
    *
    * @param username The username identifying the user whose data is required.
-   * @return {@link CustomerEntity}                 The user details required in order to perform successful authentication.
+   * @return {@link Customer}                 The user details required in order to perform successful authentication.
    * @throws PlatformBackendException If failed to load user with HTTP status 500 - Internal Server Error.
    */
   @Override
@@ -53,7 +53,7 @@ abstract class AbstractClientService
    * Use to update an already existing account or persist a new.
    *
    * @param entity Customer information that is to be persisted/updated into the database.
-   * @return {@link CustomerEntity}                 The already persisted/updated customer from the database.
+   * @return {@link Customer}                 The already persisted/updated customer from the database.
    * @throws PlatformBackendException If failed to persist/update into the database with HTTP status 500 - Internal Server Error.
    */
   @Override

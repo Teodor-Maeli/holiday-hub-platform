@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AuthenticationLog {
+public class AuthenticationAttemptResponse {
 
   private Long id;
-  private Client client;
+  private CustomerResponse customer;
   private LocalDateTime createdDate;
   private LocalDateTime updatedDate;
   private AuthenticationStatus authenticationStatus;

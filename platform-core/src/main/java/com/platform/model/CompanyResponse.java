@@ -10,10 +10,10 @@ import java.util.Set;
 @Getter
 @Setter
 @JsonInclude(Include.NON_NULL)
-public class Company extends Client {
+public class CompanyResponse extends CustomerResponse {
 
   private String companyName;
   private String companyNumber;
-  private Set<Person> representatives;
+  private Set<PersonResponse> representatives;
 }
 

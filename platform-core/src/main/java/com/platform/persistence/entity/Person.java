@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "PERSON")
-public class PersonEntity extends CustomerEntity {
+public class Person extends Customer {
 
   @Column(name = "GIVEN_NAME", nullable = false)
   private String givenName;
@@ -34,7 +34,7 @@ public class PersonEntity extends CustomerEntity {
   @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
   @JoinColumn(name = "COMPANY_ID")
   @JsonBackReference
-  private CompanyEntity company;
+  private Company company;
 
   @Column(name = "COMPANY_CONFIGURATION_ID")
   private Long companyConfigurationId;

@@ -56,7 +56,7 @@ public class AuthConfig {
     http.authorizeHttpRequests(matchers -> matchers
         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
         .requestMatchers(properties.getAllowedPaths()).permitAll()
-        .anyRequest().denyAll());
+        .anyRequest().authenticated());
 
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     http.addFilter(new PlatformAuthenticationFilter(authenticationManager, failureHandler, successHandler));

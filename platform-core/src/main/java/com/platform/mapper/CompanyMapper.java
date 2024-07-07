@@ -1,8 +1,8 @@
 package com.platform.mapper;
 
-import com.platform.model.Company;
-import com.platform.model.registration.CompanyRegistration;
-import com.platform.persistence.entity.CompanyEntity;
+import com.platform.model.CompanyResponse;
+import com.platform.model.registration.CompanyRegisterRequest;
+import com.platform.persistence.entity.Company;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,10 +15,10 @@ import org.mapstruct.Mapping;
     },
     injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
-public interface CompanyRepresentativeMapper {
+public interface CompanyMapper {
 
-  Company toResponse(CompanyEntity entity);
+  CompanyResponse toResponse(Company entity);
 
   @Mapping(target = "password", qualifiedBy = EncodedMapping.class)
-  CompanyEntity toEntity(CompanyRegistration request);
+  Company toEntity(CompanyRegisterRequest request);
 }

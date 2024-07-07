@@ -2,8 +2,8 @@ package com.platform;
 
 import com.platform.model.AuthenticationStatus;
 import com.platform.model.AuthenticationStatusReason;
-import com.platform.model.ClientUserDetails;
-import com.platform.persistence.entity.AuthenticationLogEntity;
+import com.platform.model.CustomerUserDetails;
+import com.platform.persistence.entity.AuthenticationAttempt;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,15 +16,15 @@ import java.util.Objects;
 @Setter
 @Accessors(fluent = true)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AuthenticationLogFacts {
+public class AuthenticationDetails {
 
-  private ClientUserDetails clientDetails;
+  private CustomerUserDetails clientDetails;
   private AuthenticationStatus status;
   private AuthenticationStatusReason reason;
   private Boolean resolved;
 
-  public static AuthenticationLogFacts initialize() {
-    return new AuthenticationLogFacts();
+  public static AuthenticationDetails create() {
+    return new AuthenticationDetails();
   }
 
   private void validate() {
@@ -34,14 +34,14 @@ public class AuthenticationLogFacts {
     Objects.requireNonNull(resolved, "resolved cannot be null!");
   }
 
-  public AuthenticationLogEntity toEntity() {
+  public AuthenticationAttempt toEntity() {
     validate();
 
-    AuthenticationLogEntity authenticationLog = new AuthenticationLogEntity();
+    AuthenticationAttempt authenticationLog = new AuthenticationAttempt();
     authenticationLog.setAuthenticationStatus(status);
     authenticationLog.setStatusReason(reason);
     authenticationLog.setStatusResolved(resolved);
-    authenticationLog.setClient(clientDetails.client());
+    authenticationLog.setCustomer(clientDetails.client());
 
     return authenticationLog;
   }

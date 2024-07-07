@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @JsonInclude(Include.NON_NULL)
-public class Subscription {
+public class SubscriptionResponse {
 
   private Long clientId;
   private LocalDate startDate;

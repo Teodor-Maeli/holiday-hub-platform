@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.config.PlatformSecurityProperties;
-import com.platform.model.ClientUserDetails;
+import com.platform.model.CustomerUserDetails;
 import com.platform.model.JWTComposite;
 import com.platform.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -28,14 +28,14 @@ public class JWTGenerator {
   private final ObjectMapper objectMapper;
   private final PlatformSecurityProperties properties;
 
-  public JWTComposite generate(ClientUserDetails client) {
+  public JWTComposite generate(CustomerUserDetails client) {
     String accessToken = generateJWT(ACCESS_TOKEN_EXPIRATION, client);
     String refreshToken = generateJWT(REFRESH_TOKEN_EXPIRATION, client);
 
     return JWTComposite.of(accessToken, refreshToken);
   }
 
-  private String generateJWT(Long expirationTime, ClientUserDetails details) {
+  private String generateJWT(Long expirationTime, CustomerUserDetails details) {
 
     try {
       return JWT.create()

@@ -34,7 +34,7 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
-public abstract class CustomerEntity {
+public abstract class Customer {
 
   @Id
   @Column(name = "ID", updatable = false, unique = true, nullable = false)
@@ -57,13 +57,13 @@ public abstract class CustomerEntity {
   @CreatedDate
   private LocalDateTime registeredDate;
 
-  @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonManagedReference
-  private List<AuthenticationLogEntity> authenticationLogs;
+  private List<AuthenticationAttempt> authenticationAttempts;
 
   @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonManagedReference
-  private List<SubscriptionEntity> subscriptions;
+  private List<Subscription> subscriptions;
 
   @Column(name = "CONSUMER_AUTHORITIES")
   @ElementCollection(targetClass = ConsumerAuthority.class, fetch = FetchType.EAGER)
@@ -80,14 +80,14 @@ public abstract class CustomerEntity {
     return Collections.emptySet();
   }
 
-  public List<AuthenticationLogEntity> getAuthenticationLogs() {
-    if (Hibernate.isInitialized(authenticationLogs)) {
-      return authenticationLogs;
+  public List<AuthenticationAttempt> getAuthenticationAttempts() {
+    if (Hibernate.isInitialized(authenticationAttempts)) {
+      return authenticationAttempts;
     }
 
     return Collections.emptyList();
   }
-  public List<SubscriptionEntity> getSubscriptions() {
+  public List<Subscription> getSubscriptions() {
     if (Hibernate.isInitialized(subscriptions)) {
       return subscriptions;
     }

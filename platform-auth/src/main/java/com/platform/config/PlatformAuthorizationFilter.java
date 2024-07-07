@@ -37,7 +37,7 @@ public class PlatformAuthorizationFilter extends OncePerRequestFilter {
       String subject = decodedJWT.getSubject();
       List<ConsumerAuthority> roles = decodedJWT.getClaim(ROLES).asList(ConsumerAuthority.class);
 
-      Set<SimpleGrantedAuthority> authorities = SecurityUtils.toSimpleGrantedAuthority(roles);
+      Set<SimpleGrantedAuthority> authorities = SecurityUtils.toSimpleGrantedAuthorities(roles);
       setAuthentication(subject, authorities);
 
       filterChain.doFilter(request, response);

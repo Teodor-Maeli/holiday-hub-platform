@@ -1,6 +1,6 @@
 package com.platform.service;
 
-import com.platform.persistence.entity.SubscriptionEntity;
+import com.platform.persistence.entity.Subscription;
 import com.platform.persistence.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ public class SubscriptionService {
 
   private final SubscriptionRepository repository;
 
-  public List<SubscriptionEntity> getClientSubscriptions(Long id) {
+  public List<Subscription> getSubscriptions(Long id) {
     return repository.findByClientId(id);
   }
 

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class PersonRegistration extends RegistrationRequest {
+public class PersonRegistrationRequest extends RegistrationRequest {
 
   private String familyName;
   private String givenName;

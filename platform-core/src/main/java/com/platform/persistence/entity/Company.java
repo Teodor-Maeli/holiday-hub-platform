@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "COMPANY")
-public class CompanyEntity extends CustomerEntity {
+public class Company extends Customer {
 
   @Column(name = "COMPANY_NAME", nullable = false)
   private String companyName;
@@ -25,5 +25,5 @@ public class CompanyEntity extends CustomerEntity {
 
   @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
   @JsonManagedReference
-  private Set<PersonEntity> representatives;
+  private Set<Person> representatives;
 }

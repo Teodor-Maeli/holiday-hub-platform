@@ -4,13 +4,13 @@ import com.platform.config.PlatformSecurityProperties;
 import com.platform.exception.PlatformBackendException;
 import com.platform.model.AccountUnlock;
 import com.platform.model.AuthenticationStatusReason;
-import com.platform.model.ClientUserDetails;
+import com.platform.model.CustomerUserDetails;
 import com.platform.model.EmailMessageDetails;
-import com.platform.persistence.entity.AuthenticationLogEntity;
-import com.platform.persistence.entity.CustomerEntity;
-import com.platform.persistence.entity.CompanyEntity;
-import com.platform.persistence.entity.ConfigurationEntity;
-import com.platform.persistence.entity.PersonEntity;
+import com.platform.persistence.entity.AuthenticationAttempt;
+import com.platform.persistence.entity.Company;
+import com.platform.persistence.entity.Configuration;
+import com.platform.persistence.entity.Customer;
+import com.platform.persistence.entity.Person;
 import com.platform.util.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -29,7 +29,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
@@ -39,7 +38,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
 
-  private static final Set<DecoratingOptions> BLOCKING_AUTH_LOGS = Collections.singleton(DecoratingOptions.BLOCKING_AUTHENTICATION_LOGS);
   private static final String EMAIL_SUBJECT = "Account unlocking for:%s";
   private static final String USER_DETAILS = "userDetails";
   private static final String USERNAME_PARAM = "username";
@@ -47,18 +45,20 @@ public class AuthService implements UserDetailsService {
 
 
   private final PlatformSecurityProperties properties;
-  private final ClientService<PersonEntity> personService;
-  private final ClientService<CompanyEntity> companyService;
+  private final CustomerService<Person> personService;
+  private final CustomerService<Company> companyService;
   private final HttpServletRequest request;
   private final EmailService emailService;
   private final Encoder encoder;
-  private final BiFunction<String, ClientService<?>, Optional<CustomerEntity>> loadUserWithBlockingAuthFailures =
-      (username, service) -> Optional.of(service.loadUserByUsernameDecorated(BLOCKING_AUTH_LOGS, username));
+  private final BiFunction<String, CustomerService<?>, Optional<Customer>> getBlockingAuthFailures =
+      (username, service) -> Optional.of(
+          service.loadUserByUsernameDecorated(
+              Collections.singleton(DecoratingOptions.BLOCKING_AUTHENTICATION_ATTEMPTS), username));
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-    CustomerEntity client = loadUserByUsernameInternal(username);
+    Customer client = loadUserByUsernameInternal(username);
 
     return cacheIntoRequestAsClientUserDetails(client);
   }
@@ -73,7 +73,7 @@ public class AuthService implements UserDetailsService {
    */
   @Transactional(rollbackOn = Exception.class)
   public AccountUnlock startAccountUnlocking(String username) {
-    CustomerEntity client = loadUserByUsernameInternal(username);
+    Customer client = loadUserByUsernameInternal(username);
 
     if (!isAccountLocked(client)) {
       throw new PlatformBackendException().setDetails("Account does not need to be unlocked!").setHttpStatus(BAD_REQUEST);
@@ -82,7 +82,7 @@ public class AuthService implements UserDetailsService {
     return issueAccountUnlockingCode(client, null);
   }
 
-  private AccountUnlock issueAccountUnlockingCode(CustomerEntity client, ConfigurationEntity configuration) {
+  private AccountUnlock issueAccountUnlockingCode(Customer client, Configuration configuration) {
     String rawUnlockingCode = UUID.randomUUID().toString();
 
     String partnerUnlockingUrl = UriComponentsBuilder.fromHttpUrl(configuration.getRedirectUrl())
@@ -101,19 +101,18 @@ public class AuthService implements UserDetailsService {
 
     emailService.send(emailMessageDetails);
 
-    updateAuthLogsWithCode(client, encoder.encode(rawUnlockingCode));
-    saveClient(client);
+    updateAttemptWithCode(client, encoder.encode(rawUnlockingCode));
+    saveCustomer(client);
 
-    return new AccountUnlock(
-        AccountUnlock.State.INITIATED,
+    return new AccountUnlock(AccountUnlock.State.INITIATED,
         configuration.getRedirectUrl(),
         configuration.getReturnUrl(),
         properties.getUnlockReplyEmail()
     );
   }
 
-  private void updateAuthLogsWithCode(CustomerEntity client, String hashedUnlockingCode) {
-    for (AuthenticationLogEntity log : client.getAuthenticationLogs()) {
+  private void updateAttemptWithCode(Customer client, String hashedUnlockingCode) {
+    for (AuthenticationAttempt log : client.getAuthenticationAttempts()) {
       log.setEncodedUnlockingCode(hashedUnlockingCode);
     }
   }
@@ -121,15 +120,15 @@ public class AuthService implements UserDetailsService {
   /**
    * Completes account unlocking.
    * Performs checks and determines if loaded entity is eligible for unlocking,
-   * only then resolves all blocking logs else exception is thrown.
+   * only then resolves all blocking auth attempts else exception is thrown.
    * For more information please see {@link AuthenticationStatusReason}.
    *
    * @param username      client to be loaded.
-   * @param unlockingCode unlocking code that should match against any of the authentication logs.
+   * @param unlockingCode unlocking code that should match against any of the authentication attempts.
    */
   @Transactional(rollbackOn = Exception.class)
   public AccountUnlock completeAccountUnlocking(String username, String unlockingCode) {
-    CustomerEntity client = loadUserByUsernameInternal(username);
+    Customer client = loadUserByUsernameInternal(username);
 
     if (!shouldUnlock(client, unlockingCode)) {
       throw new PlatformBackendException()
@@ -142,16 +141,16 @@ public class AuthService implements UserDetailsService {
     return unlockAccount(client, null);
   }
 
-  private AccountUnlock unlockAccount(CustomerEntity client, ConfigurationEntity configuration) {
+  private AccountUnlock unlockAccount(Customer client, Configuration configuration) {
     String updatedBy =
         SecurityUtils.getPrincipal()
-            .map(ClientUserDetails::getUsername)
+            .map(CustomerUserDetails::getUsername)
             .orElse(client.getUsername());
 
-    resolveLogsForClient(client, updatedBy);
+    resolveBlockingAttempts(client, updatedBy);
 
     client.setAccountLocked(Boolean.FALSE);
-    saveClient(client);
+    saveCustomer(client);
 
     return new AccountUnlock(
         AccountUnlock.State.COMPLETED,
@@ -161,17 +160,17 @@ public class AuthService implements UserDetailsService {
     );
   }
 
-  private void resolveLogsForClient(CustomerEntity client, String updatedBy) {
-    for (AuthenticationLogEntity log : client.getAuthenticationLogs()) {
+  private void resolveBlockingAttempts(Customer client, String updatedBy) {
+    for (AuthenticationAttempt log : client.getAuthenticationAttempts()) {
       log.setStatusResolved(Boolean.TRUE);
       log.setUpdatedBy(updatedBy);
     }
   }
 
-  private void saveClient(CustomerEntity client) {
-    if (client instanceof PersonEntity person) {
+  private void saveCustomer(Customer customer) {
+    if (customer instanceof Person person) {
       personService.save(person);
-    } else if (client instanceof CompanyEntity company) {
+    } else if (customer instanceof Company company) {
       companyService.save(company);
     } else {
       throw new PlatformBackendException().setDetails("Saving could not be completed, please contact technical support for assistance!")
@@ -179,38 +178,38 @@ public class AuthService implements UserDetailsService {
     }
   }
 
-  private boolean shouldUnlock(CustomerEntity client, String unlockingCode) {
+  private boolean shouldUnlock(Customer client, String unlockingCode) {
     return canUnlockByAdmin() || canUnlockByClient(client, unlockingCode);
   }
 
   private boolean canUnlockByAdmin() {
-    return SecurityUtils.getPrincipal().map(ClientUserDetails::isAdmin).orElse(false);
+    return SecurityUtils.getPrincipal().map(CustomerUserDetails::isAdmin).orElse(false);
   }
 
-  private boolean canUnlockByClient(CustomerEntity client, String unlockingCode) {
+  private boolean canUnlockByClient(Customer client, String unlockingCode) {
     return isAccountLocked(client)
-        && client.getAuthenticationLogs().stream()
+        && client.getAuthenticationAttempts().stream()
         .anyMatch(log -> encoder.matches(unlockingCode, log.getEncodedUnlockingCode()));
   }
 
-  private boolean isAccountLocked(CustomerEntity client) {
-    ClientUserDetails clientUserDetails = new ClientUserDetails(client);
+  private boolean isAccountLocked(Customer client) {
+    CustomerUserDetails customerUserDetails = new CustomerUserDetails(client);
 
     return Boolean.TRUE.equals(client.getAccountLocked())
-        || !clientUserDetails.isAccountNonLocked()
-        || !clientUserDetails.isEnabled();
+        || !customerUserDetails.isAccountNonLocked()
+        || !customerUserDetails.isEnabled();
   }
 
-  private CustomerEntity loadUserByUsernameInternal(String username) {
-    return loadUserWithBlockingAuthFailures.apply(username, personService)
-        .orElseGet(() -> loadUserWithBlockingAuthFailures.apply(username, companyService)
+  private Customer loadUserByUsernameInternal(String username) {
+    return getBlockingAuthFailures.apply(username, personService)
+        .orElseGet(() -> getBlockingAuthFailures.apply(username, companyService)
             .orElseThrow(() -> new PlatformBackendException()
                 .setMessage("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username))
                 .setHttpStatus(BAD_REQUEST)));
   }
 
-  private ClientUserDetails cacheIntoRequestAsClientUserDetails(CustomerEntity client) {
-    ClientUserDetails userDetails = new ClientUserDetails(client);
+  private CustomerUserDetails cacheIntoRequestAsClientUserDetails(Customer client) {
+    CustomerUserDetails userDetails = new CustomerUserDetails(client);
 
     request.setAttribute(USER_DETAILS, userDetails);
 

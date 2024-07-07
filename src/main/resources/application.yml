@@ -24,7 +24,7 @@ spring:
   output:
     ansi:
       enabled: always
-#logging:
-#  level:
+logging:
+  level:
 #    org.springframework.jdbc.core: TRACE
-#    org.springframework.security: TRACE
+    org.springframework.security: DEBUG

@@ -1,7 +1,7 @@
 package com.platform.mapper;
 
-import com.platform.model.Subscription;
-import com.platform.persistence.entity.SubscriptionEntity;
+import com.platform.model.SubscriptionResponse;
+import com.platform.persistence.entity.Subscription;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -10,9 +10,9 @@ import java.util.Set;
 @Mapper(componentModel = "spring")
 public interface SubscriptionMapper {
 
-  Set<Subscription> toResponse(Set<SubscriptionEntity> subscriptionsList);
+  Set<SubscriptionResponse> toResponse(Set<Subscription> subscriptionsList);
 
   @Mapping(source = "id", target = "clientId")
-  Subscription toResponse(SubscriptionEntity subscription);
+  SubscriptionResponse toResponse(Subscription subscription);
 
 }

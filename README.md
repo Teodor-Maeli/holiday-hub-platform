@@ -40,6 +40,8 @@ terminal in the same directory.
 
 ## Changelog:
 
+* 1.10.0 - Spring Boot 3.3.1
+
 * 1.9.0 - major refactorings
 
 * 1.8.0 - Improvements in core and auth modules, mainly focused on unlocking templates.

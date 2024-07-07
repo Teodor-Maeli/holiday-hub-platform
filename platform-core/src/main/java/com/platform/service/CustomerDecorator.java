@@ -1,8 +1,8 @@
 package com.platform.service;
 
-import com.platform.persistence.entity.AuthenticationLogEntity;
-import com.platform.persistence.entity.CustomerEntity;
-import com.platform.persistence.entity.SubscriptionEntity;
+import com.platform.persistence.entity.AuthenticationAttempt;
+import com.platform.persistence.entity.Customer;
+import com.platform.persistence.entity.Subscription;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.CollectionUtils;
 
@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
  * @param <E> Entity
  */
 @RequiredArgsConstructor
-public abstract class ClientServiceDecorator<E extends CustomerEntity> implements ClientService<E> {
+public abstract class CustomerDecorator<E extends Customer> implements CustomerService<E> {
 
   private final SubscriptionService subscriptionService;
-  private final AuthenticationLogService authenticationLogService;
-  private final ClientService<E> delegate;
+  private final AuthenticationAttemptService authenticationAttemptService;
+  private final CustomerService<E> delegate;
 
   abstract void decorateWithCustomers(E clientEntity);
 
@@ -60,27 +60,27 @@ public abstract class ClientServiceDecorator<E extends CustomerEntity> implement
     for (DecoratingOptions option : decoratingOptions) {
       switch (option) {
         case SUBSCRIPTIONS -> decorateWithSubscriptions(clientEntity);
-        case AUTHENTICATION_LOGS -> decorateWithAuthenticationLogs(clientEntity);
-        case BLOCKING_AUTHENTICATION_LOGS -> decorateWithBlockingAuthenticationLogs(clientEntity);
+        case AUTHENTICATION_ATTEMPTS -> decorateWithAuthAttempts(clientEntity);
+        case BLOCKING_AUTHENTICATION_ATTEMPTS -> decorateWithBlockingAuthAttempts(clientEntity);
         case COMPANY_REPRESENTATIVES, REPRESENTATIVE_COMPANY -> decorateWithCustomers(clientEntity);
       }
     }
 
   }
 
-  private void decorateWithAuthenticationLogs(E clientEntity) {
-    List<AuthenticationLogEntity> clientAuthenticationLogs = authenticationLogService.getClientAuthenticationLogs(clientEntity.getId());
-    clientEntity.setAuthenticationLogs(clientAuthenticationLogs);
+  private void decorateWithAuthAttempts(E clientEntity) {
+    List<AuthenticationAttempt> attempts = authenticationAttemptService.getAuthenticationAttempts(clientEntity.getId());
+    clientEntity.setAuthenticationAttempts(attempts);
   }
 
   private void decorateWithSubscriptions(E clientEntity) {
-    List<SubscriptionEntity> clientSubscriptions = subscriptionService.getClientSubscriptions(clientEntity.getId());
-    clientEntity.setSubscriptions(clientSubscriptions);
+    List<Subscription> subscriptions = subscriptionService.getSubscriptions(clientEntity.getId());
+    clientEntity.setSubscriptions(subscriptions);
   }
 
-  private void decorateWithBlockingAuthenticationLogs(E clientEntity) {
-    List<AuthenticationLogEntity> clientAuthenticationLogs = authenticationLogService.getBlockingAuthenticationLogs(clientEntity.getUsername());
-    clientEntity.setAuthenticationLogs(clientAuthenticationLogs);
+  private void decorateWithBlockingAuthAttempts(E clientEntity) {
+    List<AuthenticationAttempt> attempts = authenticationAttemptService.getBlockingAuthenticationAttempts(clientEntity.getUsername());
+    clientEntity.setAuthenticationAttempts(attempts);
   }
 
   private Set<DecoratingOptions> filterDecoratingOptions(Set<DecoratingOptions> decoratingOptions, E client) {

@@ -1,8 +1,8 @@
 package com.platform.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.platform.aspect.LogAuthentication;
-import com.platform.model.ClientUserDetails;
+import com.platform.aspect.TrackAuthentication;
+import com.platform.model.CustomerUserDetails;
 import com.platform.model.JWTComposite;
 import com.platform.component.JWTGenerator;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,10 +23,10 @@ public class PlatformAuthenticationSuccessHandler implements AuthenticationSucce
   private final ObjectMapper objectMapper;
 
   @Override
-  @LogAuthentication(async = true)
+  @TrackAuthentication(async = true)
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException {
-    ClientUserDetails details = (ClientUserDetails) authentication.getPrincipal();
+    CustomerUserDetails details = (CustomerUserDetails) authentication.getPrincipal();
     JWTComposite authTokensComposite = JWTGenerator.generate(details);
 
     response.getOutputStream().println(objectMapper.writeValueAsString(authTokensComposite));

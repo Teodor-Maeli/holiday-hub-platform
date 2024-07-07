@@ -1,10 +1,10 @@
 package com.platform.persistence.repository;
 
-import com.platform.persistence.entity.CompanyEntity;
+import com.platform.persistence.entity.Company;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CompanyRepository extends BaseClientRepository<CompanyEntity, Long> {
+public interface CompanyRepository extends BaseClientRepository<Company, Long> {
 
-  CompanyEntity findByRepresentativesUsername(String username);
+  Company findByRepresentativesUsername(String username);
 }

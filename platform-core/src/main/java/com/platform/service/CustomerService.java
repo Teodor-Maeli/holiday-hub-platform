@@ -1,10 +1,10 @@
 package com.platform.service;
 
-import com.platform.persistence.entity.CustomerEntity;
+import com.platform.persistence.entity.Customer;
 
 import java.util.Set;
 
-public interface ClientService<E extends CustomerEntity> {
+public interface CustomerService<E extends Customer> {
 
   default E loadUserByUsernameDecorated(Set<DecoratingOptions> decoratingOptions, String username) {
     throw new UnsupportedOperationException("Method not yet implemented!");

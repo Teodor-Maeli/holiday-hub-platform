@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.platform.persistence.entity.AuthenticationLogEntity;
+import com.platform.persistence.entity.AuthenticationAttempt;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +20,7 @@ import java.util.Set;
 @Setter
 @Getter
 @JsonInclude(Include.NON_NULL)
-public class Client {
+public class CustomerResponse {
 
   private Long id;
   private String username;
@@ -28,8 +28,8 @@ public class Client {
   private String emailAddress;
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime registeredDate;
-  private List<AuthenticationLogEntity> authenticationLogs;
-  private List<Subscription> subscriptions;
+  private List<AuthenticationAttempt> authenticationAttempts;
+  private List<SubscriptionResponse> subscriptions;
   private Set<ConsumerAuthority> authorities;
   private Boolean accountLocked;
   private String redirectUrl;

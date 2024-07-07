@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "SUBSCRIPTION")
-public class SubscriptionEntity {
+public class Subscription {
 
   @Id
   @Column(name = "ID", updatable = false, unique = true, nullable = false)
@@ -30,7 +30,7 @@ public class SubscriptionEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "CLIENT_ID", nullable = false)
   @JsonBackReference
-  private CustomerEntity client;
+  private Customer client;
 
   @Column(name = "START_DATE")
   private LocalDateTime startDate;

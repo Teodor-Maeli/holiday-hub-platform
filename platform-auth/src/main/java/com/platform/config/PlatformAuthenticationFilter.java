@@ -9,9 +9,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 public class PlatformAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-  private static final String PASSWORD = "password";
-  private static final String USERNAME = "username";
-
   public PlatformAuthenticationFilter(AuthenticationManager authenticationManager, PlatformAuthenticationFailureHandler platformAuthenticationFailureHandler,
       PlatformAuthenticationSuccessHandler platformAuthenticationSuccessHandler) {
     super(authenticationManager);
@@ -21,12 +18,12 @@ public class PlatformAuthenticationFilter extends UsernamePasswordAuthentication
 
   @Override
   protected String obtainPassword(HttpServletRequest request) {
-    return request.getHeader(PASSWORD);
+    return request.getHeader("password");
   }
 
   @Override
   protected String obtainUsername(HttpServletRequest request) {
-    return request.getHeader(USERNAME);
+    return request.getHeader("username");
   }
 
 }

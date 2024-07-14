@@ -51,8 +51,7 @@ public class AuthenticationAttemptAspect {
   private static final String ACCOUNT_LOCKED_EXCEPTION = "AccountLockedException";
   private static final String LOCKED_EXCEPTION = "LockedException";
 
-  private static final List<AuthenticationStatusReason> DISALLOWED_REASONS = List.of(
-      ACCOUNT_DISABLED, ACCOUNT_HACKED, ACCOUNT_LOCKED);
+  private static final List<AuthenticationStatusReason> DISALLOWED_REASONS = List.of(ACCOUNT_DISABLED, ACCOUNT_HACKED, ACCOUNT_LOCKED);
 
   private final PlatformSecurityProperties properties;
   private final AuthenticationAttemptService service;

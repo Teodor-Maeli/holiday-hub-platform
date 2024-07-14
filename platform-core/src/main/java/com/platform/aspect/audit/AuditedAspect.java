@@ -1,6 +1,8 @@
 package com.platform.aspect.audit;
 
 import com.platform.exception.PlatformBackendException;
+import com.platform.helper.JsonMasker;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -27,7 +29,10 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @Slf4j
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class AuditedAspect {
+
+  private final JsonMasker masker;
 
   @Pointcut("@within(com.platform.aspect.audit.Audited)")
   public void pointCut() {
@@ -37,7 +42,7 @@ public class AuditedAspect {
   public void logInput(JoinPoint joinPoint) {
     Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
     RequestMapping mapping = getRequestMapping(method);
-    String masked = LoggerMasker.mask(getParameters(joinPoint));
+    String masked = masker.mask(getParameters(joinPoint));
 
     log("==Input==> path(s): {}, method(s): {}, arguments: {}", mapping, masked);
   }
@@ -46,7 +51,7 @@ public class AuditedAspect {
   public void logOutput(JoinPoint joinPoint, Object o) {
     Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
     RequestMapping mapping = getRequestMapping(method);
-    String masked = LoggerMasker.mask(o);
+    String masked = masker.mask(o);
 
     log("<==Output== path(s): {}, method(s): {}, returning: {}", mapping, masked);
   }
@@ -71,7 +76,9 @@ public class AuditedAspect {
   private RequestMapping getRequestMapping(Method method) {
     return AnnotatedElementUtils.findAllMergedAnnotations(method, RequestMapping.class).stream()
         .findFirst()
-        .orElseThrow(() -> new PlatformBackendException().setMessage("Invalid or missing annotation!").setHttpStatus(INTERNAL_SERVER_ERROR));
+        .orElseThrow(() -> new PlatformBackendException()
+            .setMessage("Invalid or missing annotation!")
+            .setHttpStatus(INTERNAL_SERVER_ERROR));
 
   }
 }

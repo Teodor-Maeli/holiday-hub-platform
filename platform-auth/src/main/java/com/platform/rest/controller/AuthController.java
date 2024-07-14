@@ -23,15 +23,13 @@ public class AuthController {
 
   @ResponseStatus(HttpStatus.ACCEPTED)
   @PostMapping("/unlock-account/initiate/{username}")
-  public AccountUnlock initiateAccountUnlocking(@PathVariable("username") String username) {
+  public AccountUnlock initiateAccountUnlocking(@PathVariable String username) {
     return authService.startAccountUnlocking(username);
   }
 
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping("/unlock-account/complete/{username}")
-  public AccountUnlock completeAccountUnlocking(
-      @PathVariable("username") String username,
-      @RequestParam(value = "unlockingCode", required = false) String unlockingCode) {
+  public AccountUnlock completeAccountUnlocking(@PathVariable String username, @RequestParam (required = false) String unlockingCode) {
     return authService.completeAccountUnlocking(username, unlockingCode);
   }
 

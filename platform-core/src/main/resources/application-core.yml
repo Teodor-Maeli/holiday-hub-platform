@@ -10,3 +10,16 @@ spring:
           starttls:
             enable: true
     username: "<your-username>"
+
+masker:
+  pattern: "*"
+  frequency: 8
+  regex: "(?<={field}\":\")([^\"]{1,5})(.*?)"
+  fields:
+    - password
+    - emailAddress
+    - password
+    - familyName
+    - givenName
+    - middleName
+    - unlockingCode

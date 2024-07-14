@@ -21,16 +21,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JWTGenerator {
 
-  private static final String EMAIL = "email";
-  private static final Long ACCESS_TOKEN_EXPIRATION = 5000000L;
-  private static final Long REFRESH_TOKEN_EXPIRATION = ACCESS_TOKEN_EXPIRATION + 100000L;
-
   private final ObjectMapper objectMapper;
   private final PlatformSecurityProperties properties;
 
   public JWTComposite generate(CustomerUserDetails client) {
-    String accessToken = generateJWT(ACCESS_TOKEN_EXPIRATION, client);
-    String refreshToken = generateJWT(REFRESH_TOKEN_EXPIRATION, client);
+    String accessToken = generateJWT(5000000L, client);
+    String refreshToken = generateJWT(5000000L + 100000L, client);
 
     return JWTComposite.of(accessToken, refreshToken);
   }
@@ -41,7 +37,7 @@ public class JWTGenerator {
       return JWT.create()
           .withIssuer(properties.getJwtIssuer())
           .withSubject(details.getUsername())
-          .withClaim(EMAIL, details.client().getEmailAddress())
+          .withClaim("email", details.client().getEmailAddress())
           .withClaim("roles", toJson(details.getAuthorities()))
           .withIssuedAt(new Date())
           .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
@@ -49,7 +45,7 @@ public class JWTGenerator {
           .withNotBefore(new Date(System.currentTimeMillis() + 1000L))
           .sign(SecurityUtils.getSignAlgorithm());
     } catch (JsonProcessingException e) {
-      throw new UncheckedIOException("Failed to authenticate client username:" + details.getUsername(), e);
+      throw new UncheckedIOException("Failure during JWT generation for username:" + details.getUsername(), e);
     }
   }
 

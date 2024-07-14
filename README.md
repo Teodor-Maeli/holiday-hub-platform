@@ -40,6 +40,8 @@ terminal in the same directory.
 
 ## Changelog:
 
+* 1.11.0 - Java 21 and Gradle 8.9
+
 * 1.10.0 - Spring Boot 3.3.1
 
 * 1.9.0 - major refactorings

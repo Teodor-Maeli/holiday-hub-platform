@@ -25,7 +25,7 @@ public abstract class CustomerDecorator<E extends Customer> implements CustomerS
   abstract void decorateWithCustomers(E clientEntity);
 
   @Override
-  public E loadUserByUsernameDecorated(Set<DecoratingOptions> decoratingOptions, String username) {
+  public E loadUserByUsernameForDecoration(Set<DecoratingOptions> decoratingOptions, String username) {
     E client = delegate.loadUserByUsername(username);
 
     if (shouldDecorate(decoratingOptions, client)) {

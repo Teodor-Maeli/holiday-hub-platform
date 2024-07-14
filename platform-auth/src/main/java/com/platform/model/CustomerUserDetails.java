@@ -13,7 +13,9 @@ public record CustomerUserDetails(Customer client) implements UserDetails {
 
   public CustomerUserDetails {
     if (client == null) {
-      throw new PlatformBackendException().setMessage("Authentication was aborted!").setDetails("Client object cannot be null!");
+      throw new PlatformBackendException()
+          .setMessage("Authentication was aborted!")
+          .setDetails("Client object cannot be null!");
     }
   }
 

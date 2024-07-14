@@ -37,7 +37,7 @@ abstract class AbstractCustomerService
    */
   @Override
   public E loadUserByUsername(String username) {
-    Optional<E> user = repository.findByUsername(username);
+    Optional<E> user = repository.findByUsernameForAuthentication(username);
 
     if (user.isPresent()) {
       return user.get();

@@ -52,7 +52,7 @@ public class AuthService implements UserDetailsService {
   private final Encoder encoder;
   private final BiFunction<String, CustomerService<?>, Optional<Customer>> getBlockingAuthFailures =
       (username, service) -> Optional.of(
-          service.loadUserByUsernameDecorated(
+          service.loadUserByUsernameForDecoration(
               Collections.singleton(DecoratingOptions.BLOCKING_AUTHENTICATION_ATTEMPTS), username));
 
   @Override
@@ -67,9 +67,8 @@ public class AuthService implements UserDetailsService {
    * Initiates account unlocking.
    * Performs checks and determines if account is eligible for unlocking,
    * only then issues account unlocking code, else exception is thrown.
-   * For more information please see {@link AuthenticationStatusReason}.
    *
-   * @param username client to be loaded.
+   * @param username username of customer to be unlocked.
    */
   @Transactional(rollbackOn = Exception.class)
   public AccountUnlock startAccountUnlocking(String username) {
@@ -152,12 +151,7 @@ public class AuthService implements UserDetailsService {
     client.setAccountLocked(Boolean.FALSE);
     saveCustomer(client);
 
-    return new AccountUnlock(
-        AccountUnlock.State.COMPLETED,
-        configuration.getRedirectUrl(),
-        configuration.getReturnUrl(),
-        properties.getUnlockReplyEmail()
-    );
+    return new AccountUnlock(AccountUnlock.State.COMPLETED, configuration.getRedirectUrl(), configuration.getReturnUrl(), properties.getUnlockReplyEmail());
   }
 
   private void resolveBlockingAttempts(Customer client, String updatedBy) {

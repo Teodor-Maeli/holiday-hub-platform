@@ -13,16 +13,12 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class PlatformExceptionHandler {
 
-  private static final String MESSAGE = "message";
-  private static final String STATUS = "status";
-  private static final String DETAILS = "details";
-
   @ExceptionHandler(PlatformBackendException.class)
   private ResponseEntity<Map<String, Object>> handleException(PlatformBackendException be) {
     Map<String, Object> erroneousResponse = new HashMap<>();
-    erroneousResponse.put(MESSAGE, be.getMessage());
-    erroneousResponse.put(STATUS, be.getHttpStatus());
-    erroneousResponse.put(DETAILS, be.getDetails());
+    erroneousResponse.put("message", be.getMessage());
+    erroneousResponse.put("status", be.getHttpStatus());
+    erroneousResponse.put("details", be.getDetails());
 
     erroneousResponse =
         erroneousResponse.entrySet()

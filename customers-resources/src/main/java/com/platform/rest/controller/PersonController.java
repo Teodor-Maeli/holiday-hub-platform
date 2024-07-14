@@ -42,16 +42,14 @@ public class PersonController {
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(path = "/{username}")
   @PreAuthorize("#username == authentication.principal")
-  public PersonResponse getByUsername(@RequestParam("include") Set<DecoratingOptions> include,
-                                      @PathVariable("username") String username) {
-    return mapper.toResponse(service.loadUserByUsernameDecorated(include, username));
+  public PersonResponse getByUsername(@RequestParam Set<DecoratingOptions> include, @PathVariable String username) {
+    return mapper.toResponse(service.loadUserByUsernameForDecoration(include, username));
   }
 
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping(path = "/credentials/{username}")
   @PreAuthorize("#username == authentication.principal")
-  public void updatePassword(@RequestHeader String password,
-                             @PathVariable("username") String username) {
+  public void updatePassword(@RequestHeader String password, @PathVariable String username) {
     service.changePassword(password, username);
   }
 }

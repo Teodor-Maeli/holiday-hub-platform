@@ -25,17 +25,14 @@ import java.util.Set;
  */
 public class PlatformAuthorizationFilter extends OncePerRequestFilter {
 
-  private static final String AUTHORIZATION_HEADER = "Authorization";
-  private static final String ROLES = "roles";
-
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    String encodedJWT = request.getHeader(AUTHORIZATION_HEADER);
+    String encodedJWT = request.getHeader("Authorization");
 
     try {
       DecodedJWT decodedJWT = verifyJWT(encodedJWT);
       String subject = decodedJWT.getSubject();
-      List<ConsumerAuthority> roles = decodedJWT.getClaim(ROLES).asList(ConsumerAuthority.class);
+      List<ConsumerAuthority> roles = decodedJWT.getClaim("roles").asList(ConsumerAuthority.class);
 
       Set<SimpleGrantedAuthority> authorities = SecurityUtils.toSimpleGrantedAuthorities(roles);
       setAuthentication(subject, authorities);

@@ -25,7 +25,7 @@ public interface BaseClientRepository<E extends Customer, ID extends Number> ext
       LEFT JOIN FETCH e.authenticationAttempts attempts
       WHERE e.username = :username
       """)
-  Optional<E> findByUsername(@Param("username") String username);
+  Optional<E> findByUsernameForAuthentication(@Param("username") String username);
 
   boolean existsByUsername(String username);
 

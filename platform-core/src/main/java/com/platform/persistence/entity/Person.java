@@ -36,7 +36,4 @@ public class Person extends Customer {
   @JsonBackReference
   private Company company;
 
-  @Column(name = "COMPANY_CONFIGURATION_ID")
-  private Long companyConfigurationId;
-
 }

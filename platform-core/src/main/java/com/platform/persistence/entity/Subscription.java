@@ -28,9 +28,9 @@ public class Subscription {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "CLIENT_ID", nullable = false)
+  @JoinColumn(name = "CUSTOMER_ID", nullable = false)
   @JsonBackReference
-  private Customer client;
+  private Customer customer;
 
   @Column(name = "START_DATE")
   private LocalDateTime startDate;
@@ -41,6 +41,6 @@ public class Subscription {
   @Column(name = "ACTIVE")
   private Boolean active;
 
-  @Column(name = "SUBSCRIPTION_TYPE")
-  private SubscriptionType subscriptionType;
+  @Column(name = "TYPE")
+  private SubscriptionType type;
 }

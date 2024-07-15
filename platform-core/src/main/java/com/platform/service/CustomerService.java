@@ -1,20 +1,19 @@
 package com.platform.service;
 
-import com.platform.persistence.entity.Customer;
+import com.platform.model.CustomerResource;
+import com.platform.model.CustomerType;
 
 import java.util.Set;
 
-public interface CustomerService<E extends Customer> {
+public interface CustomerService {
 
-  default E loadUserByUsernameForDecoration(Set<DecoratingOptions> decoratingOptions, String username) {
+  default CustomerResource loadUserByUsernameForDecoration(Set<DecoratingOptions> decoratingOptions, String username) {
     throw new UnsupportedOperationException("Method not yet implemented!");
   }
 
-  E loadUserByUsername(String username);
+  CustomerResource retrieve(String username);
 
-  E save(E entity);
+  CustomerResource create(CustomerResource resource);
 
-  void delete(String username);
-
-  void changePassword(String newPassword, String username);
+  CustomerType serviceType();
 }

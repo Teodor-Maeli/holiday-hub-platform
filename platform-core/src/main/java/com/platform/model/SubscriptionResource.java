@@ -5,15 +5,15 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @JsonInclude(Include.NON_NULL)
-public class CompanyResponse extends CustomerResponse {
+public class SubscriptionResource {
 
-  private String companyName;
-  private String companyNumber;
-  private Set<PersonResponse> representatives;
+  private LocalDate startDate;
+  private LocalDate endDate;
+  private Boolean active;
+  private SubscriptionType type;
 }
-

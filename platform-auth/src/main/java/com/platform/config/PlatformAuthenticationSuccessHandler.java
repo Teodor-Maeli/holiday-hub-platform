@@ -2,9 +2,9 @@ package com.platform.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.platform.aspect.TrackAuthentication;
+import com.platform.component.JWTGenerator;
 import com.platform.model.CustomerUserDetails;
 import com.platform.model.JWTComposite;
-import com.platform.component.JWTGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class PlatformAuthenticationSuccessHandler implements AuthenticationSucce
   @Override
   @TrackAuthentication(async = true)
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-      Authentication authentication) throws IOException {
+                                      Authentication authentication) throws IOException {
     CustomerUserDetails details = (CustomerUserDetails) authentication.getPrincipal();
     JWTComposite authTokensComposite = JWTGenerator.generate(details);
 

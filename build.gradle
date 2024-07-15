@@ -43,7 +43,7 @@ allprojects {
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
         testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-        testAnnotationProcessor"org.projectlombok:lombok:${lombokVersion}"
+        testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
         runtimeOnly 'org.postgresql:postgresql'
     }

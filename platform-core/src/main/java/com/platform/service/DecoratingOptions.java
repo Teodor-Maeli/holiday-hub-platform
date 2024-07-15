@@ -1,8 +1,8 @@
 package com.platform.service;
 
-import com.platform.persistence.entity.Customer;
-import com.platform.persistence.entity.Company;
-import com.platform.persistence.entity.Person;
+import com.platform.model.CompanyResource;
+import com.platform.model.CustomerResource;
+import com.platform.model.PersonResource;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,11 +16,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 public enum DecoratingOptions {
 
-  SUBSCRIPTIONS(Set.of(Person.class, Company.class)),
-  AUTHENTICATION_ATTEMPTS(Set.of(Person.class, Company.class)),
-  BLOCKING_AUTHENTICATION_ATTEMPTS(Set.of(Person.class, Company.class)),
-  COMPANY_REPRESENTATIVES(Set.of(Company.class)),
-  REPRESENTATIVE_COMPANY(Set.of(Person.class));
+  SUBSCRIPTIONS(Set.of(PersonResource.class, CompanyResource.class)),
+  AUTHENTICATION_ATTEMPTS(Set.of(PersonResource.class, CompanyResource.class)),
+  BLOCKING_AUTHENTICATION_ATTEMPTS(Set.of(PersonResource.class, CompanyResource.class)),
+  COMPANY_REPRESENTATIVES(Set.of(CompanyResource.class)),
+  REPRESENTATIVE_COMPANY(Set.of(PersonResource.class));
 
-  private final Set<Class<? extends Customer>> eligibleForDecorating;
+  private final Set<Class<? extends CustomerResource>> eligibleForDecorating;
 }

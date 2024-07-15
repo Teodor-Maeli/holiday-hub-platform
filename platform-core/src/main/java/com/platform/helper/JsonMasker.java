@@ -21,8 +21,8 @@ public class JsonMasker {
 
   public JsonMasker(ObjectMapper mapper, JsonMaskerProperties properties) {
     this.mapper = mapper;
-
     this.mask = properties.getPattern().repeat(properties.getFrequency());
+
     this.patterns = properties.getFields().stream()
         .map(field -> properties.getRegex().replace("{field}", field))
         .map(Pattern::compile)

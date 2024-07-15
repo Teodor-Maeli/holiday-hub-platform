@@ -1,9 +1,7 @@
 package com.platform.persistence.repository;
 
-import com.platform.persistence.entity.Customer;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -13,19 +11,16 @@ import java.util.Optional;
 
 /**
  * Base repository interface, extend and override if needed.
- *
- * @param <E>  Entity
- * @param <ID> ID
  */
 @NoRepositoryBean
-public interface BaseClientRepository<E extends Customer, ID extends Number> extends JpaRepository<E, ID>, JpaSpecificationExecutor<E> {
+public interface CustomerRepository<T, ID extends Number> extends JpaRepository<T, ID> {
 
   @Query("""
       SELECT e FROM #{#entityName} e
       LEFT JOIN FETCH e.authenticationAttempts attempts
       WHERE e.username = :username
       """)
-  Optional<E> findByUsernameForAuthentication(@Param("username") String username);
+  Optional<T> findByUsernameForAuthentication(@Param("username") String username);
 
   boolean existsByUsername(String username);
 
@@ -34,14 +29,6 @@ public interface BaseClientRepository<E extends Customer, ID extends Number> ext
   @Query("DELETE #{#entityName} e WHERE e.username = :username")
   int deleteByUserName(String username);
 
-  @Transactional
-  @Modifying
-  @Query("""
-      UPDATE #{#entityName} e
-      SET e.password = :password
-      WHERE e.username = :username
-      """)
-  int updatePasswordByUsername(@Param("username") String username,
-                               @Param("password") String password);
-
+  @Override
+  <S extends T> S save(S entity);
 }

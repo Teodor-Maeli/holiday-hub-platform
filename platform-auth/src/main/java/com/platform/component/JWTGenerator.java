@@ -37,7 +37,7 @@ public class JWTGenerator {
       return JWT.create()
           .withIssuer(properties.getJwtIssuer())
           .withSubject(details.getUsername())
-          .withClaim("email", details.client().getEmailAddress())
+          .withClaim("email", details.customer().getEmailAddress())
           .withClaim("roles", toJson(details.getAuthorities()))
           .withIssuedAt(new Date())
           .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))

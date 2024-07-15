@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
-  List<Subscription> findByClientId(Long id);
+  List<Subscription> findByCustomerId(Long customerId);
 }

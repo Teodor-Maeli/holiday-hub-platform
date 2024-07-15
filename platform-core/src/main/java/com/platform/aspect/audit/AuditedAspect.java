@@ -47,11 +47,11 @@ public class AuditedAspect {
     log("==Input==> path(s): {}, method(s): {}, arguments: {}", mapping, masked);
   }
 
-  @AfterReturning(pointcut = "pointCut()", returning = "o")
-  public void logOutput(JoinPoint joinPoint, Object o) {
+  @AfterReturning(pointcut = "pointCut()", returning = "object")
+  public void logOutput(JoinPoint joinPoint, Object object) {
     Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
     RequestMapping mapping = getRequestMapping(method);
-    String masked = masker.mask(o);
+    String masked = masker.mask(object);
 
     log("<==Output== path(s): {}, method(s): {}, returning: {}", mapping, masked);
   }
@@ -74,11 +74,14 @@ public class AuditedAspect {
   }
 
   private RequestMapping getRequestMapping(Method method) {
-    return AnnotatedElementUtils.findAllMergedAnnotations(method, RequestMapping.class).stream()
-        .findFirst()
-        .orElseThrow(() -> new PlatformBackendException()
-            .setMessage("Invalid or missing annotation!")
-            .setHttpStatus(INTERNAL_SERVER_ERROR));
+    return
+        AnnotatedElementUtils
+            .findAllMergedAnnotations(method, RequestMapping.class)
+            .stream()
+            .findFirst()
+            .orElseThrow(() -> new PlatformBackendException()
+                .setMessage("Invalid or missing annotation!")
+                .setHttpStatus(INTERNAL_SERVER_ERROR));
 
   }
 }

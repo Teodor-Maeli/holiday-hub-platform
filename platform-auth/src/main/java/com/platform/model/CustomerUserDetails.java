@@ -1,18 +1,16 @@
 package com.platform.model;
 
 import com.platform.exception.PlatformBackendException;
-import com.platform.persistence.entity.AuthenticationAttempt;
-import com.platform.persistence.entity.Customer;
 import com.platform.util.SecurityUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public record CustomerUserDetails(Customer client) implements UserDetails {
+public record CustomerUserDetails(CustomerResource customer) implements UserDetails {
 
   public CustomerUserDetails {
-    if (client == null) {
+    if (customer == null) {
       throw new PlatformBackendException()
           .setMessage("Authentication was aborted!")
           .setDetails("Client object cannot be null!");
@@ -21,33 +19,33 @@ public record CustomerUserDetails(Customer client) implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return SecurityUtils.toSimpleGrantedAuthorities(client.getConsumerAuthorities());
+    return SecurityUtils.toSimpleGrantedAuthorities(customer.getAuthorities());
   }
 
   @Override
   public String getPassword() {
-    return client.getPassword();
+    return customer.getPassword();
   }
 
   @Override
   public String getUsername() {
-    return client.getUsername();
+    return customer.getUsername();
   }
 
   @Override
   public boolean isAccountNonLocked() {
-    return client.getAuthenticationAttempts().stream().noneMatch(this::isAutoLocked)
-        && !Boolean.TRUE.equals(client.getAccountLocked());
+    return customer.getAuthenticationAttempts().stream().noneMatch(this::isAutoLocked)
+        && !Boolean.TRUE.equals(customer.getLocked());
   }
 
   public boolean isAdmin() {
-    return client.getConsumerAuthorities().contains(ConsumerAuthority.ADMIN);
+    return customer.getAuthorities().contains(ConsumerAuthority.ADMIN);
   }
 
-  private boolean isAutoLocked(AuthenticationAttempt attempt) {
+  private boolean isAutoLocked(AuthenticationAttemptResource attempt) {
     return (attempt.getAuthenticationStatus() == AuthenticationStatus.LOCKED
-            || attempt.getAuthenticationStatus() == AuthenticationStatus.BLACKLISTED
-            || attempt.getStatusReason().equals(AuthenticationStatusReason.BAD_CREDENTIALS)) && Boolean.FALSE.equals(attempt.getStatusResolved());
+        || attempt.getAuthenticationStatus() == AuthenticationStatus.BLACKLISTED
+        || attempt.getStatusReason().equals(AuthenticationStatusReason.BAD_CREDENTIALS)) && Boolean.FALSE.equals(attempt.getStatusResolved());
   }
 
 }

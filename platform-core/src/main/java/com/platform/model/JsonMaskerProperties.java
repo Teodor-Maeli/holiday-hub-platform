@@ -13,8 +13,8 @@ import java.util.List;
 @ConfigurationProperties(prefix = "masker")
 public class JsonMaskerProperties {
 
-  String pattern;
-  String regex;
-  int frequency;
-  List<String> fields;
+  private String pattern;
+  private String regex;
+  private int frequency;
+  private List<String> fields;
 }

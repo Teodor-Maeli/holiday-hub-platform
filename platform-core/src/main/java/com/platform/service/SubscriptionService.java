@@ -1,5 +1,7 @@
 package com.platform.service;
 
+import com.platform.mapper.SubscriptionMapper;
+import com.platform.model.SubscriptionResource;
 import com.platform.persistence.entity.Subscription;
 import com.platform.persistence.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +14,12 @@ import java.util.List;
 public class SubscriptionService {
 
   private final SubscriptionRepository repository;
+  private final SubscriptionMapper mapper;
 
-  public List<Subscription> getSubscriptions(Long id) {
-    return repository.findByClientId(id);
+  public List<SubscriptionResource> getSubscriptions(Long customerId) {
+    List<Subscription> subscriptions = repository.findByCustomerId(customerId);
+
+    return mapper.toResource(subscriptions);
   }
 
 }

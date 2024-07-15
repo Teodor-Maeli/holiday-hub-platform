@@ -1,6 +1,6 @@
 platform-security:
   allowed-paths: >
-    /customers/v1/person/register,
+    /customers/v1/create/**,
     /auth/v1/unlock-account/**
   unlock-complete-url: "http://localhost:3000/accounts/unlock?code=%s"
   unlock-reply-email: "admin@platform.com"

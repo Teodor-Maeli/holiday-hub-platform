@@ -1,7 +1,6 @@
 package com.platform.mapper;
 
-import com.platform.model.PersonResponse;
-import com.platform.model.registration.PersonRegistrationRequest;
+import com.platform.model.PersonResource;
 import com.platform.persistence.entity.Person;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -11,15 +10,16 @@ import org.mapstruct.Mapping;
     componentModel = "spring",
     uses = {
         SubscriptionMapper.class,
-        PasswordEncoderMapper.class
+        PasswordEncoderMapper.class,
+        AuthenticationAttemptMapper.class
     },
     injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface PersonMapper {
 
-  PersonResponse toResponse(Person entity);
+  @Mapping(target = "password", ignore = true)
+  PersonResource toResource(Person entity);
 
-  @Mapping(target = "password", qualifiedBy = EncodedMapping.class)
-  Person toEntity(PersonRegistrationRequest request);
-
+  @Mapping(target = "password", source = "password", qualifiedBy = EncodedMapping.class)
+  Person toEntity(PersonResource request);
 }

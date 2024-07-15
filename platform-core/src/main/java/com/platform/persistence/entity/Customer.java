@@ -61,20 +61,20 @@ public abstract class Customer {
   @JsonManagedReference
   private List<AuthenticationAttempt> authenticationAttempts;
 
-  @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonManagedReference
   private List<Subscription> subscriptions;
 
-  @Column(name = "CONSUMER_AUTHORITIES")
+  @Column(name = "AUTHORITIES")
   @ElementCollection(targetClass = ConsumerAuthority.class, fetch = FetchType.EAGER)
-  private Set<ConsumerAuthority> consumerAuthorities;
+  private Set<ConsumerAuthority> authorities;
 
-  @Column(name = "ACCOUNT_LOCKED")
-  private Boolean accountLocked;
+  @Column(name = "LOCKED")
+  private Boolean locked;
 
-  public Set<ConsumerAuthority> getConsumerAuthorities() {
-    if (Hibernate.isInitialized(consumerAuthorities)) {
-      return consumerAuthorities;
+  public Set<ConsumerAuthority> getAuthorities() {
+    if (Hibernate.isInitialized(authorities)) {
+      return authorities;
     }
 
     return Collections.emptySet();
@@ -87,6 +87,7 @@ public abstract class Customer {
 
     return Collections.emptyList();
   }
+
   public List<Subscription> getSubscriptions() {
     if (Hibernate.isInitialized(subscriptions)) {
       return subscriptions;

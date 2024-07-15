@@ -1,14 +1,13 @@
 package com.platform.aspect;
 
-import com.platform.AuthenticationDetails;
 import com.platform.config.PlatformAuthenticationFailureHandler;
 import com.platform.config.PlatformAuthenticationSuccessHandler;
 import com.platform.config.PlatformSecurityProperties;
+import com.platform.model.AuthenticationAttemptResource;
 import com.platform.model.AuthenticationStatus;
 import com.platform.model.AuthenticationStatusReason;
+import com.platform.model.CustomerResource;
 import com.platform.model.CustomerUserDetails;
-import com.platform.persistence.entity.AuthenticationAttempt;
-import com.platform.persistence.entity.Customer;
 import com.platform.service.AuthenticationAttemptService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,7 @@ import static com.platform.model.AuthenticationStatusReason.BAD_CREDENTIALS;
 import static com.platform.model.AuthenticationStatusReason.UNKNOWN;
 
 /**
- * Creates client authentication attempts into the database.
+ * Creates customer authentication attempts into the database.
  * Applies auto-lock if exhaust maximum BadCredentials attempts.
  */
 @Slf4j
@@ -90,11 +89,11 @@ public class AuthenticationAttemptAspect {
     }
 
     if (isSuccess(caller)) {
-      recordFailure(customerUserDetails, args);
+      recordSuccess(customerUserDetails);
     }
 
     if (isFailure(caller)) {
-      recordSuccess(customerUserDetails);
+      recordFailure(customerUserDetails, args);
     }
   }
 
@@ -108,39 +107,39 @@ public class AuthenticationAttemptAspect {
 
   private void recordSuccess(CustomerUserDetails customerUserDetails) {
 
-    AuthenticationAttempt entity = AuthenticationDetails.create()
-        .status(AuthenticationStatus.AUTHORIZED)
-        .reason(AuthenticationStatusReason.SUCCESSFUL_AUTHENTICATION)
-        .clientDetails(customerUserDetails)
-        .resolved(Boolean.TRUE)
-        .toEntity();
+    AuthenticationAttemptResource resource = new AuthenticationAttemptResource();
+    resource.setAuthenticationStatus(AuthenticationStatus.AUTHORIZED);
+    resource.setStatusReason(AuthenticationStatusReason.SUCCESSFUL_AUTHENTICATION);
+    resource.setStatusResolved(Boolean.TRUE);
 
-    service.recordAttempt(entity);
+
+    service.recordAttempt(resource, customerUserDetails.customer().getUsername());
   }
 
   private void recordFailure(CustomerUserDetails customerUserDetails, Object[] args) {
     if (!ObjectUtils.isEmpty(args)) {
       Exception exception = extractException(args);
-      AuthenticationAttempt entry = prepareFailureEntity(exception, customerUserDetails);
-      service.recordAttempt(entry);
+      AuthenticationAttemptResource resource = prepareFailureEntity(exception, customerUserDetails);
+      service.recordAttempt(resource, customerUserDetails.customer().getUsername());
     }
   }
 
-  private AuthenticationAttempt prepareFailureEntity(Exception exception, CustomerUserDetails customerUserDetails) {
+  private AuthenticationAttemptResource prepareFailureEntity(Exception exception, CustomerUserDetails customerUserDetails) {
     AuthenticationStatusReason authenticationStatusReason = determineReason(exception);
     Boolean statusResolved = isStatusResolved(customerUserDetails, authenticationStatusReason);
 
-    return AuthenticationDetails.create()
-        .status(AuthenticationStatus.FAILURE)
-        .reason(authenticationStatusReason)
-        .clientDetails(customerUserDetails)
-        .resolved(statusResolved)
-        .toEntity();
+
+    AuthenticationAttemptResource resource = new AuthenticationAttemptResource();
+    resource.setAuthenticationStatus(AuthenticationStatus.FAILURE);
+    resource.setStatusReason(authenticationStatusReason);
+    resource.setStatusResolved(statusResolved);
+
+    return resource;
   }
 
   private Boolean isStatusResolved(CustomerUserDetails customerUserDetails, AuthenticationStatusReason inputStatusReason) {
-    List<AuthenticationAttempt> attempts = Optional.ofNullable(customerUserDetails.client())
-        .map(Customer::getAuthenticationAttempts)
+    List<AuthenticationAttemptResource> attempts = Optional.ofNullable(customerUserDetails.customer())
+        .map(CustomerResource::getAuthenticationAttempts)
         .orElse(Collections.emptyList());
 
     if (DISALLOWED_REASONS.contains(inputStatusReason)) {
@@ -150,13 +149,13 @@ public class AuthenticationAttemptAspect {
     return getNonExpiredBadCredentials(attempts).size() <= properties.getBadCredentialsExpiryTime();
   }
 
-  private List<AuthenticationAttempt> getNonExpiredBadCredentials(List<AuthenticationAttempt> attempts) {
+  private List<AuthenticationAttemptResource> getNonExpiredBadCredentials(List<AuthenticationAttemptResource> attempts) {
     return attempts.stream()
         .filter(this::isNonExpiredBadCredentialAttempt)
         .toList();
   }
 
-  private boolean isNonExpiredBadCredentialAttempt(AuthenticationAttempt attempt) {
+  private boolean isNonExpiredBadCredentialAttempt(AuthenticationAttemptResource attempt) {
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime expirationTime = now.minusMinutes(properties.getBadCredentialsExpiryTime());
 

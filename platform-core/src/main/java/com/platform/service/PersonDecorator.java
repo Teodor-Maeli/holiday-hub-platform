@@ -1,28 +1,22 @@
 package com.platform.service;
 
-import com.platform.persistence.entity.Company;
-import com.platform.persistence.entity.Person;
-import com.platform.persistence.repository.CompanyRepository;
+import com.platform.mapper.PersonMapper;
+import com.platform.model.CustomerType;
 import com.platform.persistence.repository.PersonRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component("personService")
-public class PersonDecorator extends CustomerDecorator<Person> {
-
-  private final CompanyRepository companyRepository;
+@Service
+public class PersonDecorator extends CustomerDecorator {
 
   protected PersonDecorator(SubscriptionService subscriptionService,
-      AuthenticationAttemptService authenticationAttemptService,
-      CompanyRepository companyRepository,
-      PersonRepository personRepository,
-      Encoder encoder) {
-    super(subscriptionService, authenticationAttemptService, new PersonService(personRepository, encoder));
-    this.companyRepository = companyRepository;
+                            AuthenticationAttemptService authenticationAttemptService,
+                            PersonRepository personRepository,
+                            PersonMapper mapper) {
+    super(subscriptionService, authenticationAttemptService, new PersonService(personRepository, mapper));
   }
 
   @Override
-  void decorateWithCustomers(Person clientEntity) {
-    Company company = companyRepository.findByRepresentativesUsername(clientEntity.getUsername());
-    clientEntity.setCompany(company);
+  public CustomerType serviceType() {
+    return CustomerType.PERSON;
   }
 }

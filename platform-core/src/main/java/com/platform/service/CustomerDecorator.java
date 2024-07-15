@@ -1,8 +1,8 @@
 package com.platform.service;
 
-import com.platform.persistence.entity.AuthenticationAttempt;
-import com.platform.persistence.entity.Customer;
-import com.platform.persistence.entity.Subscription;
+import com.platform.model.AuthenticationAttemptResource;
+import com.platform.model.CustomerResource;
+import com.platform.model.SubscriptionResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.CollectionUtils;
 
@@ -11,22 +11,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Base decorator class that utilize the decorator pattern.
- *
- * @param <E> Entity
+ * Base decorator.
  */
 @RequiredArgsConstructor
-public abstract class CustomerDecorator<E extends Customer> implements CustomerService<E> {
+public abstract class CustomerDecorator implements CustomerService {
 
   private final SubscriptionService subscriptionService;
   private final AuthenticationAttemptService authenticationAttemptService;
-  private final CustomerService<E> delegate;
-
-  abstract void decorateWithCustomers(E clientEntity);
+  private final CustomerService delegate;
 
   @Override
-  public E loadUserByUsernameForDecoration(Set<DecoratingOptions> decoratingOptions, String username) {
-    E client = delegate.loadUserByUsername(username);
+  public CustomerResource loadUserByUsernameForDecoration(Set<DecoratingOptions> decoratingOptions, String username) {
+    CustomerResource client = delegate.retrieve(username);
 
     if (shouldDecorate(decoratingOptions, client)) {
       decoratingOptions = filterDecoratingOptions(decoratingOptions, client);
@@ -37,60 +33,49 @@ public abstract class CustomerDecorator<E extends Customer> implements CustomerS
   }
 
   @Override
-  public E loadUserByUsername(String username) {
-    return delegate.loadUserByUsername(username);
+  public CustomerResource retrieve(String username) {
+    return delegate.retrieve(username);
   }
 
   @Override
-  public E save(E entity) {
-    return delegate.save(entity);
+  public CustomerResource create(CustomerResource customer) {
+    return delegate.create(customer);
   }
 
-  @Override
-  public void delete(String username) {
-    delegate.delete(username);
-  }
-
-  @Override
-  public void changePassword(String newPassword, String username) {
-    delegate.changePassword(newPassword, username);
-  }
-
-  private void decorate(Set<DecoratingOptions> decoratingOptions, E clientEntity) {
+  private void decorate(Set<DecoratingOptions> decoratingOptions, CustomerResource customer) {
     for (DecoratingOptions option : decoratingOptions) {
       switch (option) {
-        case SUBSCRIPTIONS -> decorateWithSubscriptions(clientEntity);
-        case AUTHENTICATION_ATTEMPTS -> decorateWithAuthAttempts(clientEntity);
-        case BLOCKING_AUTHENTICATION_ATTEMPTS -> decorateWithBlockingAuthAttempts(clientEntity);
-        case COMPANY_REPRESENTATIVES, REPRESENTATIVE_COMPANY -> decorateWithCustomers(clientEntity);
+        case SUBSCRIPTIONS -> decorateWithSubscriptions(customer);
+        case AUTHENTICATION_ATTEMPTS -> decorateWithAuthAttempts(customer);
+        case BLOCKING_AUTHENTICATION_ATTEMPTS -> decorateWithBlockingAuthAttempts(customer);
       }
     }
 
   }
 
-  private void decorateWithAuthAttempts(E clientEntity) {
-    List<AuthenticationAttempt> attempts = authenticationAttemptService.getAuthenticationAttempts(clientEntity.getId());
-    clientEntity.setAuthenticationAttempts(attempts);
+  private void decorateWithAuthAttempts(CustomerResource customer) {
+    List<AuthenticationAttemptResource> attempts = authenticationAttemptService.getAuthenticationAttempts(customer.getId());
+    customer.setAuthenticationAttempts(attempts);
   }
 
-  private void decorateWithSubscriptions(E clientEntity) {
-    List<Subscription> subscriptions = subscriptionService.getSubscriptions(clientEntity.getId());
-    clientEntity.setSubscriptions(subscriptions);
+  private void decorateWithSubscriptions(CustomerResource customer) {
+    List<SubscriptionResource> subscriptions = subscriptionService.getSubscriptions(customer.getId());
+    customer.setSubscriptions(subscriptions);
   }
 
-  private void decorateWithBlockingAuthAttempts(E clientEntity) {
-    List<AuthenticationAttempt> attempts = authenticationAttemptService.getBlockingAuthenticationAttempts(clientEntity.getUsername());
-    clientEntity.setAuthenticationAttempts(attempts);
+  private void decorateWithBlockingAuthAttempts(CustomerResource customer) {
+    List<AuthenticationAttemptResource> attempts = authenticationAttemptService.getBlockingAuthenticationAttempts(customer.getUsername());
+    customer.setAuthenticationAttempts(attempts);
   }
 
-  private Set<DecoratingOptions> filterDecoratingOptions(Set<DecoratingOptions> decoratingOptions, E client) {
+  private Set<DecoratingOptions> filterDecoratingOptions(Set<DecoratingOptions> decoratingOptions, CustomerResource customer) {
     return decoratingOptions.stream()
-        .filter(option -> option.getEligibleForDecorating().contains(client.getClass()))
+        .filter(option -> option.getEligibleForDecorating().contains(customer.getClass()))
         .collect(Collectors.toSet());
   }
 
-  private boolean shouldDecorate(Set<DecoratingOptions> options, E client) {
-    return client != null && !CollectionUtils.isEmpty(options);
+  private boolean shouldDecorate(Set<DecoratingOptions> options, CustomerResource customer) {
+    return customer != null && !CollectionUtils.isEmpty(options);
   }
 
 }

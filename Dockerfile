@@ -7,7 +7,7 @@ RUN gradle clean build
 
 #define entry point
 
-FROM amazoncorretto:17-alpine as run-stage
+FROM amazoncorretto:21-alpine as run-stage
 WORKDIR /application
 COPY --from=build-stage /application/build/libs/*.jar /application/platform.jar
 EXPOSE 8081

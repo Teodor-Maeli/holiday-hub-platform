@@ -9,14 +9,15 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AuthenticationAttemptResponse {
+public class AuthenticationAttemptResource {
 
   private Long id;
-  private CustomerResponse customer;
   private LocalDateTime createdDate;
   private LocalDateTime updatedDate;
   private AuthenticationStatus authenticationStatus;
   private AuthenticationStatusReason statusReason;
   private String message;
   private Boolean statusResolved;
+  private String updatedBy;
+  private String encodedUnlockingCode;
 }

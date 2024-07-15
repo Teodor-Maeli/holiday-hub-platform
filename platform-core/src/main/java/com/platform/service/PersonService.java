@@ -1,11 +1,36 @@
 package com.platform.service;
 
+import com.platform.mapper.PersonMapper;
+import com.platform.model.CustomerResource;
+import com.platform.model.CustomerType;
+import com.platform.model.PersonResource;
 import com.platform.persistence.entity.Person;
 import com.platform.persistence.repository.PersonRepository;
 
-class PersonService extends AbstractCustomerService<Person, Long, PersonRepository> {
+class PersonService implements CustomerService {
 
-  public PersonService(PersonRepository personRepository, Encoder encoder) {
-    super(personRepository, encoder);
+  private final CustomerHelperService<Person, Long> helperService;
+  private final PersonMapper mapper;
+
+  public PersonService(PersonRepository repository, PersonMapper mapper) {
+    this.helperService = new CustomerHelperService<>(repository);
+    this.mapper = mapper;
+  }
+
+  @Override
+  public CustomerResource retrieve(String username) {
+    Person person = helperService.retrieve(username);
+    return mapper.toResource(person);
+  }
+
+  @Override
+  public CustomerResource create(CustomerResource resource) {
+    Person entity = mapper.toEntity((PersonResource) resource);
+    return mapper.toResource(helperService.create(entity));
+  }
+
+  @Override
+  public CustomerType serviceType() {
+    return CustomerType.DECORATED;
   }
 }

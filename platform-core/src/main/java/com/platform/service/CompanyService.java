@@ -34,9 +34,4 @@ class CompanyService implements CustomerService {
     Company entity = mapper.toEntityUpdate((CompanyResource) resource);
     return mapper.toResource(helperService.create(entity));
   }
-
-  @Override
-  public CustomerType serviceType() {
-    return CustomerType.IGNORE;
-  }
 }

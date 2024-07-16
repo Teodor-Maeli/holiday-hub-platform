@@ -7,7 +7,9 @@ import java.util.Set;
 
 public interface CustomerService {
 
-  CustomerType serviceType();
+  default CustomerType serviceType() {
+    return CustomerType.IGNORE;
+  }
 
   CustomerResource create(CustomerResource resource);
 

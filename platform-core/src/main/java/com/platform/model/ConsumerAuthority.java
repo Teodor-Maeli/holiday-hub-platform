@@ -6,6 +6,6 @@ package com.platform.model;
  */
 public enum ConsumerAuthority {
   ADMIN,
-  BASE_CLIENT,
+  BASE_CUSTOMER,
   COMPANY_REPRESENTATIVE;
 }

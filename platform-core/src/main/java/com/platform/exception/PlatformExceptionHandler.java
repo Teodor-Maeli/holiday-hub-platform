@@ -30,20 +30,4 @@ public class PlatformExceptionHandler {
         .status(be.getHttpStatus())
         .body(erroneousResponse);
   }
-
-  @ExceptionHandler(RuntimeException.class)
-  private ResponseEntity<Map<String, Object>> handleException(RuntimeException be) {
-    Map<String, Object> erroneousResponse = new HashMap<>();
-    erroneousResponse.put("message", be.getMessage());
-    erroneousResponse.put("exception", be.getClass());
-
-    if (be.getCause() != null) {
-      erroneousResponse.put("cause", be.getCause().getClass());
-    }
-
-    log.error("Exception has occurred: ", be);
-    return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(erroneousResponse);
-  }
 }

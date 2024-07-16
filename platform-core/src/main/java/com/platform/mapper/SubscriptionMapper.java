@@ -3,6 +3,7 @@ package com.platform.mapper;
 import com.platform.model.SubscriptionResource;
 import com.platform.persistence.entity.Subscription;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public interface SubscriptionMapper {
 
   SubscriptionResource toResource(Subscription subscription);
 
+  @Mapping(target = "customer", ignore = true)
   Subscription toEntity(SubscriptionResource resources);
 
 }

@@ -14,13 +14,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SecurityUtils {
 
+  private static final String SECRET_KEY = UUID.randomUUID().toString(); // development only solution...
+
   public static Algorithm getSignAlgorithm() {
-    return Algorithm.HMAC256("key");
+    return Algorithm.HMAC256(SECRET_KEY);
   }
 
   public static SimpleGrantedAuthority toSimpleGrantedAuthority(ConsumerAuthority authority) {

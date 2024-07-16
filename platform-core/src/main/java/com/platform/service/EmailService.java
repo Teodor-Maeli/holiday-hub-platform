@@ -26,7 +26,7 @@ public class EmailService {
       emailSender.send(mimeMessageHelper.getMimeMessage());
     } catch (MailException | MessagingException e) {
       throw new PlatformBackendException()
-          .setMessage("General error while sending message")
+          .setMessage("General error while sending email.")
           .setHttpStatus(INTERNAL_SERVER_ERROR).setCause(e);
     }
   }

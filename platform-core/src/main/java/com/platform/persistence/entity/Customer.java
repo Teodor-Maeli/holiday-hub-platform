@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
@@ -53,17 +54,13 @@ public abstract class Customer {
   @Column(name = "EMAIL_ADDRESS", unique = true, nullable = false)
   private String emailAddress;
 
-  @Column(name = "REGISTERED_DATE", updatable = false, nullable = false)
+  @Column(name = "CREATED_ON", updatable = false, nullable = false)
   @CreatedDate
-  private LocalDateTime registeredDate;
+  private LocalDateTime createdOn;
 
-  @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JsonManagedReference
-  private List<AuthenticationAttempt> authenticationAttempts;
-
-  @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JsonManagedReference
-  private List<Subscription> subscriptions;
+  @Column(name = "UPDATED_ON", updatable = false, nullable = false)
+  @CreatedDate
+  private LocalDateTime updatedOn;
 
   @Column(name = "AUTHORITIES")
   @ElementCollection(targetClass = ConsumerAuthority.class, fetch = FetchType.EAGER)
@@ -71,6 +68,18 @@ public abstract class Customer {
 
   @Column(name = "LOCKED")
   private Boolean locked;
+
+  @OneToOne(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
+  @JsonManagedReference
+  private Configuration configuration;
+
+  @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference
+  private List<AuthenticationAttempt> authenticationAttempts;
+
+  @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference
+  private List<Subscription> subscriptions;
 
   public Set<ConsumerAuthority> getAuthorities() {
     if (Hibernate.isInitialized(authorities)) {

@@ -12,8 +12,9 @@ import java.time.LocalDate;
 @JsonInclude(Include.NON_NULL)
 public class SubscriptionResource {
 
-  private LocalDate startDate;
-  private LocalDate endDate;
+  private Long id;
+  private LocalDate startOn;
+  private LocalDate endOn;
   private Boolean active;
   private SubscriptionType type;
 }

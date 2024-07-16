@@ -5,12 +5,11 @@ import com.platform.exception.PlatformBackendException;
 import com.platform.model.AccountUnlock;
 import com.platform.model.AuthenticationAttemptResource;
 import com.platform.model.AuthenticationStatusReason;
+import com.platform.model.ConfigurationResource;
 import com.platform.model.CustomerResource;
 import com.platform.model.CustomerType;
 import com.platform.model.CustomerUserDetails;
 import com.platform.model.EmailMessageDetails;
-import com.platform.model.PersonResource;
-import com.platform.persistence.entity.Configuration;
 import com.platform.util.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -24,6 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -49,16 +49,12 @@ public class AuthService implements UserDetailsService {
   private final HttpServletRequest request;
   private final EmailService emailService;
   private final Encoder encoder;
-  private final BiFunction<String, CustomerService, Optional<CustomerResource>> getBlockingAuthFailures =
-      (username, service) -> Optional.of(
-          service.loadUserByUsernameForDecoration(
-              Collections.singleton(DecoratingOptions.BLOCKING_AUTHENTICATION_ATTEMPTS), username));
+  private final BiFunction<String, CustomerService, Optional<CustomerResource>> retrieveWithAuthAttempts =
+      (username, service) -> Optional.of(service.retrieve(Collections.singleton(DecoratingOptions.BLOCKING_AUTHENTICATION_ATTEMPTS), username));
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
     CustomerResource client = loadUserByUsernameInternal(username);
-
     return cacheIntoRequestAsClientUserDetails(client);
   }
 
@@ -77,12 +73,13 @@ public class AuthService implements UserDetailsService {
       throw new PlatformBackendException().setDetails("Account does not need to be unlocked!").setHttpStatus(BAD_REQUEST);
     }
 
-    return issueAccountUnlockingCode(client, null);
+    return issueAccountUnlockingCode(client);
   }
 
-  private AccountUnlock issueAccountUnlockingCode(CustomerResource customer, Configuration configuration) {
+  private AccountUnlock issueAccountUnlockingCode(CustomerResource customer) {
     String rawUnlockingCode = UUID.randomUUID().toString();
 
+    ConfigurationResource configuration = customer.getConfiguration();
     String partnerUnlockingUrl = UriComponentsBuilder.fromHttpUrl(configuration.getRedirectUrl())
         .queryParam(USERNAME_PARAM, customer.getUsername())
         .queryParam(UNLOCKING_CODE_PARAM, rawUnlockingCode)
@@ -100,7 +97,7 @@ public class AuthService implements UserDetailsService {
     emailService.send(emailMessageDetails);
 
     updateAttemptWithCode(customer, encoder.encode(rawUnlockingCode));
-    saveCustomer(customer);
+    updateCustomer(customer);
 
     return new AccountUnlock(AccountUnlock.State.INITIATED,
         configuration.getRedirectUrl(),
@@ -136,10 +133,10 @@ public class AuthService implements UserDetailsService {
           .setHttpStatus(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
-    return unlockAccount(customer, null);
+    return unlockAccount(customer);
   }
 
-  private AccountUnlock unlockAccount(CustomerResource customer, Configuration configuration) {
+  private AccountUnlock unlockAccount(CustomerResource customer) {
     String updatedBy =
         SecurityUtils.getPrincipal()
             .map(CustomerUserDetails::getUsername)
@@ -148,9 +145,13 @@ public class AuthService implements UserDetailsService {
     resolveBlockingAttempts(customer, updatedBy);
 
     customer.setLocked(Boolean.FALSE);
-    saveCustomer(customer);
+    updateCustomer(customer);
 
-    return new AccountUnlock(AccountUnlock.State.COMPLETED, configuration.getRedirectUrl(), configuration.getReturnUrl(), properties.getUnlockReplyEmail());
+    ConfigurationResource configuration = customer.getConfiguration();
+    return new AccountUnlock(AccountUnlock.State.COMPLETED,
+        configuration.getRedirectUrl(),
+        configuration.getReturnUrl(),
+        properties.getUnlockReplyEmail());
   }
 
   private void resolveBlockingAttempts(CustomerResource customer, String updatedBy) {
@@ -160,16 +161,8 @@ public class AuthService implements UserDetailsService {
     }
   }
 
-  private void saveCustomer(CustomerResource customer) {
-    if (customer instanceof PersonResource person) {
-      resolver.resolve(CustomerType.PERSON).create(person);
-    } else if (customer instanceof CustomerResource company) {
-      resolver.resolve(CustomerType.COMPANY).create(company);
-    } else {
-      throw new PlatformBackendException()
-          .setDetails("Saving could not be completed, please contact technical support for assistance!")
-          .setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  private void updateCustomer(CustomerResource customer) {
+    resolver.resolve(customer.getType()).update(customer);
   }
 
   private boolean shouldUnlock(CustomerResource customer, String unlockingCode) {
@@ -198,8 +191,8 @@ public class AuthService implements UserDetailsService {
 
   private CustomerResource loadUserByUsernameInternal(String username) {
     return
-        getBlockingAuthFailures.apply(username, resolver.resolve(CustomerType.PERSON))
-            .orElseGet(() -> getBlockingAuthFailures.apply(username, resolver.resolve(CustomerType.COMPANY))
+        retrieveWithAuthAttempts.apply(username, resolver.resolve(CustomerType.PERSON))
+            .orElseGet(() -> retrieveWithAuthAttempts.apply(username, resolver.resolve(CustomerType.COMPANY))
                 .orElseThrow(() -> new PlatformBackendException()
                     .setMessage("Failed to LOAD user, USERNAME: %s non-existent or suspended!".formatted(username))
                     .setHttpStatus(BAD_REQUEST)));
@@ -207,9 +200,7 @@ public class AuthService implements UserDetailsService {
 
   private CustomerUserDetails cacheIntoRequestAsClientUserDetails(CustomerResource client) {
     CustomerUserDetails userDetails = new CustomerUserDetails(client);
-
     request.setAttribute(USER_DETAILS, userDetails);
-
     return userDetails;
   }
 
@@ -223,7 +214,7 @@ public class AuthService implements UserDetailsService {
       text = text.replace("{{followUrl}}", followUrl);
       text = text.replace("{{replyAddress}}", properties.getUnlockReplyEmail());
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new UncheckedIOException(e);
     }
 
     return text;

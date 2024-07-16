@@ -21,17 +21,22 @@ class CompanyService implements CustomerService {
   public CustomerResource retrieve(String username) {
     Company company = helperService.retrieve(username);
     return mapper.toResource(company);
-
   }
 
   @Override
   public CustomerResource create(CustomerResource resource) {
-    Company entity = mapper.toEntity((CompanyResource) resource);
+    Company entity = mapper.toEntityCreate((CompanyResource) resource);
+    return mapper.toResource(helperService.create(entity));
+  }
+
+  @Override
+  public CustomerResource update(CustomerResource resource) {
+    Company entity = mapper.toEntityUpdate((CompanyResource) resource);
     return mapper.toResource(helperService.create(entity));
   }
 
   @Override
   public CustomerType serviceType() {
-    return CustomerType.DECORATED;
+    return CustomerType.IGNORE;
   }
 }

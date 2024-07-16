@@ -25,12 +25,18 @@ class PersonService implements CustomerService {
 
   @Override
   public CustomerResource create(CustomerResource resource) {
-    Person entity = mapper.toEntity((PersonResource) resource);
+    Person entity = mapper.toEntityCreate((PersonResource) resource);
+    return mapper.toResource(helperService.create(entity));
+  }
+
+  @Override
+  public CustomerResource update(CustomerResource resource) {
+    Person entity = mapper.toEntityUpdate((PersonResource) resource);
     return mapper.toResource(helperService.create(entity));
   }
 
   @Override
   public CustomerType serviceType() {
-    return CustomerType.DECORATED;
+    return CustomerType.IGNORE;
   }
 }

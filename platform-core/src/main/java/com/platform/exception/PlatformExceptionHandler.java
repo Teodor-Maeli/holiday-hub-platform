@@ -1,13 +1,13 @@
 package com.platform.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -19,19 +19,31 @@ public class PlatformExceptionHandler {
     erroneousResponse.put("message", be.getMessage());
     erroneousResponse.put("status", be.getHttpStatus());
     erroneousResponse.put("details", be.getDetails());
+    erroneousResponse.put("exception", be.getClass());
 
-    erroneousResponse =
-        erroneousResponse.entrySet()
-            .stream()
-            .filter(entry -> entry.getKey() != null || entry.getValue() != null)
-            .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                Map.Entry::getValue
-            ));
+    if (be.getCause() != null) {
+      erroneousResponse.put("cause", be.getCause().getClass());
+    }
 
     log.error("Exception has occurred: ", be);
     return ResponseEntity
         .status(be.getHttpStatus())
+        .body(erroneousResponse);
+  }
+
+  @ExceptionHandler(RuntimeException.class)
+  private ResponseEntity<Map<String, Object>> handleException(RuntimeException be) {
+    Map<String, Object> erroneousResponse = new HashMap<>();
+    erroneousResponse.put("message", be.getMessage());
+    erroneousResponse.put("exception", be.getClass());
+
+    if (be.getCause() != null) {
+      erroneousResponse.put("cause", be.getCause().getClass());
+    }
+
+    log.error("Exception has occurred: ", be);
+    return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(erroneousResponse);
   }
 }

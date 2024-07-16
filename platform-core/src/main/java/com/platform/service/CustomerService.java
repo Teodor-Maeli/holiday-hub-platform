@@ -7,13 +7,15 @@ import java.util.Set;
 
 public interface CustomerService {
 
-  default CustomerResource loadUserByUsernameForDecoration(Set<DecoratingOptions> decoratingOptions, String username) {
-    throw new UnsupportedOperationException("Method not yet implemented!");
-  }
-
-  CustomerResource retrieve(String username);
+  CustomerType serviceType();
 
   CustomerResource create(CustomerResource resource);
 
-  CustomerType serviceType();
+  CustomerResource update(CustomerResource resource);
+
+  CustomerResource retrieve(String username);
+
+  default CustomerResource retrieve(Set<DecoratingOptions> decoratingOptions, String username) {
+    throw new UnsupportedOperationException("Method not yet implemented!");
+  }
 }

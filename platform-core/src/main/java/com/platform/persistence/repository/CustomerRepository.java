@@ -17,18 +17,13 @@ public interface CustomerRepository<T, ID extends Number> extends JpaRepository<
 
   @Query("""
       SELECT e FROM #{#entityName} e
-      LEFT JOIN FETCH e.authenticationAttempts attempts
       WHERE e.username = :username
       """)
-  Optional<T> findByUsernameForAuthentication(@Param("username") String username);
-
-  boolean existsByUsername(String username);
+  Optional<T> findByUsername(@Param("username") String username);
 
   @Transactional
   @Modifying
   @Query("DELETE #{#entityName} e WHERE e.username = :username")
   int deleteByUserName(String username);
 
-  @Override
-  <S extends T> S save(S entity);
 }

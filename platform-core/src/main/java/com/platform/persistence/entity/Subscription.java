@@ -32,11 +32,11 @@ public class Subscription {
   @JsonBackReference
   private Customer customer;
 
-  @Column(name = "START_DATE")
-  private LocalDateTime startDate;
+  @Column(name = "START_ON")
+  private LocalDateTime startOn;
 
-  @Column(name = "END_DATE")
-  private LocalDateTime endDate;
+  @Column(name = "END_ON")
+  private LocalDateTime endOn;
 
   @Column(name = "ACTIVE")
   private Boolean active;

@@ -21,15 +21,13 @@ public abstract class CustomerDecorator implements CustomerService {
   private final CustomerService delegate;
 
   @Override
-  public CustomerResource loadUserByUsernameForDecoration(Set<DecoratingOptions> decoratingOptions, String username) {
-    CustomerResource client = delegate.retrieve(username);
+  public CustomerResource create(CustomerResource resource) {
+    return delegate.create(resource);
+  }
 
-    if (shouldDecorate(decoratingOptions, client)) {
-      decoratingOptions = filterDecoratingOptions(decoratingOptions, client);
-      decorate(decoratingOptions, client);
-    }
-
-    return client;
+  @Override
+  public CustomerResource update(CustomerResource resource) {
+    return delegate.update(resource);
   }
 
   @Override
@@ -38,8 +36,15 @@ public abstract class CustomerDecorator implements CustomerService {
   }
 
   @Override
-  public CustomerResource create(CustomerResource customer) {
-    return delegate.create(customer);
+  public CustomerResource retrieve(Set<DecoratingOptions> decoratingOptions, String username) {
+    CustomerResource resource = delegate.retrieve(username);
+
+    if (shouldDecorate(decoratingOptions, resource)) {
+      decoratingOptions = filterDecoratingOptions(decoratingOptions, resource);
+      decorate(decoratingOptions, resource);
+    }
+
+    return resource;
   }
 
   private void decorate(Set<DecoratingOptions> decoratingOptions, CustomerResource customer) {
@@ -53,24 +58,24 @@ public abstract class CustomerDecorator implements CustomerService {
 
   }
 
-  private void decorateWithAuthAttempts(CustomerResource customer) {
-    List<AuthenticationAttemptResource> attempts = authenticationAttemptService.getAuthenticationAttempts(customer.getId());
-    customer.setAuthenticationAttempts(attempts);
+  private void decorateWithAuthAttempts(CustomerResource resource) {
+    List<AuthenticationAttemptResource> attempts = authenticationAttemptService.getAuthenticationAttempts(resource.getId());
+    resource.setAuthenticationAttempts(attempts);
   }
 
-  private void decorateWithSubscriptions(CustomerResource customer) {
-    List<SubscriptionResource> subscriptions = subscriptionService.getSubscriptions(customer.getId());
-    customer.setSubscriptions(subscriptions);
+  private void decorateWithSubscriptions(CustomerResource resource) {
+    List<SubscriptionResource> subscriptions = subscriptionService.getSubscriptions(resource.getId());
+    resource.setSubscriptions(subscriptions);
   }
 
-  private void decorateWithBlockingAuthAttempts(CustomerResource customer) {
-    List<AuthenticationAttemptResource> attempts = authenticationAttemptService.getBlockingAuthenticationAttempts(customer.getUsername());
-    customer.setAuthenticationAttempts(attempts);
+  private void decorateWithBlockingAuthAttempts(CustomerResource resource) {
+    List<AuthenticationAttemptResource> attempts = authenticationAttemptService.getBlockingAuthenticationAttempts(resource.getUsername());
+    resource.setAuthenticationAttempts(attempts);
   }
 
-  private Set<DecoratingOptions> filterDecoratingOptions(Set<DecoratingOptions> decoratingOptions, CustomerResource customer) {
+  private Set<DecoratingOptions> filterDecoratingOptions(Set<DecoratingOptions> decoratingOptions, CustomerResource resource) {
     return decoratingOptions.stream()
-        .filter(option -> option.getEligibleForDecorating().contains(customer.getClass()))
+        .filter(option -> option.getEligibleForDecorating().contains(resource.getClass()))
         .collect(Collectors.toSet());
   }
 

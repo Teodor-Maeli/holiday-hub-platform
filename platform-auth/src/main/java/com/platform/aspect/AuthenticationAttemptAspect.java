@@ -17,9 +17,13 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import javax.security.auth.login.AccountLockedException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -45,17 +49,11 @@ import static com.platform.model.AuthenticationStatusReason.UNKNOWN;
 public class AuthenticationAttemptAspect {
 
   private static final String USER_DETAILS_ATTR = "userDetails";
-  private static final String BAD_CREDENTIALS_EXCEPTION = "BadCredentialsException";
-  private static final String DISABLED_ACCOUNT_EXCEPTION = "DisabledAccountException";
-  private static final String ACCOUNT_LOCKED_EXCEPTION = "AccountLockedException";
-  private static final String LOCKED_EXCEPTION = "LockedException";
-
   private static final List<AuthenticationStatusReason> DISALLOWED_REASONS = List.of(ACCOUNT_DISABLED, ACCOUNT_HACKED, ACCOUNT_LOCKED);
 
   private final PlatformSecurityProperties properties;
   private final AuthenticationAttemptService service;
   private final HttpServletRequest request;
-
 
   @Pointcut("@annotation(com.platform.aspect.TrackAuthentication) && execution(* *(..))")
   public void pointCut() {
@@ -98,11 +96,11 @@ public class AuthenticationAttemptAspect {
   }
 
   private boolean isFailure(Class<?> caller) {
-    return PlatformAuthenticationSuccessHandler.class.equals(caller);
+    return PlatformAuthenticationFailureHandler.class.equals(caller);
   }
 
   private boolean isSuccess(Class<?> caller) {
-    return PlatformAuthenticationFailureHandler.class.equals(caller);
+    return PlatformAuthenticationSuccessHandler.class.equals(caller);
   }
 
   private void recordSuccess(CustomerUserDetails customerUserDetails) {
@@ -112,22 +110,20 @@ public class AuthenticationAttemptAspect {
     resource.setStatusReason(AuthenticationStatusReason.SUCCESSFUL_AUTHENTICATION);
     resource.setStatusResolved(Boolean.TRUE);
 
-
-    service.recordAttempt(resource, customerUserDetails.customer().getUsername());
+    service.recordAttempt(resource, customerUserDetails.customer());
   }
 
   private void recordFailure(CustomerUserDetails customerUserDetails, Object[] args) {
     if (!ObjectUtils.isEmpty(args)) {
       Exception exception = extractException(args);
       AuthenticationAttemptResource resource = prepareFailureEntity(exception, customerUserDetails);
-      service.recordAttempt(resource, customerUserDetails.customer().getUsername());
+      service.recordAttempt(resource, customerUserDetails.customer());
     }
   }
 
   private AuthenticationAttemptResource prepareFailureEntity(Exception exception, CustomerUserDetails customerUserDetails) {
     AuthenticationStatusReason authenticationStatusReason = determineReason(exception);
     Boolean statusResolved = isStatusResolved(customerUserDetails, authenticationStatusReason);
-
 
     AuthenticationAttemptResource resource = new AuthenticationAttemptResource();
     resource.setAuthenticationStatus(AuthenticationStatus.FAILURE);
@@ -146,7 +142,7 @@ public class AuthenticationAttemptAspect {
       return false;
     }
 
-    return getNonExpiredBadCredentials(attempts).size() <= properties.getBadCredentialsExpiryTime();
+    return getNonExpiredBadCredentials(attempts).size() <= properties.getMaxConsecutiveBadCredentials();
   }
 
   private List<AuthenticationAttemptResource> getNonExpiredBadCredentials(List<AuthenticationAttemptResource> attempts) {
@@ -164,11 +160,12 @@ public class AuthenticationAttemptAspect {
   }
 
   private AuthenticationStatusReason determineReason(Exception exception) {
-    return switch (exception.getClass().getSimpleName()) {
-      case BAD_CREDENTIALS_EXCEPTION -> BAD_CREDENTIALS;
-      case DISABLED_ACCOUNT_EXCEPTION -> ACCOUNT_DISABLED;
-      case ACCOUNT_LOCKED_EXCEPTION, LOCKED_EXCEPTION -> ACCOUNT_LOCKED;
-      default -> UNKNOWN;
+    return switch (exception) {
+      case BadCredentialsException badCredentials -> BAD_CREDENTIALS;
+      case DisabledException disabled -> ACCOUNT_DISABLED;
+      case AccountLockedException accountLocked -> ACCOUNT_LOCKED;
+      case LockedException locked -> ACCOUNT_LOCKED;
+      case null, default -> UNKNOWN;
     };
   }
 

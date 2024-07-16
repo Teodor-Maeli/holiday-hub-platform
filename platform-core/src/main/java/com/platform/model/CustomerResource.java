@@ -21,7 +21,8 @@ import java.util.Set;
 @JsonInclude(Include.NON_NULL)
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
-    property = "type")
+    property = "type",
+    visible = true)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = PersonResource.class, name = "PERSON"),
     @JsonSubTypes.Type(value = CustomerResource.class, name = "COMPANY")
@@ -33,10 +34,12 @@ public class CustomerResource {
   private String password;
   private String phoneNumber;
   private String emailAddress;
-  private LocalDateTime registeredDate;
-  private List<AuthenticationAttemptResource> authenticationAttempts;
-  private List<SubscriptionResource> subscriptions;
-  private Set<ConsumerAuthority> authorities;
   private Boolean locked;
   private CustomerType type;
+  private LocalDateTime createdOn;
+  private LocalDateTime updatedOn;
+  private ConfigurationResource configuration;
+  private Set<ConsumerAuthority> authorities;
+  private List<AuthenticationAttemptResource> authenticationAttempts;
+  private List<SubscriptionResource> subscriptions;
 }

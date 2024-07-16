@@ -1,4 +1,4 @@
-package com.platform.model;
+package com.platform.aspect.audit;
 
 import lombok.Getter;
 import lombok.Setter;

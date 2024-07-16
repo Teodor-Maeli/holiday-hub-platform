@@ -1,22 +1,14 @@
 package com.platform.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
+public class ConfigurationResource {
 
-public class AccountUnlock {
-  private State state;
   private String redirectUrl;
   private String returnUrl;
-  private String replyTo;
-
-  public enum State {
-    INITIATED,
-    COMPLETED,
-    FAILED
-  }
 }

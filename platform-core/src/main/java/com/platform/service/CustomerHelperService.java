@@ -27,7 +27,7 @@ public class CustomerHelperService<T extends Customer, ID extends Number> {
    * @throws PlatformBackendException If failed to load user with HTTP status 500 - Internal Server Error.
    */
   public T retrieve(String username) {
-    Optional<T> customer = repository.findByUsernameForAuthentication(username);
+    Optional<T> customer = repository.findByUsername(username);
 
     if (customer.isPresent()) {
       return customer.get();

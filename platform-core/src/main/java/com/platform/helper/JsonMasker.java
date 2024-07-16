@@ -2,7 +2,7 @@ package com.platform.helper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.platform.model.JsonMaskerProperties;
+import com.platform.aspect.audit.JsonMaskerProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

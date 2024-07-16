@@ -11,7 +11,7 @@ public interface AuthenticationAttemptMapper {
 
   List<AuthenticationAttemptResource> toResource(List<AuthenticationAttempt> attempts);
 
-  AuthenticationAttemptResource toResource(AuthenticationAttempt subscription);
+  AuthenticationAttemptResource toResource(AuthenticationAttempt attempt);
 
   AuthenticationAttempt toEntity(AuthenticationAttemptResource resource);
 }
